@@ -23,7 +23,7 @@ import { Button } from "@/shared/ui/button"
 
 
 export function AppSidebar() {
-  const [role, setRole] = useState("master")
+  const [role, setRole] = useState("admin")
 
   const masterMenuItems = [
     {
