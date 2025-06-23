@@ -18,10 +18,6 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/shared/ui/popover"
 import { Button } from "@/shared/ui/button"
 
 
-
-
-
-
 export function AppSidebar() {
   const [role, setRole] = useState("admin")
 
@@ -97,7 +93,7 @@ export function AppSidebar() {
 
 
   return (
-    <Sidebar className="border-r-0 bg-blue-600 shadow-xl text-blue-400 ">
+        <Sidebar className="border-r-0 bg-blue-600 shadow-xl text-blue-400 ">
       <SidebarHeader className="p-6 border-b border-blue-200 relative overflow-hidden">
 
         <div className="flex items-center gap-3 relative z-10">
