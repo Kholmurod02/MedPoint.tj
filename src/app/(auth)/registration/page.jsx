@@ -2,14 +2,15 @@
 
 
 import { useState } from "react"
-import { Button } from "@/shared/components/ui/button"
-import { Input } from "@/shared/components/ui/input"
-import { Label } from "@/shared/components/ui/label"
-import { Card, CardContent } from "@/shared/components/ui/card"
+import { Button } from "@/shared/ui/button"
+import { Input } from "@/shared/ui/input"
+import { Label } from "@/shared/ui/label"
+import { Card, CardContent } from "@/shared/ui/card"
 import { Eye, EyeOff, Mail, Lock, ArrowRight, ShieldCheck, MailCheck, UserPlus, User, Phone } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
+import logo from "../../../../public/blackLogo.png"
 
 
 
@@ -38,7 +39,7 @@ export default function Registration() {
         {/* Left Side - Branding */}
         <div className="hidden lg:flex flex-col items-center justify-center space-y-8 p-8">
           <div className="relative w-80 h-32">
-            <Image src="/medpoint-horizontal.png" alt="MedPoint Logo" fill className="object-contain" />
+            <Image src={logo} alt="MedPoint Logo" fill className="object-contain" />
           </div>
           <div className="text-center space-y-4">
             <h2 className="text-3xl font-light text-slate-700">Welcome Back</h2>
@@ -64,8 +65,8 @@ export default function Registration() {
           <CardContent className="p-8">
             {/* Mobile Logo */}
             <div className="lg:hidden text-center mb-8">
-              <div className="relative w-64 h-20 mx-auto">
-                <Image src="/medpoint-horizontal.png" alt="MedPoint Logo" fill className="object-contain" />
+              <div className="relative w-64 h-30 mx-auto">
+                <Image src={logo} alt="MedPoint Logo" fill className="object-contain" />
               </div>
             </div>
 
