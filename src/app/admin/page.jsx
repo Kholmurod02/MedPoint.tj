@@ -7,37 +7,37 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/sha
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/shared/ui/chart"
 
 const userData = [
-  { month: "Янв", users: 1200, doctors: 45, appointments: 890, reviews: 234 },
-  { month: "Фев", users: 1350, doctors: 48, appointments: 1020, reviews: 267 },
-  { month: "Мар", users: 1580, doctors: 52, appointments: 1180, reviews: 298 },
-  { month: "Апр", users: 1720, doctors: 55, appointments: 1350, reviews: 334 },
-  { month: "Май", users: 1890, doctors: 58, appointments: 1520, reviews: 378 },
-  { month: "Июн", users: 2100, doctors: 62, appointments: 1680, reviews: 412 },
+  { month: "Jan", users: 1200, doctors: 45, appointments: 890, reviews: 234 },
+  { month: "Feb", users: 1350, doctors: 48, appointments: 1020, reviews: 267 },
+  { month: "Mar", users: 1580, doctors: 52, appointments: 1180, reviews: 298 },
+  { month: "Apr", users: 1720, doctors: 55, appointments: 1350, reviews: 334 },
+  { month: "May", users: 1890, doctors: 58, appointments: 1520, reviews: 378 },
+  { month: "Jun", users: 2100, doctors: 62, appointments: 1680, reviews: 412 },
 ]
 
 const monthlyStats = [
-  { category: "Пользователи", current: 2100, previous: 1890, growth: 11.1 },
-  { category: "Врачи", current: 62, previous: 58, growth: 6.9 },
-  { category: "Записи", current: 1680, previous: 1520, growth: 10.5 },
-  { category: "Отзывы", current: 412, previous: 378, growth: 9.0 },
+  { category: "Users", current: 2100, previous: 1890, growth: 11.1 },
+  { category: "Doctors", current: 62, previous: 58, growth: 6.9 },
+  { category: "Appointments", current: 1680, previous: 1520, growth: 10.5 },
+  { category: "Reviews", current: 412, previous: 378, growth: 9.0 },
 ]
 
 export default function DashboardAdmin() {
   return (
-    <div className="min-h-screen bg-gray-50 p-6 w-full md:max-width-1200 md:m-auto">
+    <div className="min-h-screen bg-gray-50 p-6 w-full container m-auto">
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Панель администратора</h1>
-          <p className="text-gray-600 mt-2">Обзор основных метрик системы</p>
+          <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
+          {/* <p className="text-gray-600 mt-2">Overview of key system metrics</p> */}
         </div>
 
         {/* KPI Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {/* Карточка пользователей */}
+          {/* Users Card */}
           <Card className="hover:shadow-lg transition-all duration-300 hover:-translate-y-1 border-blue-100 bg-gradient-to-br from-blue-50 to-white">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-blue-600">Кол-во пользователей</CardTitle>
+              <CardTitle className="text-sm font-medium text-blue-600">Number of users</CardTitle>
               <div className="p-2 rounded-full bg-blue-100">
                 <Users className="h-4 w-4 text-blue-600" />
               </div>
@@ -46,7 +46,7 @@ export default function DashboardAdmin() {
               <div className="text-2xl font-bold text-gray-900">2,100</div>
               <div className="flex items-center text-xs text-green-600 mt-1">
                 <TrendingUp className="h-3 w-3 mr-1" />
-                <span className="font-medium">+11.1%</span> с прошлого месяца
+                <span className="font-medium">+11.1%</span> from last month
               </div>
               <div className="mt-3 h-2 bg-blue-100 rounded-full">
                 <div className="h-2 bg-blue-500 rounded-full w-3/4"></div>
@@ -54,10 +54,10 @@ export default function DashboardAdmin() {
             </CardContent>
           </Card>
 
-          {/* Карточка врачей */}
+          {/* Doctors Card */}
           <Card className="hover:shadow-lg transition-all duration-300 hover:-translate-y-1 border-green-100 bg-gradient-to-br from-green-50 to-white">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-green-600">Кол-во врачей</CardTitle>
+              <CardTitle className="text-sm font-medium text-green-600">Number of doctors</CardTitle>
               <div className="p-2 rounded-full bg-green-100">
                 <UserCheck className="h-4 w-4 text-green-600" />
               </div>
@@ -66,7 +66,7 @@ export default function DashboardAdmin() {
               <div className="text-2xl font-bold text-gray-900">62</div>
               <div className="flex items-center text-xs text-green-600 mt-1">
                 <TrendingUp className="h-3 w-3 mr-1" />
-                <span className="font-medium">+6.9%</span> с прошлого месяца
+                <span className="font-medium">+6.9%</span> from last month
               </div>
               <div className="mt-3 h-2 bg-green-100 rounded-full">
                 <div className="h-2 bg-green-500 rounded-full w-2/3"></div>
@@ -74,10 +74,10 @@ export default function DashboardAdmin() {
             </CardContent>
           </Card>
 
-          {/* Карточка записей */}
+          {/* Appointments Card */}
           <Card className="hover:shadow-lg transition-all duration-300 hover:-translate-y-1 border-purple-100 bg-gradient-to-br from-purple-50 to-white">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-purple-600">Кол-во записей</CardTitle>
+              <CardTitle className="text-sm font-medium text-purple-600">Number of appointments</CardTitle>
               <div className="p-2 rounded-full bg-purple-100">
                 <Calendar className="h-4 w-4 text-purple-600" />
               </div>
@@ -86,7 +86,7 @@ export default function DashboardAdmin() {
               <div className="text-2xl font-bold text-gray-900">1,680</div>
               <div className="flex items-center text-xs text-green-600 mt-1">
                 <TrendingUp className="h-3 w-3 mr-1" />
-                <span className="font-medium">+10.5%</span> с прошлого месяца
+                <span className="font-medium">+10.5%</span> from last month
               </div>
               <div className="mt-3 h-2 bg-purple-100 rounded-full">
                 <div className="h-2 bg-purple-500 rounded-full w-4/5"></div>
@@ -94,10 +94,10 @@ export default function DashboardAdmin() {
             </CardContent>
           </Card>
 
-          {/* Карточка отзывов */}
+          {/* Reviews Card */}
           <Card className="hover:shadow-lg transition-all duration-300 hover:-translate-y-1 border-orange-100 bg-gradient-to-br from-orange-50 to-white">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-orange-600">Кол-во отзывов</CardTitle>
+              <CardTitle className="text-sm font-medium text-orange-600">Number of reviews</CardTitle>
               <div className="p-2 rounded-full bg-orange-100">
                 <MessageSquare className="h-4 w-4 text-orange-600" />
               </div>
@@ -106,7 +106,7 @@ export default function DashboardAdmin() {
               <div className="text-2xl font-bold text-gray-900">412</div>
               <div className="flex items-center text-xs text-green-600 mt-1">
                 <TrendingUp className="h-3 w-3 mr-1" />
-                <span className="font-medium">+9.0%</span> с прошлого месяца
+                <span className="font-medium">+9.0%</span> from last month
               </div>
               <div className="mt-3 h-2 bg-orange-100 rounded-full">
                 <div className="h-2 bg-orange-500 rounded-full w-3/5"></div>
@@ -120,14 +120,14 @@ export default function DashboardAdmin() {
           {/* Users Growth Chart */}
           <Card>
             <CardHeader>
-              <CardTitle>Рост пользователей</CardTitle>
-              <CardDescription>Динамика роста пользователей за последние 6 месяцев</CardDescription>
+              <CardTitle>User Growth</CardTitle>
+              <CardDescription>User growth dynamics over the last 6 months</CardDescription>
             </CardHeader>
             <CardContent>
               <ChartContainer
                 config={{
                   users: {
-                    label: "Пользователи",
+                    label: "Users",
                     color: "hsl(221, 83%, 53%)",
                   },
                 }}
@@ -153,14 +153,14 @@ export default function DashboardAdmin() {
           {/* Appointments Chart */}
           <Card>
             <CardHeader>
-              <CardTitle>Записи к врачам</CardTitle>
-              <CardDescription>Количество записей по месяцам</CardDescription>
+              <CardTitle>Doctor Appointments</CardTitle>
+              <CardDescription>Number of appointments by month</CardDescription>
             </CardHeader>
             <CardContent>
               <ChartContainer
                 config={{
                   appointments: {
-                    label: "Записи",
+                    label: "Appointments",
                     color: "hsl(262, 83%, 58%)",
                   },
                 }}
@@ -189,18 +189,18 @@ export default function DashboardAdmin() {
           {/* Doctors and Reviews Chart */}
           <Card>
             <CardHeader>
-              <CardTitle>Врачи и отзывы</CardTitle>
-              <CardDescription>Сравнение количества врачей и отзывов</CardDescription>
+              <CardTitle>Doctors and Reviews</CardTitle>
+              <CardDescription>Comparison of doctors count and reviews</CardDescription>
             </CardHeader>
             <CardContent>
               <ChartContainer
                 config={{
                   doctors: {
-                    label: "Врачи",
+                    label: "Doctors",
                     color: "hsl(142, 76%, 36%)",
                   },
                   reviews: {
-                    label: "Отзывы",
+                    label: "Reviews",
                     color: "hsl(25, 95%, 53%)",
                   },
                 }}
@@ -221,8 +221,8 @@ export default function DashboardAdmin() {
           {/* Monthly Comparison */}
           <Card>
             <CardHeader>
-              <CardTitle>Сравнение с предыдущим месяцем</CardTitle>
-              <CardDescription>Процентное изменение основных метрик</CardDescription>
+              <CardTitle>Comparison with Previous Month</CardTitle>
+              <CardDescription>Percentage change in key metrics</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
@@ -231,7 +231,7 @@ export default function DashboardAdmin() {
                     <div>
                       <p className="font-medium text-gray-900">{stat.category}</p>
                       <p className="text-sm text-gray-600">
-                        {stat.current.toLocaleString()} (было: {stat.previous.toLocaleString()})
+                        {stat.current.toLocaleString()} (prev: {stat.previous.toLocaleString()})
                       </p>
                     </div>
                     <div className="flex items-center text-green-600">
@@ -248,26 +248,26 @@ export default function DashboardAdmin() {
         {/* Summary Chart */}
         <Card>
           <CardHeader>
-            <CardTitle>Общая статистика</CardTitle>
-            <CardDescription>Все основные метрики в одном графике</CardDescription>
+            <CardTitle>Overall Statistics</CardTitle>
+            <CardDescription>All key metrics in one chart</CardDescription>
           </CardHeader>
           <CardContent>
             <ChartContainer
               config={{
                 users: {
-                  label: "Пользователи",
+                  label: "Users",
                   color: "hsl(221, 83%, 53%)",
                 },
                 doctors: {
-                  label: "Врачи",
+                  label: "Doctors",
                   color: "hsl(142, 76%, 36%)",
                 },
                 appointments: {
-                  label: "Записи",
+                  label: "Appointments",
                   color: "hsl(262, 83%, 58%)",
                 },
                 reviews: {
-                  label: "Отзывы",
+                  label: "Reviews",
                   color: "hsl(25, 95%, 53%)",
                 },
               }}
