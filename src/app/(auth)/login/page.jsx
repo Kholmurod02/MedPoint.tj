@@ -6,10 +6,12 @@ import { Button } from "@/shared/ui/button"
 import { Input } from "@/shared/ui/input"
 import { Label } from "@/shared/ui/label"
 import { Card, CardContent } from "@/shared/ui/card"
-import { Eye, EyeOff, Mail, Lock, ArrowRight, LogIn, ShieldCheck, Fingerprint } from "lucide-react"
+import { Eye, EyeOff, Mail, Lock, ArrowRight, LogIn, ShieldCheck, Fingerprint, PawPrint } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
 import logo from "../../../../public/blackLogo.png"
+import axios from "axios"
+import { useRouter } from "next/navigation"
 
 
 
@@ -19,12 +21,39 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState("")
+  const router = useRouter()
 
-  const handleSubmit = async (e) => {
-    e.preventDefault()
-    setIsLoading(true)
-    setError("")
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  setIsLoading(true);
+  setError("");
+
+  try {
+    const response = await axios.post('/api/login', 
+      { email, password },
+      {
+        headers: { 'Content-Type': 'application/json' },
+        withCredentials: true,
+      }
+    );
+
+    if (response.status === 200) {
+      // Получаем URL для редиректа из заголовков
+      const redirectUrl = response.headers['location'] || '/';
+      router.push(redirectUrl);
+    }
+
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      setError(error.response?.data?.message || 'Ошибка входа');
+    } else {
+      setError('Произошла неизвестная ошибка');
+    }
+  } finally {
+    setIsLoading(false);
   }
+};
+
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-teal-50 via-white to-emerald-50 flex items-center justify-center p-4">
@@ -42,13 +71,13 @@ export default function LoginPage() {
           </div>
           <div className="flex space-x-4">
             <div className="w-16 h-16 bg-teal-100 rounded-full flex items-center justify-center">
-               <LogIn/>
+              <LogIn />
             </div>
             <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center">
-             <ShieldCheck/>
+              <ShieldCheck />
             </div>
             <div className="w-16 h-16 bg-cyan-100 rounded-full flex items-center justify-center">
-              <Fingerprint/>
+              <Fingerprint />
             </div>
           </div>
         </div>
@@ -68,7 +97,7 @@ export default function LoginPage() {
               <p className="text-slate-600">Enter your credentials to access your account</p>
             </div>
 
-            <form className="space-y-6">
+            <form onSubmit={handleSubmit} className="space-y-6">
               <div className="space-y-2">
                 <Label htmlFor="email" className="text-sm font-medium text-slate-700 flex items-center gap-2">
                   <Mail className="w-4 h-4 text-teal-500" />
@@ -117,7 +146,7 @@ export default function LoginPage() {
               )}
 
               <div className="flex items-end justify-end">
-                
+
                 <button
                   type="button"
                   className="text-sm text-teal-600 hover:text-teal-700 font-medium hover:underline"
@@ -148,11 +177,11 @@ export default function LoginPage() {
             <div className="mt-8 text-center">
               <div className="text-sm text-slate-600">
                 Don't have an account?{" "}
-              <Link href="/registration">
-                <button className="text-teal-600 hover:text-teal-700 font-medium underline decoration-2 underline-offset-2">
-                  Sign up here
-                </button>
-              </Link>
+                <Link href="/registration">
+                  <button className="text-teal-600 hover:text-teal-700 font-medium underline decoration-2 underline-offset-2">
+                    Sign up here
+                  </button>
+                </Link>
               </div>
             </div>
 
