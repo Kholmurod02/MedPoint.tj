@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { Button } from "@/shared/ui/button"
 import { Input } from "@/shared/ui/input"
 import { Label } from "@/shared/ui/label"
@@ -12,50 +12,28 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card"
 import { MoreHorizontal, Search, UserPlus, Edit, Trash2, Mail, Shield, Save, X, Eye } from "lucide-react"
 import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "@/shared/ui/dialog"
 import Link from "next/link"
+import { useAddUserMutation, useGetAllUsersQuery } from "@/entities/user/api/userApi"
 
 
 
 export default function Users() {
-  const [users, setUsers] = useState([
-    {
-      id: 1,
-      first_name: "John",
-      last_name: "Doe",
-      phone: "+1234567890",
-      email: "john.doe@example.com",
-      role: "admin",
-      is_deleted: false,
-      is_email_verified: false,
-      created_at: "2024-01-15T10:30:00Z",
-    },
-    {
-      id: 2,
-      first_name: "Jane",
-      last_name: "Docker",
-      phone: "+1234567892",
-      email: "jane.doe@example.com",
-      role: "patient",
-      is_deleted: true,
-      is_email_verified: false,
-      created_at: "2024-01-15T10:30:00Z",
-    },
-    {
-      id: 3,
-      first_name: "Jane",
-      last_name: "Docker",
-      phone: "+1234567892",
-      email: "jane.doe@example.com",
-      role: "user",
-      is_deleted: false,
-      is_email_verified: true,
-      created_at: "2024-01-15T10:30:00Z",
-    }
-  ])
-  const [filteredUsers, setFilteredUsers] = useState([])
-  const [loading, setLoading] = useState(true)
+  const { data, error, isLoading } = useGetAllUsersQuery()
+  console.log(data);
 
-  // Filter states
+  const [addUser] = useAddUserMutation()
+  const [user, setUser] = useState({
+    firstName: "",
+    lastName: "",
+    phone: "",
+    email: "",
+    password: "",
+    role: ""
+  })
 
+  const handleAddUser = (e) => {
+    e.preventDefault()
+    addUser(user)
+  }
 
 
 
@@ -78,7 +56,7 @@ export default function Users() {
             <DialogTitle>
               Add new User
             </DialogTitle>
-            <form>
+            <form onSubmit={handleAddUser}>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5 py-5">
                 {/* firstName */}
                 <div className="space-y-2">
@@ -87,6 +65,8 @@ export default function Users() {
                     id="firstName"
                     placeholder="Enter First Name..."
                     required
+                    value={user.firstName}
+                    onChange={(e) => setUser({ ...user, firstName: e.target.value })}
                   />
                 </div>
                 {/* lastName */}
@@ -96,6 +76,8 @@ export default function Users() {
                     id="lastName"
                     placeholder="Enter Last Name..."
                     required
+                    value={user.lastName}
+                    onChange={(e) => setUser({ ...user, lastName: e.target.value })}
                   />
                 </div>
                 {/* phone */}
@@ -106,6 +88,8 @@ export default function Users() {
                     id="phone"
                     placeholder="Enter Phone Number..."
                     required
+                    value={user.phone}
+                    onChange={(e) => setUser({ ...user, phone: e.target.value })}
                   />
                 </div>
                 {/* email */}
@@ -116,45 +100,55 @@ export default function Users() {
                     id="email"
                     placeholder="Enter Email Address..."
                     required
+                    value={user.email}
+                    onChange={(e) => setUser({ ...user, email: e.target.value })}
                   />
                 </div>
                 {/* password */}
                 <div className="space-y-2">
-                  <Label htmlFor="email">Password*</Label>
+                  <Label htmlFor="password">Password*</Label>
                   <Input
                     type='password'
-                    id="email"
-                    placeholder="Enter Email Address..."
+                    id="password"
+                    placeholder="Enter password ..."
                     required
+                    value={user.password}
+                    onChange={(e) => setUser({ ...user, password: e.target.value })}
                   />
                 </div>
                 {/* role */}
                 <div className="space-y-2">
                   <Label htmlFor="role">Roles</Label>
-                  <Select>
+                  <Select
+                    value={user.role}
+                    onValueChange={(value) => setUser({ ...user, role: value })}
+                  >
                     <SelectTrigger>
                       <SelectValue placeholder="Select role for user" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="user">User</SelectItem>
-                      <SelectItem value="admin">Admin</SelectItem>
+                      <SelectItem value="User">User</SelectItem>
+                      <SelectItem value="Admin">Admin</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
+
                 {/* image */}
-                <div className="space-y-2">
+                {/* <div className="space-y-2">
                   <Label htmlFor="photo">Image</Label>
                   <Input
                     type='file'
                     id="photo"
                     required
                   />
-                </div>
+                </div> */}
               </div>
+
               {/* action */}
               <div className="flex justify-end space-x-2 mt-5">
                 <Button
                   size="sm"
+                  type='submit'
                 >
                   <Save className="h-4 w-4 mr-2" />
                   Save
@@ -278,10 +272,10 @@ export default function Users() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {users.map((user) => (
+              {data?.data?.map((user) => (
                 <TableRow key={user.id} className={user.is_deleted ? "opacity-60" : ""}>
                   <TableCell className="font-medium">
-                    {user.first_name} {user.last_name}
+                    {user.firstName} {user.lastName}
                   </TableCell>
                   <TableCell>{user.phone}</TableCell>
                   <TableCell>{user.email}</TableCell>
@@ -292,16 +286,16 @@ export default function Users() {
                     </Badge>
                   </TableCell>
                   <TableCell>
-                    <Badge className={user.is_deleted ? "bg-red-200 text-red-900" : "bg-green-100 text-green-800"}>
-                      {user.is_deleted ? "Deleted" : "Active"}
+                    <Badge className={user.isDeleted ? "bg-red-200 text-red-900" : "bg-green-100 text-green-800"}>
+                      {user.isDeleted ? "Deleted" : "Active"}
                     </Badge>
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center gap-2">
-                      <Badge className={user.is_email_verified ? "bg-green-100 text-green-800" : "bg-yellow-100 text-yellow-800"}>
-                        {user.is_email_verified ? "Verified" : "Unverified"}
+                      <Badge className={user.isEmailVerified ? "bg-green-100 text-green-800" : "bg-yellow-100 text-yellow-800"}>
+                        {user.isEmailVerified ? "Verified" : "Unverified"}
                       </Badge>
-                      {user.is_email_verified && <Mail className="h-4 w-4 text-green-600" />}
+                      {user.isEmailVerified && <Mail className="h-4 w-4 text-green-600" />}
                     </div>
                   </TableCell>
                   <TableCell className="text-right">
