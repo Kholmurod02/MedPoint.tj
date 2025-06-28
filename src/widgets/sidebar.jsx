@@ -19,10 +19,6 @@ import { Button } from "@/shared/ui/button"
 import { jwtDecode } from "jwt-decode"
 
 
-
-
-
-
 export function AppSidebar() {
   const [role, setRole] = useState("")
 
@@ -116,7 +112,7 @@ export function AppSidebar() {
 
 
   return (
-    <Sidebar className="border-r-0 bg-blue-600 shadow-xl text-blue-400 ">
+        <Sidebar className="border-r-0 bg-blue-600 shadow-xl text-blue-400 ">
       <SidebarHeader className="p-6 border-b border-blue-200 relative overflow-hidden">
 
         <div className="flex items-center gap-3 relative z-10">
