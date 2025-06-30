@@ -12,15 +12,16 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card"
 import { MoreHorizontal, Search, UserPlus, Edit, Trash2, Mail, Shield, Save, X, Eye } from "lucide-react"
 import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "@/shared/ui/dialog"
 import Link from "next/link"
-import { useAddUserMutation, useGetAllUsersQuery } from "@/entities/user/api/userApi"
+import { useAddUserMutation, useDeleteUserMutation, useUpdateUserMutation, useUserFiltersQuery } from "@/entities/user/api/userApi"
 
 
 
 export default function Users() {
-  const { data, error, isLoading } = useGetAllUsersQuery()
-  console.log(data);
 
+
+  // add user
   const [addUser] = useAddUserMutation()
+  const [open, setOpen] = useState(false)
   const [user, setUser] = useState({
     firstName: "",
     lastName: "",
@@ -29,23 +30,137 @@ export default function Users() {
     password: "",
     role: ""
   })
-
   const handleAddUser = (e) => {
     e.preventDefault()
     addUser(user)
+    setOpen(false)
   }
+
+  //  delete user
+  const [deleteUser] = useDeleteUserMutation()
+
+  //filter users
+  const [nameFilter, setNameFilter] = useState("")
+  const [emailFilter, setEmailFilter] = useState("")
+  const [phoneFilter, setPhoneFilter] = useState("")
+  const [roleFilter, setRoleFilter] = useState("")
+  const [statusFilter, setStatusFilter] = useState("")
+  const [verificationFilter, setVerificationFilter] = useState("")
+
+  const params = {
+    nameFilter,
+    emailFilter,
+    phoneFilter,
+    roleFilter: roleFilter == "all" ? "" : roleFilter,
+    statusFilter: statusFilter == "all" ? "" : statusFilter,
+    verificationFilter: verificationFilter == "all" ? "" : verificationFilter,
+  }
+  const { data: filteredData } = useUserFiltersQuery(params)
+
+  // update user 
+  const [update, setUpdate] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    phone: ""
+  })
+  const [idx, setIdx] = useState(null)
+  const [editOpen, setEditOpen] = useState(false)
+  const [updateUser] = useUpdateUserMutation()
+  const handleUpdateUser = (e) => {
+    e.preventDefault()
+    updateUser({id: idx, newUser: update})
+    setEditOpen(false)
+  }
+
 
 
 
   return (
     <div className="container mx-auto p-6 space-y-6">
+
+      {/* edit dialog */}
+      <Dialog open={editOpen} onOpenChange={setEditOpen}>
+        <DialogContent>
+          <DialogTitle>
+            Edit User
+          </DialogTitle>
+          <form onSubmit={handleUpdateUser}>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5 py-5">
+
+              <div className="space-y-2">
+                <Label htmlFor="firstName">First Name</Label>
+                <Input
+                  id="firstName"
+                  placeholder="Enter First Name..."
+                  required
+                  value={update.firstName}
+                  onChange={(e) => setUpdate({ ...update, firstName: e.target.value })}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="lastName">Last Name</Label>
+                <Input
+                  id="lastName"
+                  placeholder="Enter Last Name..."
+                  required
+                  value={update.lastName}
+                  onChange={(e) => setUpdate({ ...update, lastName: e.target.value })}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="phone">Phone Number</Label>
+                <Input
+                  type='number'
+                  id="phone"
+                  placeholder="Enter Phone Number..."
+                  required
+                  value={update.phone}
+                  onChange={(e) => setUpdate({ ...update, phone: e.target.value })}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="email">Email Address</Label>
+                <Input
+                  type='email'
+                  id="email"
+                  placeholder="Enter Email Address..."
+                  required
+                  value={update.email}
+                  onChange={(e) => setUpdate({ ...update, email: e.target.value })}
+                />
+              </div>
+
+            </div>
+            <div className="flex justify-end space-x-2 mt-5">
+              <Button
+                size="sm"
+              >
+                <Save className="h-4 w-4 mr-2" />
+                Save
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+              >
+                <X className="h-4 w-4 mr-2" />
+                Cancel
+              </Button>
+            </div>
+          </form>
+        </DialogContent>
+      </Dialog>
+
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold">User Management</h1>
         </div>
         {/* add user */}
-        <Dialog>
+        <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild >
             <Button>
               <UserPlus className="mr-2 h-4 w-4" />
@@ -168,12 +283,6 @@ export default function Users() {
 
       {/* Filters */}
       <Card>
-        <CardHeader>
-          {/* <CardTitle className="flex items-center gap-2">
-            <Filter className="h-5 w-5" />
-            Filters
-          </CardTitle> */}
-        </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
             <div className="space-y-2">
@@ -184,6 +293,8 @@ export default function Users() {
                   id="name-filter"
                   placeholder="Search by name..."
                   className="pl-10"
+                  value={nameFilter}
+                  onChange={(e) => setNameFilter(e.target.value)}
                 />
               </div>
             </div>
@@ -193,6 +304,8 @@ export default function Users() {
               <Input
                 id="phone-filter"
                 placeholder="Search by phone..."
+                value={phoneFilter}
+                onChange={(e) => setPhoneFilter(e.target.value)}
               />
             </div>
 
@@ -201,48 +314,58 @@ export default function Users() {
               <Input
                 id="email-filter"
                 placeholder="Search by email..."
+                value={emailFilter}
+                onChange={(e) => setEmailFilter(e.target.value)}
               />
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="role-filter">Role</Label>
-              <Select>
+              <Select
+                value={roleFilter}
+                onValueChange={(value) => setRoleFilter(value)}
+              >
                 <SelectTrigger>
                   <SelectValue placeholder="Select role" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All Roles</SelectItem>
-                  <SelectItem value="admin">Admin</SelectItem>
-                  <SelectItem value="moderator">Moderator</SelectItem>
-                  <SelectItem value="user">User</SelectItem>
+                  <SelectItem value="Admin">Admin</SelectItem>
+                  <SelectItem value="User">User</SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="deleted-filter">Status</Label>
-              <Select className="w-100">
+              <Select className="w-100"
+                value={statusFilter}
+                onValueChange={(value) => setStatusFilter(value)}
+              >
                 <SelectTrigger>
                   <SelectValue placeholder="Select status" />
                 </SelectTrigger>
                 <SelectContent >
                   <SelectItem value="all">All Users</SelectItem>
-                  <SelectItem value="active">Active Only</SelectItem>
-                  <SelectItem value="deleted">Deleted Only</SelectItem>
+                  <SelectItem value="false">Active</SelectItem>
+                  <SelectItem value="true">Deleted</SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="verified-filter">Email Status</Label>
-              <Select>
+              <Select
+                value={verificationFilter}
+                onValueChange={(value) => setVerificationFilter(value)}
+              >
                 <SelectTrigger>
                   <SelectValue placeholder="Select verification" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All</SelectItem>
-                  <SelectItem value="verified">Verified</SelectItem>
-                  <SelectItem value="unverified">Unverified</SelectItem>
+                  <SelectItem value="true">Verified</SelectItem>
+                  <SelectItem value="false">Unverified</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -263,8 +386,8 @@ export default function Users() {
             <TableHeader>
               <TableRow>
                 <TableHead>Name</TableHead>
-                <TableHead>Phone</TableHead>
                 <TableHead>Email</TableHead>
+                <TableHead>Phone</TableHead>
                 <TableHead>Role</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead>Email Verified</TableHead>
@@ -272,13 +395,13 @@ export default function Users() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {data?.data?.map((user) => (
-                <TableRow key={user.id} className={user.is_deleted ? "opacity-60" : ""}>
+              {filteredData?.data?.map((user) => (
+                <TableRow key={user.id} className={user.isDeleted ? "opacity-60" : ""}>
                   <TableCell className="font-medium">
                     {user.firstName} {user.lastName}
                   </TableCell>
-                  <TableCell>{user.phone}</TableCell>
                   <TableCell>{user.email}</TableCell>
+                  <TableCell>{user.phone}</TableCell>
                   <TableCell>
                     <Badge
                       className={"bg-gray-100 text-gray-800"}>
@@ -298,6 +421,7 @@ export default function Users() {
                       {user.isEmailVerified && <Mail className="h-4 w-4 text-green-600" />}
                     </div>
                   </TableCell>
+                  {/* actions */}
                   <TableCell className="text-right">
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
@@ -306,16 +430,27 @@ export default function Users() {
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
+                        {/* Info */}
                         <Link href={`/admin/users/${user.id}`}>
                           <DropdownMenuItem>
                             <Eye className="mr-2 h-4 w-4" />
                             View Details
                           </DropdownMenuItem>
                         </Link>
-                        {/* <DropdownMenuItem>
-                          <Edit className="mr-2 h-4 w-4" />
-                          Edit User
-                        </DropdownMenuItem> */}
+                        {/* edit */}
+                        <DropdownMenuItem onClick={() => {
+                          setUpdate({
+                            firstName: user?.firstName,
+                            lastName: user?.lastName,
+                            email: user?.email,
+                            phone: user?.phone,
+                          });
+                          setEditOpen(true);
+                          setIdx(user.id)
+                        }}>
+                          <Edit className="mr-4 h-4 w-4" />
+                          Update User
+                        </DropdownMenuItem>
                         {/* <DropdownMenuItem>
                           <Shield className="mr-2 h-4 w-4" />
                           Change Role
@@ -326,7 +461,8 @@ export default function Users() {
                             Send Verification
                           </DropdownMenuItem>
                         )} */}
-                        <DropdownMenuItem className="text-destructive">
+                        {/* delete */}
+                        <DropdownMenuItem className="text-destructive" onClick={() => deleteUser(user.id)}>
                           <Trash2 className="mr-2 h-4 w-4" />
                           {user.is_deleted ? "Restore User" : "Delete User"}
                         </DropdownMenuItem>
