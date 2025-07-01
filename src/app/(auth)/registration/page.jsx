@@ -4,7 +4,6 @@ import { useState } from "react"
 import { useRouter } from "next/navigation"
 import Image from "next/image"
 import Link from "next/link"
-
 import logo from "../../../../public/blackLogo.png"
 import { Button } from "@/shared/ui/button"
 import { Input } from "@/shared/ui/input"
@@ -15,7 +14,6 @@ import { z } from "zod"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 
-
 const formSchema = z.object({
   firstName: z.string().min(1, "First name is required"),
   lastName: z.string().min(1, "Last name is required"),
@@ -23,6 +21,7 @@ const formSchema = z.object({
   phone: z.string().min(9, "Phone number is required"),
   password: z.string().min(6, "Password must be at least 6 characters"),
 })
+
 
 
 export default function Registration() {
@@ -34,14 +33,25 @@ export default function Registration() {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<FormData>({
+  } = useForm({
     resolver: zodResolver(formSchema),
+    defaultValues: {
+      firstName: "",
+      lastName: "",
+      email: "",
+      phone: "",
+      password: "",
+    },
   })
 
   const onSubmit = (data) => {
     setIsLoading(true)
-    sessionStorage.setItem("emailForVerification", data.email)
-    router.push("/verification")
+    // Simulate API call
+    setTimeout(() => {
+      sessionStorage.setItem("emailForVerification", data.email)
+      router.push("/verification")
+      setIsLoading(false)
+    }, 1000)
   }
 
   return (
@@ -50,18 +60,25 @@ export default function Registration() {
         {/* Left Side */}
         <div className="hidden lg:flex flex-col items-center justify-center space-y-8 p-8">
           <div className="relative w-80 h-32">
-            <Image src={logo} alt="MedPoint Logo" fill className="object-contain" />
+            <Image src={logo || "/placeholder.svg"} alt="MedPoint Logo" fill className="object-contain" />
           </div>
           <div className="text-center space-y-4">
-            <h2 className="text-3xl font-light text-slate-700">Welcome Back</h2>
+            <h2 className="text-3xl font-light text-slate-700">Welcome to MedPoint</h2>
             <p className="text-slate-600 text-lg leading-relaxed">
-              Sign in to your MedPoint account and continue managing your healthcare practice with confidence and ease.
+              Join thousands of healthcare professionals who trust MedPoint to manage their practice with confidence and
+              ease.
             </p>
           </div>
           <div className="flex space-x-4">
-            <div className="w-16 h-16 bg-teal-100 rounded-full flex items-center justify-center"><MailCheck /></div>
-            <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center"><UserPlus /></div>
-            <div className="w-16 h-16 bg-cyan-100 rounded-full flex items-center justify-center"><ShieldCheck /></div>
+            <div className="w-16 h-16 bg-teal-100 rounded-full flex items-center justify-center">
+              <MailCheck className="w-8 h-8 text-teal-600" />
+            </div>
+            <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center">
+              <UserPlus className="w-8 h-8 text-emerald-600" />
+            </div>
+            <div className="w-16 h-16 bg-cyan-100 rounded-full flex items-center justify-center">
+              <ShieldCheck className="w-8 h-8 text-cyan-600" />
+            </div>
           </div>
         </div>
 
@@ -69,8 +86,8 @@ export default function Registration() {
         <Card className="w-full bg-white/80 backdrop-blur-sm shadow-2xl border-0">
           <CardContent className="p-8">
             <div className="lg:hidden text-center mb-8">
-              <div className="relative w-64 h-30 mx-auto">
-                <Image src={logo} alt="MedPoint Logo" fill className="object-contain" />
+              <div className="relative w-64 h-20 mx-auto">
+                <Image src={logo || "/placeholder.svg"} alt="MedPoint Logo" fill className="object-contain" />
               </div>
             </div>
 
@@ -85,7 +102,12 @@ export default function Registration() {
                 <Label htmlFor="firstName" className="text-sm font-medium text-slate-700 flex items-center gap-2">
                   <User className="w-4 h-4 text-teal-500" /> First Name
                 </Label>
-                <Input id="firstName" placeholder="Enter your name" {...register("firstName")} className="h-12 rounded-xl" />
+                <Input
+                  id="firstName"
+                  placeholder="Enter your first name"
+                  {...register("firstName")}
+                  className="h-12 rounded-xl"
+                />
                 {errors.firstName && <p className="text-red-500 text-sm">{errors.firstName.message}</p>}
               </div>
 
@@ -94,7 +116,12 @@ export default function Registration() {
                 <Label htmlFor="lastName" className="text-sm font-medium text-slate-700 flex items-center gap-2">
                   <User className="w-4 h-4 text-teal-500" /> Last Name
                 </Label>
-                <Input id="lastName" placeholder="Enter your surname" {...register("lastName")} className="h-12 rounded-xl" />
+                <Input
+                  id="lastName"
+                  placeholder="Enter your last name"
+                  {...register("lastName")}
+                  className="h-12 rounded-xl"
+                />
                 {errors.lastName && <p className="text-red-500 text-sm">{errors.lastName.message}</p>}
               </div>
 
@@ -103,7 +130,13 @@ export default function Registration() {
                 <Label htmlFor="phone" className="text-sm font-medium text-slate-700 flex items-center gap-2">
                   <Phone className="w-4 h-4 text-teal-500" /> Phone Number
                 </Label>
-                <Input id="phone" type="tel" placeholder="+992 900 900 900" {...register("phone")} className="h-12 rounded-xl" />
+                <Input
+                  id="phone"
+                  type="tel"
+                  placeholder="+992 900 900 900"
+                  {...register("phone")}
+                  className="h-12 rounded-xl"
+                />
                 {errors.phone && <p className="text-red-500 text-sm">{errors.phone.message}</p>}
               </div>
 
@@ -112,7 +145,13 @@ export default function Registration() {
                 <Label htmlFor="email" className="text-sm font-medium text-slate-700 flex items-center gap-2">
                   <Mail className="w-4 h-4 text-teal-500" /> Email Address
                 </Label>
-                <Input id="email" type="email" placeholder="Enter your email" {...register("email")} className="h-12 rounded-xl" />
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="Enter your email"
+                  {...register("email")}
+                  className="h-12 rounded-xl"
+                />
                 {errors.email && <p className="text-red-500 text-sm">{errors.email.message}</p>}
               </div>
 
@@ -140,18 +179,11 @@ export default function Registration() {
                 {errors.password && <p className="text-red-500 text-sm">{errors.password.message}</p>}
               </div>
 
-              {/* Forgot password */}
-              <div className="flex items-end justify-end">
-                <button type="button" className="text-sm text-teal-600 hover:text-teal-700 font-medium hover:underline">
-                  Forgot password?
-                </button>
-              </div>
-
               {/* Submit Button */}
               <Button
                 type="submit"
                 disabled={isLoading}
-                className="flex-1 w-full bg-gradient-to-r from-teal-500 to-emerald-500 hover:from-teal-600 hover:to-emerald-600 text-white font-medium h-12 rounded-xl transition-all duration-300 transform hover:scale-105 disabled:opacity-50"
+                className="w-full bg-gradient-to-r from-teal-500 to-emerald-500 hover:from-teal-600 hover:to-emerald-600 text-white font-medium h-12 rounded-xl transition-all duration-300 transform hover:scale-105 disabled:opacity-50"
               >
                 {isLoading ? (
                   <div className="flex items-center space-x-2">
@@ -159,23 +191,32 @@ export default function Registration() {
                     <span>Creating Account...</span>
                   </div>
                 ) : (
-                  "Create Account"
+                  <div className="flex items-center space-x-2">
+                    <span>Create Account</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </div>
                 )}
               </Button>
             </form>
 
             <div className="mt-8 text-center text-sm text-slate-600">
               Already have an account?{" "}
-              <Link href="/login">
-                <button className="text-teal-600 hover:text-teal-700 font-medium underline">Sign in here</button>
+              <Link href="/login" className="text-teal-600 hover:text-teal-700 font-medium underline">
+                Sign in here
               </Link>
             </div>
 
             <div className="mt-4">
               <p className="text-xs text-slate-500 text-center">
-                By signing in, you agree to our{" "}
-                <a href="#" className="text-teal-600 hover:underline">Terms of Service</a> and{" "}
-                <a href="#" className="text-teal-600 hover:underline">Privacy Policy</a>.
+                By creating an account, you agree to our{" "}
+                <a href="#" className="text-teal-600 hover:underline">
+                  Terms of Service
+                </a>{" "}
+                and{" "}
+                <a href="#" className="text-teal-600 hover:underline">
+                  Privacy Policy
+                </a>
+                .
               </p>
             </div>
           </CardContent>
