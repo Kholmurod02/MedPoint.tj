@@ -13,13 +13,32 @@ import {
   SidebarMenuItem,
 } from "@/shared/ui/sidebar"
 import { Calendar, LayoutDashboard, MessageSquare, UserCircle, Settings, Stethoscope, Users, LogOut, ChevronRight } from "lucide-react"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Popover, PopoverContent, PopoverTrigger } from "@/shared/ui/popover"
 import { Button } from "@/shared/ui/button"
+import { jwtDecode } from "jwt-decode"
 
 
 export function AppSidebar() {
-  const [role, setRole] = useState("admin")
+  const [role, setRole] = useState("")
+
+   useEffect(() => {
+    const getCookie = (name) => {
+      const value = `; ${document.cookie}`
+      const parts = value.split(`; ${name}=`)
+      if (parts.length === 2) return parts.pop().split(";").shift()
+    }
+
+    const token = getCookie("token")
+    if (token) {
+      const decoded = jwtDecode(token)
+      const role = decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"]
+      setRole(role)
+      
+    }
+  }, [])
+  console.log("role:",role);
+
 
   const masterMenuItems = [
     {
@@ -87,7 +106,7 @@ export function AppSidebar() {
     }
   ]
 
-  const menuItems = role == "admin" ? adminMenuItems : masterMenuItems
+  const menuItems = role == "Admin" ? adminMenuItems : masterMenuItems
 
 
 
