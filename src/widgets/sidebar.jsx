@@ -13,7 +13,7 @@ import {
   SidebarMenuItem,
 } from "@/shared/ui/sidebar"
 import { Calendar, LayoutDashboard, MessageSquare, UserCircle, Settings, Stethoscope, Users, LogOut, ChevronRight } from "lucide-react"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Popover, PopoverContent, PopoverTrigger } from "@/shared/ui/popover"
 import { Button } from "@/shared/ui/button"
 import { useCurrentUserQuery } from "@/entities/user/api/userApi"
@@ -91,7 +91,7 @@ export function AppSidebar() {
     }
   ]
 
-  const menuItems = role == "admin" ? adminMenuItems : masterMenuItems
+  const menuItems = role == "Admin" ? adminMenuItems : masterMenuItems
 
 
 
