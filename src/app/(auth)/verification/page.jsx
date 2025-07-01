@@ -11,8 +11,17 @@ export default function Component() {
     const [countdown, setCountdown] = useState(57)
     const inputRefs = useRef([])
      const router = useRouter()
+ const [userEmail, setUserEmail] = useState("")
 
-    const userEmail = sessionStorage.getItem("emailForVerification")
+useEffect(() => {
+  if (typeof window !== "undefined") {
+    const email = sessionStorage.getItem("emailForVerification")
+    if (email) {
+      setUserEmail(email)
+    }
+  }
+}, [])
+
 
     const handleSubmit = (e)=>{
        e.preventDefault()
