@@ -16,10 +16,14 @@ import { Calendar, LayoutDashboard, MessageSquare, UserCircle, Settings, Stethos
 import { useState } from "react"
 import { Popover, PopoverContent, PopoverTrigger } from "@/shared/ui/popover"
 import { Button } from "@/shared/ui/button"
+import { useCurrentUserQuery } from "@/entities/user/api/userApi"
 
 
 export function AppSidebar() {
   const [role, setRole] = useState("admin")
+  const { data } = useCurrentUserQuery()
+  console.log(data?.data);
+
 
   const masterMenuItems = [
     {
@@ -93,7 +97,7 @@ export function AppSidebar() {
 
 
   return (
-        <Sidebar className="border-r-0 bg-blue-600 shadow-xl text-blue-400 ">
+    <Sidebar className="border-r-0 bg-blue-600 shadow-xl text-blue-400 ">
       <SidebarHeader className="p-6 border-b border-blue-200 relative overflow-hidden">
 
         <div className="flex items-center gap-3 relative z-10">
@@ -151,23 +155,23 @@ export function AppSidebar() {
         {/* User profile */}
         <div className="flex items-center gap-3 p-3 bg-blue-500 hover:bg-blue-400 rounded-lg transition-all duration-200 cursor-pointer group hover:shadow-md relative overflow-hidden">
           {/* Background decoration */}
-          {/* <div className="absolute inset-0 bg-gradient-to-r from-blue-400/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div> */}
+          <div className="absolute inset-0 bg-gradient-to-r from-blue-400/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
 
           <div className="relative">
             <div className="w-10 h-10 bg-blue-400 rounded-full flex items-center justify-center border-2 border-blue-300 shadow-md group-hover:border-blue-200 overflow-hidden">
               <img
-                src="../../logo.png"
-                alt="Dr. Khairulloev Kh"
+                src={data?.data?.profileImageUrl}
+                alt={`${data?.data?.firstName} ${data?.data?.lastName}`}
                 className="w-full h-full object-cover"
               />
             </div>
 
-            <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-400 rounded-full border-2 border-blue-500"></div>
+            {/* <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-400 rounded-full border-2 border-blue-500"></div> */}
           </div>
 
           <div className="flex-1 min-w-0 relative z-10">
-            <p className="text-sm font-bold text-white">Dr. Alex Petrov</p>
-            <p className="text-xs text-blue-200 truncate">Chief Surgeon</p>
+            <p className="text-sm font-bold text-white">{data?.data?.firstName} {data?.data?.lastName}</p>
+            <p className="text-xs text-blue-200 truncate">{data?.data?.role}</p>
           </div>
 
           {/* Setting */}
