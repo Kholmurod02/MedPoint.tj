@@ -1,15 +1,13 @@
+"use client"
+import { useGetUserByIdQuery } from '@/entities/user/api/userApi'
 import { Avatar, AvatarFallback, AvatarImage } from '@/shared/ui/avatar'
 import { Badge } from '@/shared/ui/badge'
-import { Button } from '@/shared/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/shared/ui/card'
-import { Dialog, DialogContent, DialogTitle, DialogTrigger } from '@/shared/ui/dialog'
+import { Card, CardContent, CardHeader, CardTitle } from '@/shared/ui/card'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/shared/ui/dropdown-menu'
-import { Input } from '@/shared/ui/input'
-import { Label } from '@/shared/ui/label'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/shared/ui/select'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/shared/ui/tabs'
-import { Calendar, Clock, Edit, Mail, MapPin, MoreHorizontal, Phone, Save, Trash, User, X } from 'lucide-react'
-import React from 'react'
+import { ArrowLeft, Calendar, Clock,Mail, MoreHorizontal, Phone, Save, Shield, Trash, User, X } from 'lucide-react'
+import { useParams, useRouter } from 'next/navigation'
+import { useState } from 'react'
 
 const UserById = () => {
     const reviews = [
@@ -81,125 +79,45 @@ const UserById = () => {
             price: "$45",
         },
     ]
+
+    const { id } = useParams()
+    const { data } = useGetUserByIdQuery(id)
+    const user = data?.data
+
+    const router = useRouter()
+
+  
+
+
     return (
         <div className='container m-auto p-4 gap-5'>
-            <div className='flex items-center justify-between mb-5'>
-
-           <h1 className='font-bold text-2xl'>Personal Information</h1>
-            {/* update user */}
-            <Dialog>
-                <DialogTrigger asChild >
-                    <Button>
-                        <Edit className="mr-2 h-4 w-4" />
-                        Update User
-                    </Button>
-                </DialogTrigger>
-                <DialogContent>
-                    <DialogTitle>
-                        Edit User
-                    </DialogTitle>
-                    <form>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 py-5">
-
-                            <div className="space-y-2">
-                                <Label htmlFor="firstName">First Name</Label>
-                                <Input
-                                    id="firstName"
-                                    placeholder="Enter First Name..."
-                                    required
-                                />
-                            </div>
-
-                            <div className="space-y-2">
-                                <Label htmlFor="lastName">Last Name</Label>
-                                <Input
-                                    id="lastName"
-                                    placeholder="Enter Last Name..."
-                                    required
-                                />
-                            </div>
-
-                            <div className="space-y-2">
-                                <Label htmlFor="phone">Phone Number</Label>
-                                <Input
-                                    type='number'
-                                    id="phone"
-                                    placeholder="Enter Phone Number..."
-                                    required
-                                />
-                            </div>
-
-                            <div className="space-y-2">
-                                <Label htmlFor="email">Email Address</Label>
-                                <Input
-                                    type='email'
-                                    id="email"
-                                    placeholder="Enter Email Address..."
-                                    required
-                                />
-                            </div>
-
-                            <div className="space-y-2">
-                                <Label htmlFor="email">Password*</Label>
-                                <Input
-                                    type='password'
-                                    id="email"
-                                    placeholder="Enter Email Address..."
-                                    required
-                                />
-                            </div>
-
-                            <div className="space-y-2">
-                                <Label htmlFor="role">Roles</Label>
-                                <Select>
-                                    <SelectTrigger>
-                                        <SelectValue placeholder="Select role for user" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="user">User</SelectItem>
-                                        <SelectItem value="admin">Admin</SelectItem>
-                                    </SelectContent>
-                                </Select>
-                            </div>
-                        </div>
-                        <div className="flex justify-end space-x-2 mt-5">
-                            <Button
-                                size="sm"
-                            >
-                                <Save className="h-4 w-4 mr-2" />
-                                Save
-                            </Button>
-                            <Button
-                                variant="outline"
-                                size="sm"
-                            >
-                                <X className="h-4 w-4 mr-2" />
-                                Cancel
-                            </Button>
-                        </div>
-                    </form>
-                </DialogContent>
-            </Dialog>
-
-             </div>
+            <div className='flex items-center gap-7 mb-5'>
+                <p onClick={()=>router.back()}><ArrowLeft/></p>
+                <h1 className='font-bold text-2xl'>Personal Information</h1>
+               
+            </div>
             <Card>
                 <CardContent>
                     <div className="flex flex-col gap-3 mb-6">
                         <div className="flex items-center justify-center flex-col gap-4">
                             <Avatar className="h-30 w-30">
-                                <AvatarImage src="/placeholder.svg" alt="JD" />
+                                <AvatarImage src={user?.profileImageUrl} alt="solo" />
                                 <AvatarFallback className="text-lg">
-                                    JD
+                                    {user?.lastName[0]}{user?.firstName[0]}
                                 </AvatarFallback>
                             </Avatar>
                             <div>
-                                <h1 className="text-2xl font-bold">John Donald</h1>
+                                <h1 className="text-2xl font-bold">{user?.firstName}  {user?.lastName}</h1>
                                 <div className='flex gap-3 items-center justify-center my-2'>
-                                    <Badge variant="outline" className="mt-1 bg-green-100 text-green-800">
-                                        Active
+                                    <Badge
+                                        variant="outline"
+                                        className={`mt-1 ${user?.isDeleted ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800'}`}  >
+                                        {user?.isDeleted ? "Deleted" : "Active"}
                                     </Badge>
-                                    <Badge variant="outline" className="mt-1 bg-green-100 text-green-800">
-                                        Verified
+                                    <Badge
+                                        variant="outline"
+                                        className={`mt-1 ${user?.isEmailVerified ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}`}  >
+                                        {user?.isEmailVerified ? "Verified" : "UnVerified"}
                                     </Badge>
                                 </div>
                             </div>
@@ -221,33 +139,37 @@ const UserById = () => {
                                         <Mail className="h-4 w-4 text-muted-foreground" />
                                         <div>
                                             <p className="text-sm text-muted-foreground">Email</p>
-                                            <p className="font-medium">user@email.com</p>
+                                            <p className="font-medium">{user?.email}</p>
                                         </div>
                                     </div>
+                                    <div className="flex items-center gap-3">
+                                        <Shield className="h-4 w-4 text-muted-foreground" />
+                                        <div>
+                                            <p className="text-sm text-muted-foreground">Role</p>
+                                            <p className="font-medium">{user?.role}</p>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div className="space-y-4">
                                     <div className="flex items-center gap-3">
                                         <Phone className="h-4 w-4 text-muted-foreground" />
                                         <div>
                                             <p className="text-sm text-muted-foreground">Phone</p>
-                                            <p className="font-medium">99876543123</p>
+                                            <p className="font-medium">{user?.phone}</p>
                                         </div>
                                     </div>
-                                </div>
-                                <div className="space-y-4">
-                                    <div className="flex items-center gap-3">
-                                        <MapPin className="h-4 w-4 text-muted-foreground" />
-                                        <div>
-                                            <p className="text-sm text-muted-foreground">Address</p>
-                                            <p className="font-medium">Dushanbe Street 19</p>
-                                        </div>
-                                    </div>
-                                    <div className="flex items-center gap-3">
+
+                                    {/* <div className="flex items-center gap-3">
                                         <Calendar className="h-4 w-4 text-muted-foreground" />
                                         <div>
                                             <p className="text-sm text-muted-foreground">Member Since</p>
                                             <p className="font-medium">2024-10-11</p>
                                         </div>
-                                    </div>
+                                    </div> */}
                                 </div>
+
                             </div>
                         </CardContent>
                     </Card>
