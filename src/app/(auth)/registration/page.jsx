@@ -16,9 +16,6 @@ import { useForm } from "react-hook-form"
 
 import { zodResolver } from "@hookform/resolvers/zod" 
 
-
-
-
 const formSchema = z.object({
   firstName: z.string().min(1, "First name is required"),
   lastName: z.string().min(1, "Last name is required"),
@@ -37,7 +34,7 @@ export default function Registration() {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<FormData>({
+  } = useForm({
     resolver: zodResolver(formSchema),
   })
 
