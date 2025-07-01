@@ -13,10 +13,12 @@ import { Card, CardContent } from "@/shared/ui/card"
 import { Eye, EyeOff, Mail, Lock, ArrowRight, ShieldCheck, MailCheck, UserPlus, User, Phone } from "lucide-react"
 import { z } from "zod"
 import { useForm } from "react-hook-form"
+
 import { zodResolver } from "@hookform/resolvers/zod" 
 
 
 import { zodResolver } from "@hookform/resolvers/zod"
+
 
 const formSchema = z.object({
   firstName: z.string().min(1, "First name is required"),
@@ -25,6 +27,7 @@ const formSchema = z.object({
   phone: z.string().min(9, "Phone number is required"),
   password: z.string().min(6, "Password must be at least 6 characters"),
 })
+
 
 export default function Registration() {
   const router = useRouter()
