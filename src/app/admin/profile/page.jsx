@@ -17,8 +17,8 @@ export default function AdminProfile() {
   const adminData = data?.data
   const [deleteUserImage] = useDeleteUserImageMutation()
   const [changeImageUser] = useChangeImageUserMutation()
-  const [file, setFile] = useState(null)
-  const formData = new FormData()
+ 
+ 
 
 
   const [updateUser] = useUpdateUserMutation()
@@ -194,11 +194,6 @@ export default function AdminProfile() {
                         type="file"
                         accept="image/*"
                         className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                        onChange={(e) => {
-                          setFile(e.target.files?.[0]),
-                            formData.append("data", file)
-                          changeImageUser(formData)
-                        }}
                       />
                     </DropdownMenuItem>
 
