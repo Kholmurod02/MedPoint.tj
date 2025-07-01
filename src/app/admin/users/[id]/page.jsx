@@ -2,16 +2,11 @@
 import { useGetUserByIdQuery } from '@/entities/user/api/userApi'
 import { Avatar, AvatarFallback, AvatarImage } from '@/shared/ui/avatar'
 import { Badge } from '@/shared/ui/badge'
-import { Button } from '@/shared/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/shared/ui/card'
-import { Dialog, DialogContent, DialogTitle, DialogTrigger } from '@/shared/ui/dialog'
+import { Card, CardContent, CardHeader, CardTitle } from '@/shared/ui/card'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/shared/ui/dropdown-menu'
-import { Input } from '@/shared/ui/input'
-import { Label } from '@/shared/ui/label'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/shared/ui/select'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/shared/ui/tabs'
-import { Calendar, Clock, Edit, Mail, MapPin, MoreHorizontal, Phone, Save, Shield, Trash, User, X } from 'lucide-react'
-import { useParams } from 'next/navigation'
+import { ArrowLeft, Calendar, Clock,Mail, MoreHorizontal, Phone, Save, Shield, Trash, User, X } from 'lucide-react'
+import { useParams, useRouter } from 'next/navigation'
 import { useState } from 'react'
 
 const UserById = () => {
@@ -89,16 +84,15 @@ const UserById = () => {
     const { data } = useGetUserByIdQuery(id)
     const user = data?.data
 
-    const [firstName,setFirstName]=useState(user?.firstName)
-    const [lastName,setLastName]=useState(user?.lastName)
-    const [phone,setPhone]=useState(user?.phone)
-    const [email,setEmail]=useState(user?.email)
+    const router = useRouter()
+
+  
 
 
     return (
         <div className='container m-auto p-4 gap-5'>
-            <div className='flex items-center justify-between mb-5'>
-
+            <div className='flex items-center gap-7 mb-5'>
+                <p onClick={()=>router.back()}><ArrowLeft/></p>
                 <h1 className='font-bold text-2xl'>Personal Information</h1>
                
             </div>
