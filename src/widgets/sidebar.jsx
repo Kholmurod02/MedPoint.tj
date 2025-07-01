@@ -21,7 +21,7 @@ import { useCurrentUserQuery } from "@/entities/user/api/userApi"
 
 
 export function AppSidebar() {
-  const [role, setRole] = useState("admin")
+  const [role, setRole] = useState("Admin")
   const { data } = useCurrentUserQuery()
   console.log(data?.data);
 
