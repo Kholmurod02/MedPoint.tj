@@ -1,3 +1,4 @@
+"use client"
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/shared/ui/sidebar";
 import { AppSidebar } from "@/widgets/sidebar";
 

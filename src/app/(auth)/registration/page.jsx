@@ -12,8 +12,12 @@ import { Card, CardContent } from "@/shared/ui/card"
 import { Eye, EyeOff, Mail, Lock, ArrowRight, ShieldCheck, MailCheck, UserPlus, User, Phone } from "lucide-react"
 import { z } from "zod"
 import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
 
+<<<<<<< HEAD
+=======
+import { zodResolver } from "@hookform/resolvers/zod" 
+
+>>>>>>> 4dbe26429bf160aa68afff6c246bc2c382ae2ea0
 const formSchema = z.object({
   firstName: z.string().min(1, "First name is required"),
   lastName: z.string().min(1, "Last name is required"),
