@@ -13,11 +13,8 @@ import { Eye, EyeOff, Mail, Lock, ArrowRight, ShieldCheck, MailCheck, UserPlus, 
 import { z } from "zod"
 import { useForm } from "react-hook-form"
 
-<<<<<<< HEAD
-=======
 import { zodResolver } from "@hookform/resolvers/zod" 
 
->>>>>>> 4dbe26429bf160aa68afff6c246bc2c382ae2ea0
 const formSchema = z.object({
   firstName: z.string().min(1, "First name is required"),
   lastName: z.string().min(1, "Last name is required"),
