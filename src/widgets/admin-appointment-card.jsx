@@ -3,11 +3,11 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/shared/ui/card'
 import { Calendar, CalendarDays, Clock, Stethoscope, User } from 'lucide-react'
 import React from 'react'
 
-const AdminAppointmentsCard = () => {
+const AdminAppointmentCard = () => {
     return (
-        <Card className='md:w-[350px]'>
+        <Card className='md:w-[300px]'>
             <CardHeader className='text-white bg-blue-400 p-5 mx-2 rounded-2xl'>
-                <CardTitle className='flex gap-3 items-center justify-center '><CalendarDays/> Appointment Details</CardTitle>
+                <CardTitle className='flex gap-3 items-center justify-center '><CalendarDays /> Appointment Details</CardTitle>
             </CardHeader>
             <CardContent>
                 <div className="grid grid-cols-2 gap-4">
@@ -35,7 +35,7 @@ const AdminAppointmentsCard = () => {
                     <Calendar className='h-4 w-4' />
                     <div>
                         <p className="text-sm font-medium">Date</p>
-                        <Badge  variant="secondary" className="font-mono bg-blue-200 text-blue-800 hover:bg-blue-300">Tuesday, July 1, 2025</Badge>
+                        <Badge variant="secondary" className="font-mono bg-blue-200 text-blue-800 hover:bg-blue-300">Tuesday, July 1, 2025</Badge>
                     </div>
                 </div>
 
@@ -43,20 +43,12 @@ const AdminAppointmentsCard = () => {
                     <Clock className='h-4 w-4' />
                     <div>
                         <p className="text-sm font-medium">Time</p>
-                        <Badge  variant="secondary" className="font-mono bg-blue-200 text-blue-800 hover:bg-blue-300">10:00 AM - 11:00 AM</Badge>
+                        <Badge variant="secondary" className="font-mono bg-blue-200 text-blue-800 hover:bg-blue-300">10:00 AM - 11:00 AM</Badge>
                     </div>
                 </div>
             </CardContent>
-            {/* <CardFooter className='flex gap-3 items-end justify-end'>
-               <Button  className='flex items-center text-red-600 bg-white border border-red-500 hover:bg-teal-600'>
-                <X/>
-                Cancel</Button>
-               <Button variant='secondary' className='flex items-center text-white hover:bg-teal-600'>
-                <Check/>
-                Confirm</Button>
-            </CardFooter> */}
         </Card>
     )
 }
 
-export default AdminAppointmentsCard
+export default AdminAppointmentCard
