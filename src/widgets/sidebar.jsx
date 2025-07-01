@@ -16,6 +16,7 @@ import { Calendar, LayoutDashboard, MessageSquare, UserCircle, Settings, Stethos
 import { useEffect, useState } from "react"
 import { Popover, PopoverContent, PopoverTrigger } from "@/shared/ui/popover"
 import { Button } from "@/shared/ui/button"
+
 import { useCurrentUserQuery } from "@/entities/user/api/userApi"
 
 
@@ -23,6 +24,7 @@ export function AppSidebar() {
   const [role, setRole] = useState("admin")
   const { data } = useCurrentUserQuery()
   console.log(data?.data);
+
 
 
   const masterMenuItems = [
