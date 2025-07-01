@@ -13,7 +13,10 @@ import { Card, CardContent } from "@/shared/ui/card"
 import { Eye, EyeOff, Mail, Lock, ArrowRight, ShieldCheck, MailCheck, UserPlus, User, Phone } from "lucide-react"
 import { z } from "zod"
 import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
+
+import { zodResolver } from "@hookform/resolvers/zod" 
+
+
 
 
 const formSchema = z.object({

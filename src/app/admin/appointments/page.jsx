@@ -1,12 +1,12 @@
-import AdminAppointmentsCard from '@/widgets/admin-appointments-card'
+import AdminAppointmentCard from '@/widgets/admin-appointment-card'
 import React from 'react'
 
-const AdminAppointments = () => {
+const AdminAppointment = () => {
   return (
     <div>
-      <AdminAppointmentsCard/>
+      <AdminAppointmentCard/>
     </div>
   )
 }
 
-export default AdminAppointments
+export default AdminAppointment
