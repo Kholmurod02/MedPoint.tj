@@ -40,7 +40,10 @@ export default function Registration() {
 
   const onSubmit = (data) => {
     setIsLoading(true)
-    sessionStorage.setItem("emailForVerification", data.email)
+     if (typeof window !== "undefined") {
+
+       sessionStorage.setItem("emailForVerification", data.email)
+      }
     router.push("/verification")
   }
 

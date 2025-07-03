@@ -1,234 +1,303 @@
-import { Avatar, AvatarFallback, AvatarImage } from '@/shared/ui/avatar'
-import { Badge } from '@/shared/ui/badge'
-import { Button } from '@/shared/ui/button'
-import { Card, CardContent } from '@/shared/ui/card'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/shared/ui/tabs'
-import { Calendar, Clock, DollarSign, Edit, Mail, MapPin, MoreHorizontal, Phone, Star, Users } from 'lucide-react'
-import React from 'react'
+"use client"
 
-const DoctorById = () => {
+import { useState } from "react"
+import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card"
+import { Badge } from "@/shared/ui/badge"
+import { Avatar, AvatarFallback, AvatarImage } from "@/shared/ui/avatar"
+import { Mail, Phone, User, Stethoscope, ArrowLeft } from "lucide-react"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/shared/ui/tabs"
+import { Star, Calendar, Clock, MessageSquare } from "lucide-react"
+import { Button } from "@/shared/ui/button"
+import { useParams, useRouter } from "next/navigation"
+import { useGetDoctorByIdQuery } from "@/entities/doctor/api/doctorApi"
 
-  const upcomingAppointments = [
-    {
-      id: 1,
-      patientName: "Michael Brown",
-      date: "2024-01-20",
-      time: "09:00 AM",
-      type: "Follow-up",
-      status: "Confirmed",
-    },
-    {
-      id: 2,
-      patientName: "Lisa Wilson",
-      date: "2024-01-20",
-      time: "10:30 AM",
-      type: "Consultation",
-      status: "Confirmed",
-    },
-    {
-      id: 3,
-      patientName: "David Taylor",
-      date: "2024-01-20",
-      time: "02:00 PM",
-      type: "Check-up",
-      status: "Pending",
-    },
-    {
-      id: 4,
-      patientName: "Jennifer Lee",
-      date: "2024-01-21",
-      time: "11:00 AM",
-      type: "Emergency",
-      status: "Urgent",
-    },
-  ]
 
-  const recentReviews = [
-    {
-      id: 1,
-      patientName: "John Smith",
-      rating: 5,
-      date: "2024-01-15",
-      comment:
-        "Dr. Johnson is exceptional. She took the time to explain my condition thoroughly and made me feel comfortable throughout the entire process.",
-    },
-    {
-      id: 2,
-      patientName: "Maria Garcia",
-      rating: 5,
-      date: "2024-01-12",
-      comment: "Outstanding care and professionalism. Highly recommend Dr. Johnson to anyone needing cardiac care.",
-    },
-    {
-      id: 3,
-      patientName: "Robert Chen",
-      rating: 4,
-      date: "2024-01-10",
-      comment: "Very knowledgeable doctor. The appointment was efficient and she answered all my questions.",
-    },
-    {
-      id: 4,
-      patientName: "Emily Davis",
-      rating: 5,
-      date: "2024-01-08",
-      comment: "Dr. Johnson saved my life. Her quick diagnosis and treatment plan were perfect. Forever grateful.",
-    },
-  ]
+
+// Mock appointments data
+const appointmentsData = [
+  {
+    id: 1,
+    patientName: "John Smith",
+    date: "2024-01-15",
+    time: "10:00 AM",
+    status: "confirmed",
+    type: "Consultation",
+  },
+  {
+    id: 2,
+    patientName: "Sarah Johnson",
+    date: "2024-01-15",
+    time: "2:30 PM",
+    status: "pending",
+    type: "Follow-up",
+  },
+  {
+    id: 3,
+    patientName: "Mike Wilson",
+    date: "2024-01-16",
+    time: "9:15 AM",
+    status: "completed",
+    type: "Check-up",
+  },
+]
+
+// Mock reviews data
+const reviewsData = [
+  {
+    id: 1,
+    patientName: "Emma Davis",
+    rating: 5,
+    comment:
+      "Dr. Testov is extremely professional and caring. The consultation was thorough and I felt very comfortable throughout the process.",
+    date: "2024-01-10",
+  },
+  {
+    id: 2,
+    patientName: "Robert Brown",
+    rating: 4,
+    comment: "Great experience overall. The doctor was knowledgeable and took time to explain everything clearly.",
+    date: "2024-01-08",
+  },
+  {
+    id: 3,
+    patientName: "Lisa Anderson",
+    rating: 5,
+    comment:
+      "Excellent care and attention to detail. Highly recommend Dr. Testov to anyone looking for quality medical care.",
+    date: "2024-01-05",
+  },
+]
+
+export default function DoctorProfileById() {
+  const router = useRouter()
+  const { id } = useParams()
+
+  const { data } = useGetDoctorByIdQuery(id)
+  const doctorData = data?.data
+  
+
+
+
 
   return (
-    <div className='container m-auto p-auto'>
-      {/* header */}
-      <div className="flex items-center justify-between space-y-10">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">Doctor Profile</h1>
-          <p className="text-gray-600">Admin Dashboard - Doctor Management</p>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 p-4 md:p-8">
+      <div className="max-w-4xl mx-auto space-y-6">
+        <div className="flex items-center gap-3">
+          <ArrowLeft onClick={() => router.back()} className="h-5 w-5 cursor-pointer" />
+          <p className="font-bold">Back to Table Doctors</p>
         </div>
-        <div className="flex gap-2">
-          <Button size="sm">
-            <Edit className="w-4 h-4 mr-2" />
-            Edit Profile
-          </Button>
-          <Button variant="outline" size="sm">
-            <MoreHorizontal className="w-4 h-4" />
-          </Button>
-        </div>
-      </div>
-      {/* profile card */}
-      <Card>
-        <CardContent className="p-6">
-          <div className="flex flex-col md:flex-row gap-6">
-            <div className="flex flex-col items-center md:items-start">
-              <Avatar className="h-32 w-32 mb-4">
-                <AvatarImage src={`/placeholder.svg?height=128&width=128`} />
-                <AvatarFallback className="bg-gradient-to-br from-purple-600 to-blue-600 text-white text-3xl">
-                  JS
+        {/* Header Card */}
+        <Card className="border-0 shadow-lg bg-white/80 backdrop-blur-sm">
+          <CardHeader className="pb-4">
+            <div className="flex flex-col md:flex-row items-start md:items-center gap-6">
+              <Avatar className="w-24 h-24 border-4 border-white shadow-lg">
+                <AvatarImage src={doctorData?.profileImageUrl || ""} />
+                <AvatarFallback className="bg-gradient-to-br from-blue-500 to-blue-600 text-white text-2xl font-semibold">
+                  KK
                 </AvatarFallback>
               </Avatar>
-              <div className="flex items-center space-x-2 mb-2">
-                <Star className="h-5 w-5 text-yellow-400 fill-current" />
-                <span className="text-2xl font-bold ">4.2</span>
-                <span>(12 reviews)</span>
-              </div>
-            </div>
 
-            <div className="flex-1 space-y-4">
-              <div>
-                <div className="flex items-center  space-x-3 mb-2">
-                  <h1 className="text-3xl font-bold text-blue-950">John Smith</h1>
-                  {/* {doctor.verified && <CheckCircle className="h-6 w-6 text-green-400" title="Verified Doctor" />} */}
-                </div>
-                <div className="flex flex-wrap gap-2 mb-3">
-                  <Badge className='bg-blue-500'>Dentist</Badge>
-                  <Badge className='bg-green-700'>Online</Badge>
-                  <Badge variant="outline" className="border-slate-600 text-slate-800">
-                    5 years
-                  </Badge>
-                </div>
-                <p className="text-slate-700 mb-4">Experienced internal medicine physician with expertise in preventive care and chronic disease management. Dr. Johnson has been practicing for over 15 years and has helped thousands of patients achieve better health outcomes through personalized care and evidence-based medicine.</p>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                <div className="space-y-3">
-                  <div className="flex items-center space-x-2 text-slate-700">
-                    <Mail className="h-4 w-4" />
-                    <span>doctor@email.com</span>
-                  </div>
-                  <div className="flex items-center space-x-2 text-slate-700">
-                    <Phone className="h-4 w-4" />
-                    <span>+992919991111</span>
-                  </div>
-                  <div className="flex items-center space-x-2 text-slate-700">
-                    <MapPin className="h-4 w-4" />
-                    <span>Central Hospital</span>
-                  </div>
-                </div>
-                <div className="space-y-3">
-                  <div className="flex items-center space-x-2 text-slate-700">
-                    <Users className="h-4 w-4" />
-                    <span> 120 patients</span>
-                  </div>
-                  <div className="flex items-center space-x-2 text-slate-700">
-                    <DollarSign className="h-4 w-4" />
-                    <span>$100 consultation</span>
-                  </div>
-                  <div className="flex items-center space-x-2 text-slate-700">
-                    <Calendar className="h-4 w-4" />
-                    <span>Joined 2020-12-22</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* main content */}
-
-      <Tabs defaultValue="appointments" className="space-y-4 w-full my-3">
-        <TabsList className={'w-full'}>
-          <TabsTrigger value="appointments">Appointments</TabsTrigger>
-          <TabsTrigger value="reviews">Reviews</TabsTrigger>
-        </TabsList>
-
-        {/* appointments */}
-        <TabsContent value="appointments" className="space-y-4 w-full">
-          <div className="space-y-6">
-            <Card className='w-full'>
-              <CardContent className='w-full'>
-                <div className="space-y-4 w-full">
-                  {upcomingAppointments.map((appointment) => (
-                    <div key={appointment.id} className="flex items-center justify-between p-3 border rounded-lg">
-                      <div className="flex-1">
-                        <p className="font-medium">{appointment.patientName}</p>
-                        <div className="flex items-center gap-4 text-sm text-gray-600">
-                          <span className="flex items-center gap-1">
-                            <Calendar className="w-3 h-3" />
-                            {appointment.date}
-                          </span>
-                          <span className="flex items-center gap-1">
-                            <Clock className="w-3 h-3" />
-                            {appointment.time}
-                          </span>
-                        </div>
-                        <p className="text-sm text-gray-500">{appointment.type}</p>
-                      </div>
-                      {/* <Badge>{appointment.status}</Badge> */}
+              <div className="flex-1 space-y-2">
+                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                  <div>
+                    <CardTitle className="text-3xl font-bold text-slate-800">
+                      Dr. {doctorData?.firstName} {doctorData?.lastName}
+                    </CardTitle>
+                    <div className="flex flex-wrap gap-2 mt-2">
+                      {doctorData?.specialization.map((spec, index) => (
+                        <Badge key={index} variant="secondary" className="bg-blue-100 text-blue-800 hover:bg-blue-200">
+                          <Stethoscope className="w-3 h-3 mr-1" />
+                          {spec}
+                        </Badge>
+                      ))}
                     </div>
-                  ))}
+                  </div>
+
+
                 </div>
+              </div>
+            </div>
+          </CardHeader>
+        </Card>
+
+        {/* Tabs Section */}
+        <Tabs defaultValue="profile" className="w-full">
+          <TabsList className="grid w-full grid-cols-3 bg-white/80 backdrop-blur-sm shadow-lg border-0">
+            <TabsTrigger value="profile" className="data-[state=active]:bg-blue-100 data-[state=active]:text-blue-800">
+              <User className="w-4 h-4 mr-2" />
+              Profile
+            </TabsTrigger>
+            <TabsTrigger
+              value="appointments"
+              className="data-[state=active]:bg-blue-100 data-[state=active]:text-blue-800"
+            >
+              <Calendar className="w-4 h-4 mr-2" />
+              Appointments
+            </TabsTrigger>
+            <TabsTrigger value="reviews" className="data-[state=active]:bg-blue-100 data-[state=active]:text-blue-800">
+              <Star className="w-4 h-4 mr-2" />
+              Reviews
+            </TabsTrigger>
+          </TabsList>
+
+          {/* Profile Tab */}
+          <TabsContent value="profile" className="space-y-6 mt-6">
+            <div className="grid md:grid-cols-2 gap-6">
+              {/* Contact Information */}
+              <Card className="border-0 shadow-lg bg-white/80 backdrop-blur-sm">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-slate-800">
+                    <User className="w-5 h-5" />
+                    Contact Information
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="flex items-center gap-3 p-3 rounded-lg bg-slate-50/50">
+                    <Mail className="w-5 h-5 text-blue-600" />
+                    <div>
+                      <p className="text-sm text-slate-600">Email</p>
+                      <p className="font-medium text-slate-800">{doctorData?.email}</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-3 p-3 rounded-lg bg-slate-50/50">
+                    <Phone className="w-5 h-5 text-green-600" />
+                    <div>
+                      <p className="text-sm text-slate-600">Phone</p>
+                      <p className="font-medium text-slate-800">{doctorData?.phone}</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Professional Details */}
+              <Card className="border-0 shadow-lg bg-white/80 backdrop-blur-sm">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-slate-800">
+                    <Stethoscope className="w-5 h-5" />
+                    Professional Details
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="p-3 rounded-lg bg-slate-50/50">
+                    <p className="text-sm text-slate-600 mb-1">Doctor ID</p>
+                    <p className="font-medium text-slate-800">#{doctorData?.id}</p>
+                  </div>
+
+                  <div className="p-3 rounded-lg bg-slate-50/50">
+                    <p className="text-sm text-slate-600 mb-1">Status</p>
+                    <div className="flex items-center gap-2">
+                      <div className={`w-2 h-2 rounded-full ${doctorData?.isActive ? "bg-green-500" : "bg-slate-400"}`} />
+                      <span className={`text-sm font-medium ${doctorData?.isActive ? "text-green-700" : "text-slate-600"}`}>
+                        {doctorData?.isActive ? "Currently Active" : "Currently Inactive"}
+                      </span>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Description Card */}
+            <Card className="border-0 shadow-lg bg-white/80 backdrop-blur-sm">
+              <CardHeader>
+                <CardTitle className="text-slate-800">About</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-slate-600 leading-relaxed">
+                  {doctorData?.description || "No description available."}
+                </p>
               </CardContent>
             </Card>
+          </TabsContent>
 
-          </div>
-        </TabsContent>
+          {/* Appointments Tab */}
+          <TabsContent value="appointments" className="space-y-6 mt-6">
+            <Card className="border-0 shadow-lg bg-white/80 backdrop-blur-sm">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-slate-800">
+                  <Calendar className="w-5 h-5" />
+                  Upcoming Appointments
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {appointmentsData.map((appointment) => (
+                  <div key={appointment.id} className="p-4 rounded-lg bg-slate-50/50 border border-slate-200/50">
+                    <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+                      <div className="flex-1">
+                        <h4 className="font-semibold text-slate-800">{appointment.patientName}</h4>
+                        <p className="text-sm text-slate-600">{appointment.type}</p>
+                      </div>
 
-           {/* reviews */}
-        <TabsContent value="reviews" className="space-y-4">
-          <Card>
-            <CardContent>
-              <div className="space-y-6">
-                {recentReviews.map((review) => (
-                  <div key={review.id} className="border-b pb-4 last:border-b-0">
-                    <div className="flex items-start justify-between mb-2">
-                      <div>
-                        <p className="font-medium">{review.patientName}</p>
-                        <div className="flex items-center gap-2">
-                          {/* <div className="flex">{renderStars(review.rating)}</div> */}
-                          <span className="text-sm text-gray-500">{review.date}</span>
+                      <div className="flex items-center gap-4">
+                        <div className="flex items-center gap-2 text-sm text-slate-600">
+                          <Calendar className="w-4 h-4" />
+                          {appointment.date}
                         </div>
+                        <div className="flex items-center gap-2 text-sm text-slate-600">
+                          <Clock className="w-4 h-4" />
+                          {appointment.time}
+                        </div>
+                        <Badge
+                          variant={
+                            appointment.status === "confirmed"
+                              ? "default"
+                              : appointment.status === "pending"
+                                ? "secondary"
+                                : "outline"
+                          }
+                          className={
+                            appointment.status === "confirmed"
+                              ? "bg-green-100 text-green-800"
+                              : appointment.status === "pending"
+                                ? "bg-yellow-100 text-yellow-800"
+                                : "bg-slate-100 text-slate-600"
+                          }
+                        >
+                          {appointment.status}
+                        </Badge>
                       </div>
                     </div>
-                    <p className="text-gray-700 text-sm leading-relaxed">{review.comment}</p>
                   </div>
                 ))}
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
+              </CardContent>
+            </Card>
+          </TabsContent>
 
+          {/* Reviews Tab */}
+          <TabsContent value="reviews" className="space-y-6 mt-6">
+            <Card className="border-0 shadow-lg bg-white/80 backdrop-blur-sm">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-slate-800">
+                  <MessageSquare className="w-5 h-5" />
+                  Patient Reviews
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                {reviewsData.map((review) => (
+                  <div key={review.id} className="p-4 rounded-lg bg-slate-50/50 border border-slate-200/50">
+                    <div className="flex items-start justify-between mb-3">
+                      <div>
+                        <h4 className="font-semibold text-slate-800">{review.patientName}</h4>
+                        <p className="text-sm text-slate-500">{review.date}</p>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        {[...Array(5)].map((_, i) => (
+                          <Star
+                            key={i}
+                            className={`w-4 h-4 ${i < review.rating ? "fill-yellow-400 text-yellow-400" : "text-slate-300"
+                              }`}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                    <p className="text-slate-600 leading-relaxed">{review.comment}</p>
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
+      </div>
     </div>
   )
 }
-
-export default DoctorById

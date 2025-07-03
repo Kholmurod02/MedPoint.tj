@@ -1,3 +1,4 @@
+
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import StoreProvider from "./store/store-provider";
@@ -5,11 +6,13 @@ import StoreProvider from "./store/store-provider";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
+  display: "swap", // ✅ добавь это
 });
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
+  display: "swap", // ✅ добавь это
 });
 
 export const metadata = {
@@ -23,7 +26,7 @@ export default function RootLayout({ children }) {
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <StoreProvider> {children} </StoreProvider>
+        <StoreProvider>{children}</StoreProvider>
       </body>
     </html>
   );

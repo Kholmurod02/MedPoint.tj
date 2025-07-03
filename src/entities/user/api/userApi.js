@@ -1,4 +1,4 @@
-import { BASIC_URL } from '@/shared/config/config'
+import { access_token, BASIC_URL } from '@/shared/config/config'
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 
 export const userApi = createApi({
@@ -6,7 +6,7 @@ export const userApi = createApi({
     baseQuery: fetchBaseQuery({
         baseUrl: BASIC_URL,
         prepareHeaders: (headers) => {
-            headers.set('Authorization', `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjIiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9lbWFpbGFkZHJlc3MiOiJtZWRwb2ludC50akBnbWFpbC5jb20iLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJBZG1pbiIsImV4cCI6MTc1MTQ1ODQ4MiwiaXNzIjoidG9wZmlsZS50aiIsImF1ZCI6Ind3dy50b3BmaWxlLnRqIn0.C62Z_0WbusbhAxfhu0_Et2327qcK9jkYim0GtVguHV4`)
+            headers.set('Authorization', `Bearer ${access_token}`)
             return headers
         },
     }),

@@ -8,24 +8,87 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/shared/ui/table"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/shared/ui/dropdown-menu"
 import { Badge } from "@/shared/ui/badge"
-import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card"
-import { MoreHorizontal, Search, UserPlus, Edit, Trash2, Mail, Shield, Save, X, Eye } from "lucide-react"
+import { Card, CardContent, CardHeader } from "@/shared/ui/card"
+import { MoreHorizontal, Search, UserPlus, Edit, Trash2, Mail, Save, X, Eye } from "lucide-react"
 import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "@/shared/ui/dialog"
 import Link from "next/link"
-import { useAddUserMutation, useGetAllUsersQuery } from "@/entities/user/api/userApi"
+import { useAddDoctorMutation, useGetAllDoctorsQuery, useGetDoctorsSpecializationsQuery, useRemoveDoctorMutation, useUpdateDoctorMutation } from "@/entities/doctor/api/doctorApi"
+import { Textarea } from "@/shared/ui/textarea"
 
 
 
 export default function Doctors() {
-  const [addUser] = useAddUserMutation()
+  const [addDialog, setAddDialog] = useState(false)
   const [doctor, setDoctor] = useState({
     firstName: "",
     lastName: "",
     phone: "",
     email: "",
     password: "",
-    role: ""
+    specialization: [],
+    description: ""
   })
+
+  const [addDoctor] = useAddDoctorMutation()
+  const handleAddDoctor = (e) => {
+    e.preventDefault()
+    addDoctor(doctor)
+    setAddDialog(false)
+  }
+
+  const [nameFilter, setNameFilter] = useState("")
+  const [emailFilter, setEmailFilter] = useState("")
+  const [specialization, setSpecialization] = useState([])
+  const [status, setStatus] = useState('')
+  const [emailStatus, setEmailStatus] = useState('')
+
+  const params = {
+    nameFilter,
+    emailFilter,
+    // specialization: specialization === "all" ? [] : [specialization],
+    status: status == "all" ? "" : status,
+    emailStatus: emailStatus == "all" ? "" : emailStatus
+  }
+
+  const { data: doctors, isLoading, error } = useGetAllDoctorsQuery(params)
+  const { data: specs } = useGetDoctorsSpecializationsQuery()
+
+
+  const [editDialog, setEditDialog] = useState(false)
+  const [idx, setIdx] = useState(null)
+  const [editedDoctor, setEditedDoctor] = useState({
+    firstName: "",
+    lastName: "",
+    phone: "",
+    email: "",
+    password: "",
+    specialization: [],
+    description: ""
+  })
+
+  const editDoctorFunc = (el) => {
+    setEditedDoctor({
+      firstName: el?.firstName,
+      lastName: el?.lastName,
+      phone: el?.phone,
+      email: el?.email,
+      specialization: el?.specialization,
+      description: el?.description
+    })
+    setEditDialog(true)
+    setIdx(el.id)
+  }
+
+  const [updateDoctor] = useUpdateDoctorMutation()
+  const handleEditDoctor = (e) => {
+    e.preventDefault()
+    updateDoctor({ id: idx, editedDoctor })
+    setEditDialog(false)
+  }
+
+  const [removeDoctor] = useRemoveDoctorMutation()
+
+
 
 
 
@@ -33,13 +96,120 @@ export default function Doctors() {
 
   return (
     <div className="container mx-auto p-6 space-y-6">
+      {/* edit Dialog */}
+      <Dialog open={editDialog} onOpenChange={setEditDialog}>
+        <DialogContent>
+          <DialogTitle>
+            Add new User
+          </DialogTitle>
+          <form onSubmit={handleEditDoctor}>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5 py-5">
+              {/* firstName */}
+              <div className="space-y-2">
+                <Label htmlFor="firstName">First Name</Label>
+                <Input
+                  id="firstName"
+                  placeholder="Enter First Name..."
+                  required
+                  value={editedDoctor?.firstName}
+                  onChange={(e) => setEditedDoctor({ ...editedDoctor, firstName: e.target.value })}
+                />
+              </div>
+              {/* lastName */}
+              <div className="space-y-2">
+                <Label htmlFor="lastName">Last Name</Label>
+                <Input
+                  id="lastName"
+                  placeholder="Enter Last Name..."
+                  required
+                  value={editedDoctor.lastName}
+                  onChange={(e) => setEditedDoctor({ ...editedDoctor, lastName: e.target.value })}
+                />
+              </div>
+              {/* phone */}
+              <div className="space-y-2">
+                <Label htmlFor="phone">Phone Number</Label>
+                <Input
+                  type='number'
+                  id="phone"
+                  placeholder="Enter Phone Number..."
+                  required
+                  value={editedDoctor.phone}
+                  onChange={(e) => setEditedDoctor({ ...editedDoctor, phone: e.target.value })}
+                />
+              </div>
+              {/* email */}
+              <div className="space-y-2">
+                <Label htmlFor="email">Email Address</Label>
+                <Input
+                  type='email'
+                  id="email"
+                  placeholder="Enter Email Address..."
+                  required
+                  value={editedDoctor.email}
+                  onChange={(e) => setEditedDoctor({ ...editedDoctor, email: e.target.value })}
+                />
+              </div>
+              {/* specialization */}
+              <div className="space-y-2">
+                <Label htmlFor="role">Specializations</Label>
+                <Select
+                  value={editedDoctor.specialization[0] || ""}
+                  onValueChange={(value) => setEditedDoctor({ ...editedDoctor, specialization: [value] })}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select Specialization" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {specs?.data.map((el) => <SelectItem key={el.id} value={el.name}>{el.name}</SelectItem>)}
+                  </SelectContent>
+                  {/* <SelectContent value="JuniorDoctor">JuniorDoctor</SelectContent>
+                    <SelectContent value="MiddleDoctor">MiddleDoctor</SelectContent>
+                    <SelectContent value='SeniorDoctor'>SeniorDoctor</SelectContent> */}
+                </Select>
+              </div>
+              {/* description */}
+              <div className="space-y-2">
+                <Label htmlFor="desc">Description*</Label>
+                <Textarea
+                  id="desc"
+                  placeholder="Enter your description ..."
+                  required
+                  value={editedDoctor.description}
+                  onChange={(e) => setEditedDoctor({ ...editedDoctor, description: e.target.value })}
+                />
+
+              </div>
+
+            </div>
+
+            {/* action */}
+            <div className="flex justify-end space-x-2 mt-5">
+              <Button
+                size="sm"
+                type='submit'
+              >
+                <Save className="h-4 w-4 mr-2" />
+                Save
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+              >
+                <X className="h-4 w-4 mr-2" />
+                Cancel
+              </Button>
+            </div>
+          </form>
+        </DialogContent>
+      </Dialog>
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold">Doctor Management</h1>
         </div>
-        {/* add user */}
-        <Dialog>
+        {/* add doctor */}
+        <Dialog open={addDialog} onOpenChange={setAddDialog}>
           <DialogTrigger asChild >
             <Button>
               <UserPlus className="mr-2 h-4 w-4" />
@@ -50,7 +220,7 @@ export default function Doctors() {
             <DialogTitle>
               Add new User
             </DialogTitle>
-            <form>
+            <form onSubmit={handleAddDoctor}>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5 py-5">
                 {/* firstName */}
                 <div className="space-y-2">
@@ -110,32 +280,37 @@ export default function Doctors() {
                     onChange={(e) => setDoctor({ ...doctor, password: e.target.value })}
                   />
                 </div>
-                {/* role */}
-                {/* <div className="space-y-2">
-                  <Label htmlFor="role">Roles</Label>
+                {/* specialization */}
+                <div className="space-y-2">
+                  <Label htmlFor="role">Specializations</Label>
                   <Select
-                    value={doctor.role}
-                    onValueChange={(e) => setdoctor({ ...doctor, role: e.value })}
+                    value={doctor.specialization[0] || ""}
+                    onValueChange={(value) => setDoctor({ ...doctor, specialization: [value] })}
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder="Select role for doctor" />
+                      <SelectValue placeholder="Select Specialization" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="doctor">User</SelectItem>
-                      <SelectItem value="Admin">Admin</SelectItem>
+                      {specs?.data.map((el) => <SelectItem key={el.id} value={el.name}>{el.name}</SelectItem>)}
                     </SelectContent>
+                    {/* <SelectContent value="JuniorDoctor">JuniorDoctor</SelectContent>
+                    <SelectContent value="MiddleDoctor">MiddleDoctor</SelectContent>
+                    <SelectContent value='SeniorDoctor'>SeniorDoctor</SelectContent> */}
                   </Select>
-                </div> */}
-
-                {/* image */}
-                {/* <div className="space-y-2">
-                  <Label htmlFor="photo">Image</Label>
-                  <Input
-                    type='file'
-                    id="photo"
+                </div>
+                {/* description */}
+                <div className="space-y-2">
+                  <Label htmlFor="desc">Description*</Label>
+                  <Textarea
+                    id="desc"
+                    placeholder="Enter your description ..."
                     required
+                    value={doctor.description}
+                    onChange={(e) => setDoctor({ ...doctor, description: e.target.value })}
                   />
-                </div> */}
+
+                </div>
+
               </div>
 
               {/* action */}
@@ -175,39 +350,52 @@ export default function Doctors() {
                   id="name-filter"
                   placeholder="Search by name..."
                   className="pl-10"
+                  value={nameFilter}
+                  onChange={(e) => { setNameFilter(e.target.value) }}
                 />
               </div>
             </div>
 
-              {/* Search by email */}
+            {/* Search by email */}
             <div className="space-y-2">
               <Label htmlFor="email-filter">Email Address</Label>
               <Input
                 id="email-filter"
                 placeholder="Search by email..."
+                value={emailFilter}
+                onChange={(e) => { setEmailFilter(e.target.value) }}
               />
             </div>
 
-             {/* Search by specialization */}
-            <div className="space-y-2">
-              <Label htmlFor="phone-filter">Specialization</Label>
-              <Input
-                id="phone-filter"
-                placeholder="Search by specialization..."
-              />
-            </div>
-  
-             {/* Status */}
+            {/* Search by specialization */}
+            {/* <div className="space-y-2">
+              <Label htmlFor="deleted-filter">Specializations</Label>
+              <Select className="w-100" value={specialization} onValueChange={setSpecialization}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select specialization" />
+                </SelectTrigger>
+                <SelectContent >
+                  <SelectItem value="all">All Specializations</SelectItem>
+                  {specs?.data?.map((spec) => {
+                    return (
+                      <SelectItem key={spec.id} value={spec.name}>{spec.name}</SelectItem>
+                    )
+                  })}
+                </SelectContent>
+              </Select>
+            </div> */}
+
+            {/* Status */}
             <div className="space-y-2">
               <Label htmlFor="deleted-filter">Status</Label>
-              <Select className="w-100">
+              <Select className="w-100" onValueChange={(value) => setStatus(value)}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select status" />
                 </SelectTrigger>
                 <SelectContent >
                   <SelectItem value="all">All Statuses</SelectItem>
-                  <SelectItem value="active">Online</SelectItem>
-                  <SelectItem value="deleted">Offline</SelectItem>
+                  <SelectItem value="true">Online</SelectItem>
+                  <SelectItem value="false">Offline</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -215,14 +403,14 @@ export default function Doctors() {
             {/* isDeleted */}
             <div className="space-y-2">
               <Label htmlFor="verified-filter">Email Status</Label>
-              <Select>
+              <Select onValueChange={(value) => setEmailStatus(value)}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select verification" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All</SelectItem>
-                  <SelectItem value="verified">Active Doctor</SelectItem>
-                  <SelectItem value="unverified">Deleted Doctor</SelectItem>
+                  <SelectItem value="false">Active Doctor</SelectItem>
+                  <SelectItem value="true">Deleted Doctor</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -246,38 +434,44 @@ export default function Doctors() {
                 <TableHead>Phone</TableHead>
                 <TableHead>Email</TableHead>
                 <TableHead>Specialization</TableHead>
-                <TableHead>Reviews/Orders</TableHead>
                 <TableHead>Status</TableHead>
+                <TableHead>Email Status</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {[]?.map((doctor) => (
-                <TableRow key={doctor.id} className={doctor.is_deleted ? "opacity-60" : ""}>
+              {doctors?.data?.map((doctor) => (
+                <TableRow key={doctor.id} className={doctor.isDeleted ? "opacity-60" : ""}>
                   <TableCell className="font-medium">
-                    {doctor.first_name} {doctor.last_name}
+                    {doctor.firstName} {doctor.lastName}
                   </TableCell>
                   <TableCell>{doctor.phone}</TableCell>
                   <TableCell>{doctor.email}</TableCell>
+                  {/* special */}
                   <TableCell>
-                    <Badge
-                      className={"bg-gray-100 text-gray-800"}>
-                      {doctor.role}
+
+                    <Badge className={"bg-gray-100 text-gray-800"} >
+                      {doctor.specialization[0]}
+                    </Badge>
+
+
+                  </TableCell>
+                  {/* status */}
+                  <TableCell>
+                    <Badge className={doctor.isActive ? "bg-green-200 text-green-900" : "bg-red-100 text-red-800"}>
+                      {doctor.isActive ? "Online" : "Offline"}
                     </Badge>
                   </TableCell>
-                  <TableCell>
-                    <Badge className={doctor.is_deleted ? "bg-red-200 text-red-900" : "bg-green-100 text-green-800"}>
-                      {doctor.is_deleted ? "Deleted" : "Active"}
-                    </Badge>
-                  </TableCell>
+                  {/* emailStatus */}
                   <TableCell>
                     <div className="flex items-center gap-2">
-                      <Badge className={doctor.is_email_verified ? "bg-green-100 text-green-800" : "bg-yellow-100 text-yellow-800"}>
-                        {doctor.is_email_verified ? "Verified" : "Unverified"}
+                      <Badge className={doctor.isDeleted ? "bg-green-100 text-green-800" : "bg-yellow-100 text-yellow-800"}>
+                        {doctor.isDeleted ? "Deleted" : "Verified"}
                       </Badge>
-                      {doctor.is_email_verified && <Mail className="h-4 w-4 text-green-600" />}
+                      {doctor?.isDeleted && <Mail className="h-4 w-4 text-green-600" />}
                     </div>
                   </TableCell>
+
                   <TableCell className="text-right">
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
@@ -292,23 +486,13 @@ export default function Doctors() {
                             View Details
                           </DropdownMenuItem>
                         </Link>
-                        {/* <DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => editDoctorFunc(doctor)}>
                           <Edit className="mr-2 h-4 w-4" />
-                          Edit User
-                        </DropdownMenuItem> */}
-                        {/* <DropdownMenuItem>
-                          <Shield className="mr-2 h-4 w-4" />
-                          Change Role
-                        </DropdownMenuItem> */}
-                        {/* {!user.is_email_verified && (
-                          <DropdownMenuItem>
-                            <Mail className="mr-2 h-4 w-4" />
-                            Send Verification
-                          </DropdownMenuItem>
-                        )} */}
-                        <DropdownMenuItem className="text-destructive">
+                          Edit  Doctor
+                        </DropdownMenuItem>
+                        <DropdownMenuItem className="text-destructive" onClick={() => removeDoctor(doctor.id)}>
                           <Trash2 className="mr-2 h-4 w-4" />
-                          {user.is_deleted ? "Restore User" : "Delete User"}
+                          {doctor.isDeleted ? "Restore User" : "Delete User"}
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
@@ -317,12 +501,6 @@ export default function Doctors() {
               ))}
             </TableBody>
           </Table>
-
-          {/* {filteredUsers.length === 0 && (
-            <div className="text-center py-8">
-              <p className="text-muted-foreground">No users found matching your filters.</p>
-            </div>
-          )} */}
         </CardContent>
       </Card>
     </div>
