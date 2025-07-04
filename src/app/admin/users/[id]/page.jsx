@@ -1,41 +1,17 @@
 "use client"
+import { useGetReviewsByUserIdQuery } from '@/entities/reviews/api/reviewApi'
 import { useGetUserByIdQuery } from '@/entities/user/api/userApi'
 import { Avatar, AvatarFallback, AvatarImage } from '@/shared/ui/avatar'
 import { Badge } from '@/shared/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/shared/ui/card'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/shared/ui/dropdown-menu'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/shared/ui/tabs'
-import { ArrowLeft, Calendar, Clock,Mail, MoreHorizontal, Phone, Save, Shield, Trash, User, X } from 'lucide-react'
+import { ArrowLeft, Calendar, Clock, Mail, MoreHorizontal, Phone, Save, Shield, Star, Trash, User, X } from 'lucide-react'
 import { useParams, useRouter } from 'next/navigation'
 import { useState } from 'react'
 
 const UserById = () => {
-    const reviews = [
-        {
-            id: 1,
-            service: "Hair Styling",
-            rating: 5,
-            comment: "Absolutely amazing service! The stylist was professional and the results exceeded my expectations.",
-            date: "December 20, 2024",
-            provider: "Emma Wilson",
-        },
-        {
-            id: 2,
-            service: "Massage Therapy",
-            rating: 4,
-            comment: "Very relaxing session. The therapist was skilled and the atmosphere was perfect.",
-            date: "December 10, 2024",
-            provider: "Michael Chen",
-        },
-        {
-            id: 3,
-            service: "Facial Treatment",
-            rating: 5,
-            comment: "My skin feels incredible! Will definitely book again.",
-            date: "November 28, 2024",
-            provider: "Lisa Rodriguez",
-        },
-    ]
+
 
     const appointments = [
         {
@@ -86,15 +62,22 @@ const UserById = () => {
 
     const router = useRouter()
 
-  
+    const { data: reviews } = useGetReviewsByUserIdQuery(id)
 
+
+
+    const renderStars = (rating) => {
+        return Array.from({ length: 5 }, (_, i) => (
+            <Star key={i} className={`w-4 h-4 ${i < rating ? "fill-yellow-400 text-yellow-400" : "text-gray-300"}`} />
+        ))
+    }
 
     return (
         <div className='container m-auto p-4 gap-5'>
             <div className='flex items-center gap-7 mb-5'>
-                <p onClick={()=>router.back()}><ArrowLeft/></p>
+                <p onClick={() => router.back()}><ArrowLeft /></p>
                 <h1 className='font-bold text-2xl'>Personal Information</h1>
-               
+
             </div>
             <Card>
                 <CardContent>
@@ -234,16 +217,18 @@ const UserById = () => {
             </CardHeader> */}
                         <CardContent>
                             <div className="space-y-6">
-                                {reviews.map((review) => (
+                                {reviews?.data?.map((review) => (
                                     <div key={review.id} className="border rounded-lg p-4">
                                         <div className="flex items-start justify-between mb-3">
                                             <div>
-                                                <h3 className="font-semibold">{review.service}</h3>
-                                                <p className="text-sm text-muted-foreground">Provider: {review.provider}</p>
+                                                <h3 className="font-semibold">{review.userName}</h3>
+                                                <p className="text-sm text-muted-foreground">
+                                                    {new Date(review.createdAt).toLocaleDateString()}
+                                                </p>
+                                                {/* <p className="text-sm text-muted-foreground">Dr: {review.doctorName}</p> */}
                                             </div>
                                             <div className="text-right">
-                                                {/* <div className="flex items-center gap-1 mb-1">{renderStars(review.rating)}</div> */}
-                                                <p className="text-sm text-muted-foreground">{review.date}</p>
+                                                <div className="flex items-center gap-2 mb-1">{renderStars(review.rating)}   {review.rating}/5</div>
                                             </div>
                                         </div>
                                         <p className="text-sm leading-relaxed">{review.comment}</p>
