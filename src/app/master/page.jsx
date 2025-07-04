@@ -1,12 +1,12 @@
 import { AppSidebar } from '@/widgets/sidebar'
 import React from 'react'
 
-const HomeMaster = () => {
+const MasterDashboard = () => {
   return (
     <div>
-      HomeMaster
+      MasterDashboard
     </div>
   )
 }
 
-export default HomeMaster
+export default MasterDashboard
