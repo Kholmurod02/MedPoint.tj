@@ -20,39 +20,32 @@ import {
 import { Mail, Phone, User, FileText, Edit, Camera, Settings, LogOut, Trash2, Save } from "lucide-react"
 import { Switch } from "@/shared/ui/switch"
 import { useState } from "react"
+import { useCurrentDoctorQuery } from "@/entities/doctor/api/doctorApi"
 
-const doctorData = {
-  id: 1,
-  firstName: "Doctor",
-  lastName: "Test",
-  phone: "018581313",
-  email: "kurbanovs397@gmail.com",
-  description: "Really good description",
-  specialization: ["MiddleDoctor"],
-  profileImageUrl: null,
-  isActive: true,
-}
+
 
 const specializationOptions = ["SeniorDoctor", "MiddleDoctor", "JuniorDoctor", "Specialist", "Consultant"]
 
-export default function Component() {
+export default function DoctorProfile() {
+
+  const { data } = useCurrentDoctorQuery()
+  const doctorData = data?.data;
+  
   const [editData, setEditData] = useState({
-    firstName: doctorData.firstName,
-    lastName: doctorData.lastName,
-    phone: doctorData.phone,
-    email: doctorData.email,
-    description: doctorData.description,
-    specialization: doctorData.specialization,
+    firstName: doctorData?.firstName,
+    lastName: doctorData?.lastName,
+    phone: doctorData?.phone,
+    email: doctorData?.email,
+    description: doctorData?.description,
+    specialization: doctorData?.specialization,
   })
   const [isEditOpen, setIsEditOpen] = useState(false)
 
-  const fullName = `${doctorData.firstName} ${doctorData.lastName}`
-  const initials = `${doctorData.firstName.charAt(0)}${doctorData.lastName.charAt(0)}`
 
-  const handleSave = () => {
-    console.log("Saving data:", editData)
-    setIsEditOpen(false)
-  }
+  // const handleSave = () => {
+  //   console.log("Saving data:", editData)
+  //   setIsEditOpen(false)
+  // }
 
   const handleLogout = () => {
     console.log("Logging out...")
@@ -90,9 +83,9 @@ export default function Component() {
                   {/* Avatar with Glow Effect */}
                   <div className="absolute -inset-2 bg-white/20 rounded-full blur-md"></div>
                   <Avatar className="h-20 w-20 ring-3 ring-white/50 shadow-xl relative">
-                    <AvatarImage src={doctorData.profileImageUrl || undefined} />
+                    <AvatarImage src={doctorData?.profileImageUrl} />
                     <AvatarFallback className="text-lg font-bold bg-gradient-to-br from-blue-500 to-indigo-500 text-white">
-                      {initials}
+                      
                     </AvatarFallback>
                   </Avatar>
 
@@ -117,7 +110,7 @@ export default function Component() {
                         <Camera className="h-3 w-3 mr-2" />
                         Upload Image
                       </DropdownMenuItem>
-                      {doctorData.profileImageUrl && (
+                      {doctorData?.profileImageUrl && (
                         <>
                           <DropdownMenuSeparator />
                           <DropdownMenuItem
@@ -148,9 +141,9 @@ export default function Component() {
 
                 {/* Name and Specialization */}
                 <div>
-                  <CardTitle className="text-xl font-bold text-white mb-1">{fullName}</CardTitle>
+                  <CardTitle className="text-xl font-bold text-white mb-1"></CardTitle>
                   <div className="flex flex-wrap gap-2">
-                    {doctorData.specialization.map((spec, index) => (
+                    {doctorData?.specialization?.map((spec, index) => (
                       <Badge
                         key={index}
                         className="bg-white/20 text-white border-white/30 rounded-full px-3 py-1 text-xs font-semibold backdrop-blur-sm"
@@ -165,7 +158,7 @@ export default function Component() {
               {/* Right Side - Action Buttons */}
               <div className="flex gap-3">
                 {/* Edit Profile Modal */}
-                <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
+                {/* <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
                   <DialogTrigger asChild>
                     <Button className="bg-white/20 hover:bg-white/30 text-white border border-white/30 backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-300 rounded-xl px-4 py-2">
                       <Edit className="h-4 w-4 mr-2" />
@@ -184,7 +177,7 @@ export default function Component() {
                           </Label>
                           <Input
                             id="firstName"
-                            value={editData.firstName}
+                            value={editData?.firstName}
                             onChange={(e) => setEditData({ ...editData, firstName: e.target.value })}
                             className="border-blue-200 focus:border-blue-500 rounded-lg h-9"
                           />
@@ -195,7 +188,7 @@ export default function Component() {
                           </Label>
                           <Input
                             id="lastName"
-                            value={editData.lastName}
+                            value={editData?.lastName}
                             onChange={(e) => setEditData({ ...editData, lastName: e.target.value })}
                             className="border-blue-200 focus:border-blue-500 rounded-lg h-9"
                           />
@@ -208,7 +201,7 @@ export default function Component() {
                         <Input
                           id="email"
                           type="email"
-                          value={editData.email}
+                          value={editData?.email}
                           onChange={(e) => setEditData({ ...editData, email: e.target.value })}
                           className="border-blue-200 focus:border-blue-500 rounded-lg h-9"
                         />
@@ -219,7 +212,7 @@ export default function Component() {
                         </Label>
                         <Input
                           id="phone"
-                          value={editData.phone}
+                          value={editData?.phone}
                           onChange={(e) => setEditData({ ...editData, phone: e.target.value })}
                           className="border-blue-200 focus:border-blue-500 rounded-lg h-9"
                         />
@@ -229,14 +222,14 @@ export default function Component() {
                           Specialization
                         </Label>
                         <Select
-                          value={editData.specialization[0]}
+                          value={editData?.specialization[0]}
                           onValueChange={(value) => setEditData({ ...editData, specialization: [value] })}
                         >
                           <SelectTrigger className="border-blue-200 focus:border-blue-500 rounded-lg h-9">
                             <SelectValue placeholder="Select specialization" />
                           </SelectTrigger>
                           <SelectContent>
-                            {specializationOptions.map((spec) => (
+                            {specializationOptions?.map((spec) => (
                               <SelectItem key={spec} value={spec}>
                                 {spec}
                               </SelectItem>
@@ -250,7 +243,7 @@ export default function Component() {
                         </Label>
                         <Textarea
                           id="description"
-                          value={editData.description}
+                          value={editData?.description}
                           onChange={(e) => setEditData({ ...editData, description: e.target.value })}
                           className="border-blue-200 focus:border-blue-500 min-h-[80px] rounded-lg"
                           placeholder="Enter your professional description..."
@@ -274,7 +267,7 @@ export default function Component() {
                       </div>
                     </div>
                   </DialogContent>
-                </Dialog>
+                </Dialog> */}
 
                 {/* Settings Dropdown */}
                 <DropdownMenu>
@@ -319,7 +312,7 @@ export default function Component() {
                 <div className="flex items-center gap-3">
                   <div className="w-8 h-8 bg-blue-500 rounded-xl flex items-center justify-center shadow-md">
                     <div
-                      className={`w-3 h-3 rounded-full ${doctorData.isActive ? "bg-green-400 animate-pulse" : "bg-gray-400"}`}
+                      className={`w-3 h-3 rounded-full ${doctorData?.isActive ? "bg-green-400 animate-pulse" : "bg-gray-400"}`}
                     ></div>
                   </div>
                   <div>
@@ -329,17 +322,16 @@ export default function Component() {
                 </div>
                 <div className="flex items-center space-x-3">
                   <span
-                    className={`text-xs font-bold px-3 py-1 rounded-full ${
-                      doctorData.isActive
+                    className={`text-xs font-bold px-3 py-1 rounded-full ${doctorData?.isActive
                         ? "text-green-700 bg-green-100 border border-green-200"
                         : "text-gray-600 bg-gray-100 border border-gray-200"
-                    }`}
+                      }`}
                   >
-                    {doctorData.isActive ? "Active" : "Inactive"}
+                    {doctorData?.isActive ? "Active" : "Inactive"}
                   </span>
                   <Switch
                     id="active-status"
-                    checked={doctorData.isActive}
+                    checked={doctorData?.isActive}
                     className="data-[state=checked]:bg-blue-500"
                   />
                 </div>
@@ -364,7 +356,7 @@ export default function Component() {
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="text-xs text-blue-600 font-bold uppercase tracking-wide">Email</p>
-                      <p className="font-bold text-blue-800 text-sm truncate">{doctorData.email}</p>
+                      <p className="font-bold text-blue-800 text-sm truncate">{doctorData?.email}</p>
                     </div>
                   </div>
                 </div>
@@ -377,7 +369,7 @@ export default function Component() {
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="text-xs text-indigo-600 font-bold uppercase tracking-wide">Phone</p>
-                      <p className="font-bold text-indigo-800 text-sm">{doctorData.phone}</p>
+                      <p className="font-bold text-indigo-800 text-sm">{doctorData?.phone}</p>
                     </div>
                   </div>
                 </div>
@@ -400,7 +392,7 @@ export default function Component() {
                   <div className="absolute -top-1 -left-1 w-4 h-4 bg-blue-500 rounded-full opacity-20"></div>
                   <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-indigo-400 rounded-full opacity-30"></div>
                   <p className="text-blue-700 leading-relaxed font-medium italic relative z-10">
-                    "{doctorData.description}"
+                    "{doctorData?.description}"
                   </p>
                 </div>
               </div>
