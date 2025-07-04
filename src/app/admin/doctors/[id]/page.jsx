@@ -10,6 +10,7 @@ import { Star, Calendar, Clock, MessageSquare } from "lucide-react"
 import { Button } from "@/shared/ui/button"
 import { useParams, useRouter } from "next/navigation"
 import { useGetDoctorByIdQuery } from "@/entities/doctor/api/doctorApi"
+import { useGetReviewsByDoctorIdQuery } from "@/entities/reviews/api/reviewApi"
 
 
 
@@ -40,33 +41,7 @@ const appointmentsData = [
     type: "Check-up",
   },
 ]
-
-// Mock reviews data
-const reviewsData = [
-  {
-    id: 1,
-    patientName: "Emma Davis",
-    rating: 5,
-    comment:
-      "Dr. Testov is extremely professional and caring. The consultation was thorough and I felt very comfortable throughout the process.",
-    date: "2024-01-10",
-  },
-  {
-    id: 2,
-    patientName: "Robert Brown",
-    rating: 4,
-    comment: "Great experience overall. The doctor was knowledgeable and took time to explain everything clearly.",
-    date: "2024-01-08",
-  },
-  {
-    id: 3,
-    patientName: "Lisa Anderson",
-    rating: 5,
-    comment:
-      "Excellent care and attention to detail. Highly recommend Dr. Testov to anyone looking for quality medical care.",
-    date: "2024-01-05",
-  },
-]
+ 
 
 export default function DoctorProfileById() {
   const router = useRouter()
@@ -74,6 +49,12 @@ export default function DoctorProfileById() {
 
   const { data } = useGetDoctorByIdQuery(id)
   const doctorData = data?.data
+
+  const {data:reviews}=useGetReviewsByDoctorIdQuery(id)
+  const doctorReviews = reviews?.data;
+  console.log(doctorData);
+  
+  
   
 
 
@@ -273,12 +254,12 @@ export default function DoctorProfileById() {
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-6">
-                {reviewsData.map((review) => (
+                {doctorReviews?.map((review) => (
                   <div key={review.id} className="p-4 rounded-lg bg-slate-50/50 border border-slate-200/50">
                     <div className="flex items-start justify-between mb-3">
                       <div>
-                        <h4 className="font-semibold text-slate-800">{review.patientName}</h4>
-                        <p className="text-sm text-slate-500">{review.date}</p>
+                        <h4 className="font-semibold text-slate-800">{review.userName}</h4>
+                        <p className="text-sm text-slate-500">{new Date(review.createdAt).toLocaleDateString()}</p>
                       </div>
                       <div className="flex items-center gap-1">
                         {[...Array(5)].map((_, i) => (
