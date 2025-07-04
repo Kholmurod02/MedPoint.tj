@@ -52,7 +52,6 @@ export default function DoctorProfileById() {
 
   const {data:reviews}=useGetReviewsByDoctorIdQuery(id)
   const doctorReviews = reviews?.data;
-  console.log(doctorData);
   
   
   

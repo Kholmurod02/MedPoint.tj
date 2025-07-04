@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { Badge } from "@/shared/ui/badge"
 import { Button } from "@/shared/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card"
+import { Card, CardContent } from "@/shared/ui/card"
 import { Input } from "@/shared/ui/input"
 import { Label } from "@/shared/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/shared/ui/select"
@@ -21,7 +21,7 @@ import {
 } from "lucide-react"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/shared/ui/dropdown-menu"
 import { useGetAllReviewsQuery, useRemoveReviewMutation, useStatusReviewMutation } from "@/entities/reviews/api/reviewApi"
-import { Marquee } from "@/components/magicui/marquee"
+import { Marquee } from "@/shared/magicui/marquee"
 
 
 
@@ -34,8 +34,6 @@ export default function AdminReviews() {
   const [dateTo, setDateTo] = useState('')
   const [status, setStatus] = useState(false)
 
-
-
   const params = {
     doctorName,
     userName,
@@ -46,6 +44,8 @@ export default function AdminReviews() {
     isHidden: status
   }
 
+  const [removeReview] = useRemoveReviewMutation()
+  const [statusReview] = useStatusReviewMutation()
   const { data } = useGetAllReviewsQuery(params)
   const reviewData = data?.data;
 
@@ -66,8 +66,7 @@ export default function AdminReviews() {
     ))
   }
 
-  const [removeReview] = useRemoveReviewMutation()
-  const [statusReview] = useStatusReviewMutation()
+
 
 
   return (
@@ -360,9 +359,6 @@ export default function AdminReviews() {
                       </div>
 
                       <div className="flex items-center gap-2">
-                        <Badge variant="outline" className="text-xs px-1.5 py-0.5">
-                          {review.id}
-                        </Badge>
                         {review.isHidden && (
                           <Badge variant="destructive" className="text-xs px-1.5 py-0.5">
                             {review.isHidden}
@@ -390,7 +386,7 @@ export default function AdminReviews() {
 
         </div>
 
-        {/* {reviewData.length === 0 && (
+        {reviewData?.length === 0 && (
           <Card className="shadow-sm border-slate-200">
             <CardContent className="p-12 text-center">
               <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -400,7 +396,7 @@ export default function AdminReviews() {
               <p className="text-slate-500">Try adjusting your filters to see more results.</p>
             </CardContent>
           </Card>
-        )} */}
+        )}
       </div>
     </div>
   )
