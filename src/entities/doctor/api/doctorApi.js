@@ -57,12 +57,17 @@ export const doctorApi = createApi({
                 method: "DELETE"
             }),
             invalidatesTags: ['doctorApi']
-        })
+        }),
+
+         currentDoctor: builder.query({
+            query: () => '/Doctor/CurrentDoctor',
+            providesTags: ['doctorApi'],
+        }),
 
 
     })
 })
 
-export const { useGetAllDoctorsQuery, useGetDoctorsSpecializationsQuery, useGetDoctorByIdQuery, useAddDoctorMutation, useUpdateDoctorMutation, useRemoveDoctorMutation } = doctorApi
+export const { useGetAllDoctorsQuery, useGetDoctorsSpecializationsQuery, useGetDoctorByIdQuery, useAddDoctorMutation, useUpdateDoctorMutation, useRemoveDoctorMutation,useCurrentDoctorQuery } = doctorApi
 
 
