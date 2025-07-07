@@ -19,6 +19,12 @@ export const reviewApi = createApi({
             providesTags: ['reviewApi']
         }),
 
+          getReviewsForClients: builder.query({
+            query: () => "/Review/All",
+            providesTags: ['reviewApi']
+        }),
+        
+
         removeReview: builder.mutation({
             query: (id) => ({
                 url: `/Review?reviewId=${id}`,
@@ -56,4 +62,4 @@ export const reviewApi = createApi({
     })
 })
 
-export const { useGetAllReviewsQuery, useRemoveReviewMutation, useStatusReviewMutation,useGetReviewsByUserIdQuery,useGetReviewsByDoctorIdQuery } = reviewApi
+export const { useGetAllReviewsQuery, useRemoveReviewMutation, useStatusReviewMutation,useGetReviewsByUserIdQuery,useGetReviewsByDoctorIdQuery , useGetReviewsForClientsQuery} = reviewApi
