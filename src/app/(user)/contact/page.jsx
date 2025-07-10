@@ -1,21 +1,28 @@
+'use client'
+
 import ContactSection from '@/features/contact-section'
-import MapIframe from '@/widgets/map'
+import MapIframe from '@/features/map'
+import ReviewsSection from '@/features/reviews-section'
 
 
 
 const ContactPage = () => {
   return (
-    <div>
+    <>
       <section className='flex items-center justify-center my-20'>
         <MapIframe />
       </section>
 
       {/* contact section  */}
-      <section>
+      <section className='m-10'>
         <ContactSection />
       </section>
 
-    </div>
+      <section className='my-15'>
+        <ReviewsSection/>
+      </section>
+
+    </>
   )
 }
 

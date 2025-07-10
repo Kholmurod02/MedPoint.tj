@@ -92,8 +92,7 @@ export function AppSidebar() {
     }
   ]
 
-  const menuItems = role == "Admin" ? adminMenuItems : masterMenuItems
-
+  const menuItems = role === "Admin" ? adminMenuItems : role === "Doctor"? masterMenuItems: [];
 
 
 
