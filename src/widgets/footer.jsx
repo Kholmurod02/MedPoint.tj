@@ -45,7 +45,7 @@ export default function Footer() {
           <div>
             <h3 className="text-lg font-semibold mb-4">Contact Us</h3>
             <div className="space-y-2 text-gray-200">
-              <p>Call: (992) 927-775-599</p>
+              <p>Call: (992) 977-275-599</p>
               <p>Email: medpoint.tj@gmail.com</p>
               <p>Address: Street 13</p>
               <p>Dushanbe, Tajikistan</p>

@@ -35,7 +35,7 @@ export default function ContactSection() {
           {/* Get In Touch Section */}
           <div className="space-y-4">
             <div>
-              <h2 className="text-4xl font-bold text-gray-900 mb-2">Get In Touch</h2>
+              <h2 className="text-2xl font-bold text-gray-900 mb-2">Get In Touch</h2>
               <div className="w-16 h-1 bg-gradient-to-r from-purple-900 to-blue-900 rounded-full"></div>
             </div>
 
@@ -112,7 +112,6 @@ export default function ContactSection() {
                     <Input
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      required
                       type="email"
                       placeholder="Your Email Address"
                       className="h-12 text-base border-gray-200 focus:border-purple-500 focus:ring-purple-500"

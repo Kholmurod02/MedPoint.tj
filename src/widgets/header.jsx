@@ -26,9 +26,7 @@ export default function Header() {
   const navigationItems = [
     { name: "Home", href: "/" },
     { name: "About us", href: "/about" },
-    { name: "Services", href: "/services" },
     { name: "Doctors", href: "/doctors" },
-    { name: "News", href: "/news" },
     { name: "Contact", href: "/contact" },
   ]
 
@@ -46,7 +44,7 @@ export default function Header() {
   }
 
   return (
-    <header className="bg-blue-900 text-white sticky top-0 z-10 container mx-auto px-4">
+    <header className="bg-blue-900 text-white sticky top-0 z-100 container mx-auto px-4">
       <div className="">
         <div className="flex items-center justify-between h-16">
           {/* Logo Section - Left on Desktop, Right on Mobile */}
@@ -131,13 +129,15 @@ export default function Header() {
               </>
             ) : (
               <div className="flex items-center space-x-2">
+                <Link href='/login'>
                 <Button
                   variant="ghost"
                   className="text-white hover:text-blue-200 hover:bg-blue-700"
                   onClick={handleLogin}
-                >
+                  >
                   Login
                 </Button>
+                  </Link>
                 <Button
                   className="bg-white text-[#3B4A8C] hover:bg-blue-50 font-medium px-4 py-2 rounded-full"
                   onClick={handleLogin}

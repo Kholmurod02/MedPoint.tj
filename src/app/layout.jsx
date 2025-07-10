@@ -1,4 +1,3 @@
-
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import StoreProvider from "./store/store-provider";
@@ -27,7 +26,9 @@ export default function RootLayout({ children }) {
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         suppressHydrationWarning
       >
-        <StoreProvider>{children}</StoreProvider>
+        <div className="container m-auto p-auto">
+          <StoreProvider>{children}</StoreProvider>
+        </div>
       </body>
     </html>
   );

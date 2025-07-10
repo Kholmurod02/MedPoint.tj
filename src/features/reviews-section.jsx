@@ -1,10 +1,8 @@
 import { useGetReviewsForClientsQuery } from '@/entities/reviews/api/reviewApi'
 import { Marquee } from '@/shared/magicui/marquee'
 import { Badge } from '@/shared/ui/badge'
-import { Button } from '@/shared/ui/button'
 import { Card, CardContent } from '@/shared/ui/card'
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/shared/ui/dropdown-menu'
-import { Calendar, Eye, MoreVertical, Star, User, UserCheck } from 'lucide-react'
+import { Calendar, Star, User, UserCheck } from 'lucide-react'
 import React from 'react'
 
 const ReviewsSection = () => {

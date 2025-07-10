@@ -15,7 +15,7 @@ export const reviewApi = createApi({
     endpoints: (builder) => ({
 
         getAllReviews: builder.query({
-            query: (params) => `/Review/All?DoctorName=${params.doctorName || ""}&UserName=${params.userName || ""}&RatingFrom=${params.ratingFrom || ""}&RatingTo=${params.ratingTo || ""}&CreatedFrom=${params.createdFrom || ""}&CreatedTo=${params.createdTo || ""}&IsHidden=${params.isHidden || ""}`,
+            query: (params) => `/Review/All?DoctorName=${params?.doctorName || ""}&UserName=${params?.userName || ""}&RatingFrom=${params?.ratingFrom || ""}&RatingTo=${params?.ratingTo || ""}&CreatedFrom=${params?.createdFrom || ""}&CreatedTo=${params?.createdTo || ""}&IsHidden=${params?.isHidden || ""}`,
             providesTags: ['reviewApi']
         }),
 
