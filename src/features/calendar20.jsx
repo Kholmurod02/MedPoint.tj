@@ -14,7 +14,7 @@ export default function Calendar20() {
 
 
   const [date, setDate] = useState(new Date())
-   const [selectedTime, setSelectedTime] = useState("")
+  const [selectedTime, setSelectedTime] = useState("")
 
 
   // Полное расписание врача
@@ -22,14 +22,18 @@ export default function Calendar20() {
   const doctorSchedule = data?.data
 
   const [addOrder] = useAddOrderMutation()
-  const handleClick = () => {
-    const newOrder = {
-      "doctorId": id,
-      "date":`${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`,
-      "startTime":`${selectedTime}:00`
-    }
-    addOrder(newOrder)
+  const handleClick = async () => {
+    try {
+      const newOrder = {
+        "doctorId": id,
+        "date": `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`,
+        "startTime": `${selectedTime}:00`
+      }
+     await addOrder(newOrder).unwrap()
+     
+    } catch (error) {
 
+    }
   }
 
 
@@ -70,7 +74,7 @@ export default function Calendar20() {
     const lunchEndMin = timeToMinutes(todaySchedule.lunchEnd)
 
     const slots = []
-    for (let min = workStartMin; min < workEndMin; min += 15) {
+    for (let min = workStartMin; min < workEndMin; min += 30) {
       if (lunchStartMin !== null && min >= lunchStartMin && min < lunchEndMin) continue
       const hour = Math.floor(min / 60)
       const minute = min % 60
@@ -104,7 +108,7 @@ export default function Calendar20() {
         <div className="no-scrollbar inset-y-0 right-0 flex max-h-72 w-full scroll-pb-6 flex-col gap-4 overflow-y-auto border-t p-6 md:absolute md:max-h-none md:w-48 md:border-l md:border-t-0">
           <div className="grid gap-2">
             {isDayOff ? (
-              <p className="text-sm text-gray-500">Врач сегодня не работает</p>
+              <p className="text-sm text-gray-500">The doctor isn't working today</p>
             ) : (
               timeSlots.map((time) => {
                 const isBooked = bookedTimes[selectedDateStr]?.includes(time)
