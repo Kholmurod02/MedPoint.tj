@@ -64,10 +64,15 @@ export const doctorApi = createApi({
             providesTags: ['doctorApi'],
         }),
 
+        getScheduleByDoctorId: builder.query({
+            query:(id)=>`/DoctorSchedule/By-doctor-id?doctorId=${id}`,
+            providesTags:["doctorApi"]
+        })
+
 
     })
 })
 
-export const { useGetAllDoctorsQuery, useGetDoctorsSpecializationsQuery, useGetDoctorByIdQuery, useAddDoctorMutation, useUpdateDoctorMutation, useRemoveDoctorMutation,useCurrentDoctorQuery } = doctorApi
+export const { useGetAllDoctorsQuery, useGetDoctorsSpecializationsQuery, useGetDoctorByIdQuery, useAddDoctorMutation, useUpdateDoctorMutation, useRemoveDoctorMutation,useCurrentDoctorQuery,useGetScheduleByDoctorIdQuery } = doctorApi
 
 

@@ -1,34 +1,48 @@
 "use client"
 import Image from "next/image"
-import { ArrowRight, Star } from "lucide-react"
+import { ArrowRight, ChevronDown, ChevronUp } from "lucide-react"
 import { Button } from "@/shared/ui/button"
 import Link from "next/link"
 import collective_doctors from "../../../public/file_4840344.jpg"
 import { useState } from "react"
 import DoctorCard from "@/features/doctor-card"
-import doc from "../../../public/manDoctor.jpg"
-import do2 from "../../../public/womenDoc.jpg"
 import SpecializationCard from "@/features/specialization-card"
-import ReviewsSection from "@/features/reviews-section"
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/shared/ui/accordion"
+import { useGetAllDoctorsQuery, useGetDoctorsSpecializationsQuery } from "@/entities/doctor/api/doctorApi"
 
 export default function Home() {
   const [showMore, setShowMore] = useState(false)
 
-  const categories = [
-    { id: 1, name: "Junior-Doctor", level: "entry" },
-    { id: 2, name: "Middle-Doctor", level: "intermediate" },
-    { id: 3, name: "Senior-Doctor", level: "advanced" },
-    { id: 4, name: "Junior-Doctor", level: "entry" },
-    { id: 5, name: "Middle-Doctor", level: "intermediate" },
-    { id: 6, name: "Senior-Doctor", level: "advanced" },
-  ]
+  const { data } = useGetDoctorsSpecializationsQuery()
+  const specialization = data?.data
 
-  const visibleCategories = showMore ? categories : categories.slice(0, 3)
+  const visibleSpecialization = showMore ? specialization : specialization?.slice(0, 3)
 
-  const doctors = [
-    { id: 1, doctorImage: doc, name: "John Doe", spec: "Junior - Doctor", status: false },
-    { id: 2, doctorImage: do2, name: "John Smith", spec: "Senior - Doctor", status: true },
-    { id: 3, doctorImage: doc, name: "Sarah John ", spec: "Middle - Doctor", status: false },
+  const { data: doctor } = useGetAllDoctorsQuery("")
+  const doctors = doctor?.data
+
+
+  const faqs = [
+    {
+      id: 1,
+      question: "Is it safe to use traditional (folk) remedies with pharmacy medicine?",
+      answer: "Some folk remedies can interfere with or increase the side effects of modern medicine. Always consult a doctor before combining them."
+    },
+    {
+      id: 2,
+      question: "What should I do if the medicine doesn’t help after 2–3 days?",
+      answer: "Do not increase the dose yourself. Contact a doctor — the medication may need to be changed, or the diagnosis reviewed."
+    },
+    {
+      id: 3,
+      question: "Can I continue fasting (e.g. during Ramadan) while taking medicine?",
+      answer: "Your doctor may adjust the dosage schedule. In cases of serious illness, religion allows exceptions — always consult both your doctor and imam if needed."
+    },
+    {
+      id: 4,
+      question: "What should I do if I have high blood pressure at home?",
+      answer: "Stay calm, lie down, and measure your pressure. Take your prescribed medicine. If it doesn't go down — call emergency services."
+    }
   ]
 
   return (
@@ -121,7 +135,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Enhanced categories section */}
+      {/* Enhanced specialization section */}
       <section className="py-16 px-4">
         <div className="max-w-6xl mx-auto text-center">
           {/* Modern badge */}
@@ -134,14 +148,14 @@ export default function Home() {
           </h2>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-8">
-            {visibleCategories.map((category) => (
-              <div key={category.id} className="transform hover:scale-105 transition-transform duration-300">
-                <SpecializationCard category={category} />
+            {visibleSpecialization?.map((Specialty) => (
+              <div key={Specialty.id} className="transform hover:scale-105 transition-transform duration-300">
+                <SpecializationCard Specialty={Specialty} />
               </div>
             ))}
           </div>
 
-          <div className="pt-12">
+          {/* <div className="pt-12">
             <Button
               variant="outline"
               size="lg"
@@ -150,7 +164,7 @@ export default function Home() {
             >
               {showMore ? "Show Less" : "Show More"}
             </Button>
-          </div>
+          </div> */}
         </div>
       </section>
 
@@ -166,10 +180,10 @@ export default function Home() {
         </h2>
 
         <div className="grid grid-cols-1 md:grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-10 w-full max-w-6xl mx-auto">
-          {doctors?.map((docs) => {
+          {doctors?.slice(0, 3)?.map((docs) => {
             return (
               <div key={docs.id} className="transform hover:scale-105 transition-transform duration-300">
-                <DoctorCard el={docs} />
+                <DoctorCard key={docs.id} doctor={docs} />
               </div>
             )
           })}
@@ -189,20 +203,36 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Enhanced reviews section */}
-      <section className="text-center my-20 py-8">
-        {/* Modern badge */}
-        <div className="inline-flex items-center px-4 py-2 bg-blue-50 rounded-full mb-6">
-          <Star className="w-4 h-4 text-blue-600 mr-2" />
-          <span className="text-blue-600 font-semibold text-sm tracking-wider uppercase">Voices of Care</span>
+      {/* FAQ section */}
+      <section className="w-full py-12 md:py-24 lg:py-32 bg-white">
+        <div className="container px-4 md:px-6 max-w-3xl mx-auto text-center">
+          <div className="space-y-4 mb-8">
+            <p className="text-blue-600 text-sm font-semibold uppercase tracking-wider">WHAT PEOPLE</p>
+            <h2 className="text-4xl font-bold tracking-tighter sm:text-3xl md:text-4xl text-gray-900">Usually Asked</h2>
+          </div>
+          <Accordion type="single" collapsible className="w-full space-y-4 text-blue-950">
+            {faqs.map((faq, index) => (
+              <AccordionItem
+                key={index}
+                value={`item-${index}`}
+                className="group border-b-0 rounded-lg shadow-sm overflow-hidden "
+              >
+                <AccordionTrigger className="flex w-full items-center justify-between py-4 px-6 text-lg hover:no-underline">
+                  <p>{faq.question}</p>
+                  <span className="ml-auto shrink-0 transition-transform duration-200">
+                    <ChevronUp className="h-5 w-5 text-gray-600 group-data-[state=open]:hidden" />
+                    <ChevronDown className="h-5 w-5 text-gray-600 group-data-[state=closed]:hidden" />
+                  </span>
+                </AccordionTrigger>
+                <AccordionContent className="px-6 pb-4 text-gray-700 text-base font-semibold leading-relaxed">
+                  <p className="text-sm font-semibold">{faq.answer}</p>
+                </AccordionContent>
+              </AccordionItem>
+            ))}
+          </Accordion>
         </div>
-
-        <h2 className="text-4xl font-bold text-slate-900 mb-12">
-          What Our <span className="text-blue-600">Patients Say</span>
-        </h2>
-
-        <ReviewsSection />
       </section>
+
     </div>
   )
 }

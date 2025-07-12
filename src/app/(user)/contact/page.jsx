@@ -18,9 +18,9 @@ const ContactPage = () => {
         <ContactSection />
       </section>
 
-      <section className='my-15'>
+      {/* <section className='my-15'>
         <ReviewsSection/>
-      </section>
+      </section> */}
 
     </>
   )

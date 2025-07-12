@@ -6,6 +6,7 @@ import Image from 'next/image'
 import doc from '../../../../public/womenDoc.jpg'
 import Link from 'next/link'
 import { Button } from '@/shared/ui/button'
+import { useGetAllDoctorsQuery } from '@/entities/doctor/api/doctorApi'
 
 const AboutUs = () => {
 
@@ -44,12 +45,8 @@ const AboutUs = () => {
       title: "Rumi",
     }
   ]
-
-    const doctors = [
-      { id: 1, doctorImage: doc, name: "John Doe", spec: 'Junior - Doctor', status: false },
-      { id: 2, doctorImage: doc, name: "John Smith", spec: 'Senior - Doctor', status: true },
-      { id: 3, doctorImage: doc, name: "Sarah John ", spec: 'Middle - Doctor', status: false }
-    ]
+  const { data: doctor } = useGetAllDoctorsQuery("")
+  const doctors = doctor?.data 
 
 
   return (
@@ -123,9 +120,9 @@ const AboutUs = () => {
       <section className='text-center my-20'>
         <p className="text-blue-600 font-medium text-sm tracking-wider uppercase mb-2">Medical Quotes</p>
         <h2 className="text-4xl font-bold text-slate-800 mb-12">Short quotes from great medical minds.</h2>
-      <div className='h-[330px] w-full p-2 my-10'>
-        <Swiperr data={quotes}  />
-      </div>
+        <div className='h-[330px] w-full p-2 my-10'>
+          <Swiperr data={quotes} />
+        </div>
       </section>
 
       {/* doctors section */}
@@ -133,10 +130,10 @@ const AboutUs = () => {
         <p className="text-blue-700 font-medium text-sm tracking-wider uppercase mb-2">Trusted Care</p>
         <h2 className="text-4xl font-bold text-slate-800 mb-12">Our Doctors</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-10 w-full">
-          {doctors?.map((docs) => {
+          {doctors?.slice(0,3)?.map((docs) => {
             return (
               <div key={docs.id}>
-                <DoctorCard el={docs} />
+                <DoctorCard doctor={docs} />
               </div>
             )
           })}
@@ -152,8 +149,8 @@ const AboutUs = () => {
         </div>
       </section>
 
-          {/* reviews */}
-       <section className="text-center my-20">
+      {/* reviews */}
+      <section className="text-center my-20">
         <p className="text-blue-600 font-medium text-sm tracking-wider uppercase mb-2">Voices of Care</p>
         <h2 className="text-4xl font-bold text-slate-800 mb-12">What Our Patients Say</h2>
         <ReviewsSection />

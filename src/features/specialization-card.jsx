@@ -2,7 +2,7 @@ import { Card } from '@/shared/ui/card'
 import { HeartPulse } from 'lucide-react'
 import React from 'react'
 
-const SpecializationCard = ({ category }) => {
+const SpecializationCard = ({ Specialty }) => {
     return (
         <Card
             className="px-4   rounded-lg transition-all duration-300 hover:bg-slate-700 hover:text-white bg-white text-slate-700 hover:shadow-lg cursor-pointer group"
@@ -14,7 +14,7 @@ const SpecializationCard = ({ category }) => {
                         fill="currentColor"
                     />
                 </div>
-                <h3 className="font-semibold text-lg"> {category?.name} </h3>
+                <h3 className="font-semibold text-lg"> {Specialty?.name} </h3>
             </div>
         </Card>
     )
