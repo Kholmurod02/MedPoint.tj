@@ -1,6 +1,8 @@
 "use client"
 
-import { useGetOrdersQuery } from "@/entities/order/api/orderApi"
+import { useGetDoctorByNameQuery } from "@/entities/doctor/api/doctorApi"
+import { useAddOrderByAdminMutation, useGetOrdersQuery } from "@/entities/order/api/orderApi"
+import { useGetUserByNameQuery } from "@/entities/user/api/userApi"
 import { Badge } from "@/shared/ui/badge"
 import { Button } from "@/shared/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card"
@@ -19,6 +21,7 @@ import { Separator } from "@/shared/ui/separator"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/shared/ui/table"
 import { Calendar, Clock, MoreHorizontal, Search, User, UserCheck } from "lucide-react"
 import { useState } from "react"
+import toast from "react-hot-toast"
 
 
 
@@ -72,6 +75,52 @@ export default function AppointmentTable() {
 
   const { data: orders } = useGetOrdersQuery(params)
   const appointments = orders?.data
+
+  // add order by admin
+  const [open, setOpen] = useState(false)
+
+  // filtered doctors
+  const [docByName, setDocByName] = useState('')
+  const [docIdx, setDocIdx] = useState(null)
+  const { data: doctors } = useGetDoctorByNameQuery(docByName)
+  const filteredDoctors = doctors?.data
+  console.log(docIdx);
+
+
+  // filtered user
+  const [userByName, setUserByName] = useState('')
+  const [userIdx, setUserIdx] = useState(null)
+  const { data: users } = useGetUserByNameQuery(userByName)
+  const filteredUsers = users?.data
+  console.log(userIdx);
+
+
+  const [aptDate, setAptDate] = useState('')
+  const [aptTime, setAptTime] = useState('')
+  console.log('aptDate', aptDate);
+  console.log('aptTime', aptTime);
+
+  const [addOrderByAdmin] = useAddOrderByAdminMutation()
+
+  const handleAddAppointmentByAdmin = async (e) => {
+    e.preventDefault()
+    const orderByAdmin = {
+      "doctorId": docIdx,
+      "userId": userIdx,
+      "date": aptDate,
+      "startTime": aptTime
+    }
+
+    try {
+      await addOrderByAdmin(orderByAdmin).unwrap()
+      setOpen(false)
+      toast.success("Appointment successfully booked!")
+    } catch (error) {
+      toast.error(error.data.message)
+    }
+  }
+
+
   return (
     <div className="w-full space-y-6 p-6  min-h-screen">
 
@@ -146,30 +195,36 @@ export default function AppointmentTable() {
               {/* book appointment by admin */}
 
               <div className="relative">
-                <Dialog>
+                <Dialog open={open} onOpenChange={setOpen}>
                   <DialogTrigger asChild>
                     <Button>Add Appointment</Button>
                   </DialogTrigger>
-                  <form>
                     <DialogContent>
-                      <DialogTitle>Book Appointment for User</DialogTitle>
+                  <form onSubmit={handleAddAppointmentByAdmin}>
+                      <DialogTitle className={"mb-5"}>Book Appointment for User</DialogTitle>
                       <Separator />
-                      <div className="grid gap-4">
+                      <div className="grid gap-4 mt-5">
                         {/* Doctor Search */}
                         <div className="grid gap-3">
                           <Label htmlFor="doctor-search">Doctor Name</Label>
                           <Input
                             id="doctor-search"
-                            placeholder="Search Doctor . . ."
+                            placeholder="Search Doctor..."
+                            value={docByName}
+                            onChange={(e) => setDocByName(e.target.value)}
                           />
-                          {[].length > 0 && (
+                          {filteredDoctors?.length > 0 && (
                             <ul className="border p-2 rounded bg-white shadow">
-                              {[].map((doc) => (
+                              {filteredDoctors.map((doc) => (
                                 <li
                                   key={doc.id}
                                   className="cursor-pointer hover:bg-gray-100 px-2 py-1"
+                                  onClick={() => {
+                                    setDocIdx(doc.id)
+                                    setDocByName(`${doc.firstName} ${doc.lastName}`)
+                                  }}
                                 >
-                                  {doc.name}
+                                  {doc.firstName} {doc.lastName}
                                 </li>
                               ))}
                             </ul>
@@ -181,16 +236,22 @@ export default function AppointmentTable() {
                           <Label htmlFor="user-search">User Name</Label>
                           <Input
                             id="user-search"
-                            placeholder="Search User . . ."
+                            placeholder="Search User..."
+                            value={userByName}
+                            onChange={(e) => setUserByName(e.target.value)}
                           />
-                          {[].length > 0 && (
+                          {filteredUsers?.length > 0 && (
                             <ul className="border p-2 rounded bg-white shadow">
-                              {[].map((user) => (
+                              {filteredUsers.map((user) => (
                                 <li
                                   key={user.id}
                                   className="cursor-pointer hover:bg-gray-100 px-2 py-1"
+                                  onClick={() => {
+                                    setUserIdx(user.id)
+                                    setUserByName(`${user.firstName} ${user.lastName}`)
+                                  }}
                                 >
-                                  {user.name}
+                                  {user.firstName} {user.lastName}
                                 </li>
                               ))}
                             </ul>
@@ -205,10 +266,12 @@ export default function AppointmentTable() {
                             name="date"
                             type="date"
                             defaultValue={new Date().toISOString().split("T")[0]}
+                            value={aptDate}
+                            onChange={(e) => setAptDate(e.target.value)}
                           />
                         </div>
 
-                        {/* Start Time */}
+                        {/* Time */}
                         <div className="grid gap-3">
                           <Label htmlFor="startTime">Start Time</Label>
                           <Input
@@ -216,18 +279,21 @@ export default function AppointmentTable() {
                             name="startTime"
                             type="time"
                             step="1"
+                            value={aptTime}
+                            onChange={(e) => setAptTime(e.target.value)}
                           />
                         </div>
                       </div>
-
                       <DialogFooter>
                         <DialogClose asChild>
-                          <Button type="button" variant="outline">Cancel</Button>
+                          <Button type="button" variant="outline">
+                            Cancel
+                          </Button>
                         </DialogClose>
                         <Button type="submit">Save changes</Button>
                       </DialogFooter>
-                    </DialogContent>
                   </form>
+                    </DialogContent>
                 </Dialog>
               </div>
 

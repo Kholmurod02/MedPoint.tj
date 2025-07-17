@@ -19,11 +19,11 @@ export const reviewApi = createApi({
             providesTags: ['reviewApi']
         }),
 
-          getReviewsForClients: builder.query({
+        getReviewsForClients: builder.query({
             query: () => "/Review/All",
             providesTags: ['reviewApi']
         }),
-        
+
 
         removeReview: builder.mutation({
             query: (id) => ({
@@ -50,10 +50,19 @@ export const reviewApi = createApi({
             providesTags: ['reviewApi']
         }),
 
-          getReviewsByDoctorId: builder.query({
+        getReviewsByDoctorId: builder.query({
             query: (id) => `/Review/ByDoctorId?doctorId=${id}`,
             providesTags: ['reviewApi']
         }),
+
+        postReview: builder.mutation({
+            query: (newReview) => ({
+                url: '/Review',
+                method: "POST",
+                body: newReview
+            }),
+            invalidatesTags: ['reviewApi']
+        })
 
 
 
@@ -62,4 +71,4 @@ export const reviewApi = createApi({
     })
 })
 
-export const { useGetAllReviewsQuery, useRemoveReviewMutation, useStatusReviewMutation,useGetReviewsByUserIdQuery,useGetReviewsByDoctorIdQuery , useGetReviewsForClientsQuery} = reviewApi
+export const { useGetAllReviewsQuery, useRemoveReviewMutation, useStatusReviewMutation, useGetReviewsByUserIdQuery, useGetReviewsByDoctorIdQuery, useGetReviewsForClientsQuery, usePostReviewMutation } = reviewApi

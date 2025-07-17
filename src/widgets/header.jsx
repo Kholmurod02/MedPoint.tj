@@ -83,15 +83,10 @@ export default function Header() {
 
           {/* Right Side - Authentication Aware - Hidden on Mobile */}
           <div className="hidden lg:flex items-center space-x-4">
-            <button className="text-white hover:text-blue-200 transition-colors duration-200" aria-label="Search">
-              <Search size={20} />
-            </button>
 
             {isLoggedIn ? (
               <>
-                <Button className="bg-white text-[#3B4A8C] hover:bg-blue-50 font-medium px-4 py-2 rounded-full">
-                  Appointment
-                </Button>
+
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <button className="flex items-center space-x-2 text-white hover:text-blue-200 transition-colors duration-200">
@@ -130,14 +125,14 @@ export default function Header() {
             ) : (
               <div className="flex items-center space-x-2">
                 <Link href='/login'>
-                <Button
-                  variant="ghost"
-                  className="text-white hover:text-blue-200 hover:bg-blue-700"
-                  onClick={handleLogin}
+                  <Button
+                    variant="ghost"
+                    className="text-white hover:text-blue-200 hover:bg-blue-700"
+                    onClick={handleLogin}
                   >
-                  Login
-                </Button>
-                  </Link>
+                    Login
+                  </Button>
+                </Link>
                 <Button
                   className="bg-white text-[#3B4A8C] hover:bg-blue-50 font-medium px-4 py-2 rounded-full"
                   onClick={handleLogin}
@@ -153,17 +148,7 @@ export default function Header() {
         {isMenuOpen && (
           <div className="lg:hidden border-t border-blue-600">
             <div className="py-4 max-h-screen overflow-y-auto">
-              {/* Search Bar - Mobile */}
-              <div className="px-4 mb-4">
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-blue-200" size={16} />
-                  <input
-                    type="text"
-                    placeholder="Search..."
-                    className="w-full bg-blue-700 text-white placeholder-blue-200 rounded-lg pl-10 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-white focus:bg-blue-600"
-                  />
-                </div>
-              </div>
+              
 
               {/* Navigation Links */}
               <nav className="px-4 space-y-1">
@@ -183,12 +168,7 @@ export default function Header() {
               {isLoggedIn ? (
                 <div className="border-t border-blue-600 mt-4 pt-4 px-4">
                   <div className="space-y-2">
-                    <Button
-                      className="w-full bg-white text-[#3B4A8C] hover:bg-blue-50 font-medium py-3 rounded-lg mb-3"
-                      onClick={() => setIsMenuOpen(false)}
-                    >
-                      Book Appointment
-                    </Button>
+                   
                     <Link
                       href="/profile"
                       className="flex items-center space-x-3 py-3 px-2 text-white hover:text-blue-200 hover:bg-blue-700 rounded-lg transition-colors duration-200"

@@ -72,7 +72,12 @@ export const doctorApi = createApi({
         getDoctorOrders:builder.query({
             query:(id)=>`/Order/Doctor-orders?doctorId=${id}`,
             providesTags:['doctorApi']
-        })
+        }),
+
+          getDoctorByName: builder.query({
+            query: (doctorName) => `/Doctor/ByName?name=${doctorName}`,
+            providesTags: ['doctorApi']
+        }),
 
 
     })
@@ -80,6 +85,7 @@ export const doctorApi = createApi({
 
 export const { useGetAllDoctorsQuery, useGetDoctorsSpecializationsQuery, useGetDoctorByIdQuery,
      useAddDoctorMutation, useUpdateDoctorMutation, useRemoveDoctorMutation,useCurrentDoctorQuery,
-     useGetScheduleByDoctorIdQuery,useGetDoctorOrdersQuery } = doctorApi
+     useGetScheduleByDoctorIdQuery,useGetDoctorOrdersQuery,
+    useGetDoctorByNameQuery } = doctorApi
 
 

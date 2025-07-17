@@ -38,6 +38,14 @@ export const orderApi = createApi({
         getOrders: builder.query({
             query: (params) => `/Order/All?DoctorName=${params?.doctorName || ""}&UserName=${params?.userName || ""}`,
             providesTags: ['orderApi']
+        }),
+
+        addOrderByAdmin: builder.mutation({
+            query: (newOrderByAdmin) => ({
+                url: '/Order/By-admin',
+                method: "POST",
+                body: newOrderByAdmin
+            })
         })
 
 
@@ -47,5 +55,5 @@ export const orderApi = createApi({
 
 
 
-export const { useAddOrderMutation, useGetUserOrdersByUserIdQuery,useGetOrdersQuery } = orderApi
+export const { useAddOrderMutation, useGetUserOrdersByUserIdQuery, useGetOrdersQuery, useAddOrderByAdminMutation } = orderApi
 

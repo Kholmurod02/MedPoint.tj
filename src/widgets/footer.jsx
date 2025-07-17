@@ -19,8 +19,8 @@ export default function Footer() {
             <h3 className="text-lg font-semibold mb-4">Important Links</h3>
             <ul className="space-y-2">
               <li>
-                <Link href="#" className="text-gray-200 hover:text-white transition-colors">
-                  Appointment
+                <Link href="/profile" className="text-gray-200 hover:text-white transition-colors">
+                  Profile
                 </Link>
               </li>
               <li>
@@ -29,8 +29,8 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/services" className="text-gray-200 hover:text-white transition-colors">
-                  Services
+                <Link href="/contact" className="text-gray-200 hover:text-white transition-colors">
+                  Contact Us
                 </Link>
               </li>
               <li>
@@ -45,7 +45,7 @@ export default function Footer() {
           <div>
             <h3 className="text-lg font-semibold mb-4">Contact Us</h3>
             <div className="space-y-2 text-gray-200">
-              <p>Call: (992) 977-275-599</p>
+              <p>Call: (992) 977-27-55-99</p>
               <p>Email: medpoint.tj@gmail.com</p>
               <p>Address: Street 13</p>
               <p>Dushanbe, Tajikistan</p>

@@ -1,10 +1,14 @@
 "use client"
-import { useCurrentUserQuery } from "@/entities/user/api/userApi"
+import { useCurrentUserQuery, useUpdateUserMutation } from "@/entities/user/api/userApi"
 import { Avatar, AvatarFallback, AvatarImage } from "@/shared/ui/avatar"
 import { Button } from "@/shared/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card"
+import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "@/shared/ui/dialog"
 import { Input } from "@/shared/ui/input"
-import { Mail, EyeIcon, Trash, ImagePlus, User, Phone } from "lucide-react"
+import { Label } from "@/shared/ui/label"
+import { Mail, EyeIcon, Trash, ImagePlus, User, Phone, Save, X } from "lucide-react"
+import { useState } from "react"
+import toast from "react-hot-toast"
 
 // Placeholder image for profile if not available
 const PLACEHOLDER_PROFILE_IMAGE = "/womenDoc.jpg"
@@ -13,9 +17,34 @@ export default function DashboardPage() {
   const { data: user } = useCurrentUserQuery()
   const userData = user?.data
 
-  
+  // edit profile
 
-  
+  // update user 
+  const [update, setUpdate] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    phone: ""
+  })
+  const [idx, setIdx] = useState(null)
+  const [editOpen, setEditOpen] = useState(false)
+
+  const [updateUser] = useUpdateUserMutation()
+
+  const handleUpdateUser = async (e) => {
+    e.preventDefault()
+    try {
+      await updateUser({ id: idx, newUser: update }).unwrap()
+      setEditOpen(false)
+      toast.success('Profile successfully updated')
+    } catch (error) {
+      toast.error(error.data.message)
+    }
+  }
+
+
+
+
 
   const appointmentsData = [
     {
@@ -114,7 +143,101 @@ export default function DashboardPage() {
                   {userData?.email ?? "No email"}
                 </Button>
               </div>
-              <Button className="mt-4 px-6 py-2 rounded-lg">Edit Profile</Button>
+
+              {/* edit user profile  */}
+              <Dialog
+                open={editOpen}
+                onOpenChange={(open) => {
+                  setEditOpen(open)
+                  if (open && userData) {
+                    setUpdate({
+                      firstName: userData?.firstName || '',
+                      lastName: userData?.lastName || '',
+                      email: userData?.email || '',
+                      phone: userData?.phone || '',
+                    })
+                    setIdx(userData.id)
+                  }
+                }}
+              >
+                <DialogTrigger asChild>
+                  <Button on>Edit Profile</Button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogTitle>
+                    Edit User
+                  </DialogTitle>
+                  <form onSubmit={handleUpdateUser}>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5 py-5">
+
+                      <div className="space-y-2">
+                        <Label htmlFor="firstName">First Name</Label>
+                        <Input
+                          id="firstName"
+                          placeholder="Enter First Name..."
+                          required
+                          value={update.firstName}
+                          onChange={(e) => setUpdate({ ...update, firstName: e.target.value })}
+                        />
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label htmlFor="lastName">Last Name</Label>
+                        <Input
+                          id="lastName"
+                          placeholder="Enter Last Name..."
+                          required
+                          value={update.lastName}
+                          onChange={(e) => setUpdate({ ...update, lastName: e.target.value })}
+                        />
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label htmlFor="phone">Phone Number</Label>
+                        <Input
+                          type='number'
+                          id="phone"
+                          placeholder="Enter Phone Number..."
+                          required
+                          value={update.phone}
+                          onChange={(e) => setUpdate({ ...update, phone: e.target.value })}
+                        />
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label htmlFor="email">Email Address</Label>
+                        <Input
+                          type='email'
+                          id="email"
+                          placeholder="Enter Email Address..."
+                          required
+                          value={update.email}
+                          onChange={(e) => setUpdate({ ...update, email: e.target.value })}
+                        />
+                      </div>
+
+                    </div>
+                    <div className="flex justify-end space-x-2 mt-5">
+                      <Button
+                        size="sm"
+                      >
+                        <Save className="h-4 w-4 mr-2" />
+                        Save
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setEditOpen(false)}
+                      >
+                        <X className="h-4 w-4 mr-2" />
+                        Cancel
+                      </Button>
+                    </div>
+                  </form>
+                </DialogContent>
+              </Dialog>
+
+
             </div>
             <div className="flex flex-col items-center gap-3">
               <Avatar className="h-52 w-52  border-gray-200 rounded overflow-hidden">
@@ -140,7 +263,7 @@ export default function DashboardPage() {
           </CardContent>
         </Card>
 
-         {/* My Appointment Card */}
+        {/* My Appointment Card */}
         <Card className="lg:col-span-2 rounded-xl shadow-sm">
           <CardHeader className="pb-4">
             <CardTitle className="text-xl font-semibold">My Appointment</CardTitle>
@@ -205,7 +328,7 @@ export default function DashboardPage() {
           </CardContent>
         </Card>
 
-       
+
       </div>
     </div>
   )

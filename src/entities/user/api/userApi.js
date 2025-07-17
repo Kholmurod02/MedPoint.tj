@@ -73,8 +73,13 @@ export const userApi = createApi({
 
         getUserOrders: builder.query({
             query: (id) => `/Order/User-orders?userId=${id}`,
-            providesTags:['userApi']
-        })
+            providesTags: ['userApi']
+        }),
+
+        getUserByName: builder.query({
+            query: (userName) => `/User/ByName?name=${userName}`,
+            providesTags: ['userApi'],
+        }),
 
 
     })
@@ -83,5 +88,5 @@ export const userApi = createApi({
 export const {
     useGetUserByIdQuery, useAddUserMutation, useDeleteUserMutation,
     useUserFiltersQuery, useUpdateUserMutation, useCurrentUserQuery,
-    useChangeImageUserMutation, useDeleteUserImageMutation,useGetUserOrdersQuery
+    useChangeImageUserMutation, useDeleteUserImageMutation, useGetUserOrdersQuery,useGetUserByNameQuery
 } = userApi

@@ -8,6 +8,7 @@ import { Input } from "@/shared/ui/input"
 import Calendar20 from "@/features/calendar20"
 import { useParams } from "next/navigation"
 import { useGetDoctorByIdQuery, useGetScheduleByDoctorIdQuery } from "@/entities/doctor/api/doctorApi"
+import { LeaveReviewModal } from "@/shared/components/leaveReviewModal"
 
 export default function DoctorById() {
   const { id } = useParams()
@@ -65,6 +66,8 @@ export default function DoctorById() {
                   </div>
                 </CardContent>
               </Card>
+
+
             </div>
 
             {/* RIGHT COLUMN: Name + Description + Schedule */}
@@ -94,6 +97,8 @@ export default function DoctorById() {
                     </div>
                   </div>
                 </CardContent>
+                {/* post review */}
+                <LeaveReviewModal doctorId={id}/>
               </Card>
 
               {/* Schedule */}
