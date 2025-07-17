@@ -22,7 +22,7 @@ import { useRouter } from "next/navigation"
 
 
 export function AppSidebar() {
-  const [role, setRole] = useState("Admin")
+  const [role, setRole] = useState("Doctor")
   const { data } = useCurrentUserQuery()
   const router = useRouter()
 

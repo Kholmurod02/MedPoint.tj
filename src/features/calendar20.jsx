@@ -88,9 +88,9 @@ export default function Calendar20() {
   const timeSlots = isDayOff ? [] : generateTimeSlots()
 
   return (
-    <Card className="gap-0 p-0 md:w-[50%]">
+    <Card className="gap-0 p-0 w-full lg:w-[50%] md:w-[80%]">
       <CardContent className="relative p-0 md:pr-48 grid">
-        <div className="p-6">
+        <div className="p-3">
           <Calendar
             mode="single"
             selected={date}

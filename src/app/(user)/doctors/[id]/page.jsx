@@ -15,11 +15,11 @@ export default function DoctorById() {
   const { data } = useGetDoctorByIdQuery(id)
   const doctorData = data?.data || []
 
-  const { data: schedule}=useGetScheduleByDoctorIdQuery(id)
+  const { data: schedule } = useGetScheduleByDoctorIdQuery(id)
   const scheduleData = schedule?.data
   console.log(scheduleData);
-  
-  
+
+
 
   return (
     <>
@@ -98,7 +98,7 @@ export default function DoctorById() {
                   </div>
                 </CardContent>
                 {/* post review */}
-                <LeaveReviewModal doctorId={id}/>
+                <LeaveReviewModal doctorId={id} />
               </Card>
 
               {/* Schedule */}
@@ -145,12 +145,13 @@ export default function DoctorById() {
 
 
       {/* Book Appointment */}
-      <section className="relative h-[650px] flex items-center my-20 justify-start p-4 bg-blue-900 bg-[url('/calendar_book.png')] bg-no-repeat bg-cover bg-center">
+      <section className="relative h-auto min-h-[650px] flex flex-col lg:flex-row md:flex-row items-center justify-start my-20 p-4 bg-blue-900 bg-[url('/calendar_book.png')] bg-no-repeat bg-cover bg-center">
         <div className="absolute inset-0 bg-black/40 z-0" />
-        <div className="relative z-10 my-10 w-full p-3">
+        <div className="relative z-10 w-full max-w-6xl mx-auto p-4">
           <Calendar20 />
         </div>
       </section>
+
 
 
 
