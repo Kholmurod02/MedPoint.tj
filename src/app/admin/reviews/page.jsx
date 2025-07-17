@@ -17,55 +17,43 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/shared/ui/table"
 import { Avatar, AvatarFallback, AvatarImage } from "@/shared/ui/avatar"
 import { Eye, EyeOff, Filter, MoreHorizontal, Search, Star, Trash2, UserCheck } from "lucide-react"
+import { useGetAllReviewsQuery } from "@/entities/reviews/api/reviewApi"
 
 // Your actual data structure
-const reviewsData = [
-  {
-    id: 2,
-    doctorId: 1,
-    doctorName: "Doctor Test",
-    userId: 2,
-    userName: "Med1 Point",
-    rating: 3,
-    comment: "Doctor was very good!",
-    isHidden: false,
-    createdAt: "2025-07-03T16:39:28.4012688",
-    updatedAt: "0001-01-01T05:00:00",
-  },
-  {
-    id: 1,
-    doctorId: 2,
-    doctorName: "Test Testov",
-    userId: 1,
-    userName: "Admin User",
-    rating: 5,
-    comment: "Testing the review service",
-    isHidden: true,
-    createdAt: "2025-06-29T23:04:42.0380085",
-    updatedAt: "0001-01-01T05:00:00",
-  },
-]
+
 
 export default function ReviewsAdminTable() {
   const [searchTerm, setSearchTerm] = useState("")
   const [visibilityFilter, setVisibilityFilter] = useState("all")
   const [ratingFilter, setRatingFilter] = useState("all")
 
-  const filteredReviews = reviewsData.filter((review) => {
-    const matchesSearch =
-      review.userName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      review.doctorName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      review.comment.toLowerCase().includes(searchTerm.toLowerCase())
+  const params = {
+    doctorName: searchTerm,
+    userName: searchTerm,
+    ratingFrom: 1,
+    ratingTo: ratingFilter == "all" ? "" : ratingFilter,
+    createdFrom: "",
+    createdTo: "",
+    isHidden: visibilityFilter == "all" ? "" : visibilityFilter
+  }
+  const { data } = useGetAllReviewsQuery(params)
+  const reviewsData = data?.data
 
-    const matchesVisibility =
-      visibilityFilter === "all" ||
-      (visibilityFilter === "visible" && !review.isHidden) ||
-      (visibilityFilter === "hidden" && review.isHidden)
+  // const filteredReviews = reviewsData.filter((review) => {
+  //   const matchesSearch =
+  //     review.userName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  //     review.doctorName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  //     review.comment.toLowerCase().includes(searchTerm.toLowerCase())
 
-    const matchesRating = ratingFilter === "all" || review.rating.toString() === ratingFilter
+  //   const matchesVisibility =
+  //     visibilityFilter === "all" ||
+  //     (visibilityFilter === "visible" && !review.isHidden) ||
+  //     (visibilityFilter === "hidden" && review.isHidden)
 
-    return matchesSearch && matchesVisibility && matchesRating
-  })
+  //   const matchesRating = ratingFilter === "all" || review.rating.toString() === ratingFilter
+
+  //   return matchesSearch && matchesVisibility && matchesRating
+  // })
 
   const getVisibilityBadge = (isHidden) => {
     if (isHidden) {
@@ -111,10 +99,11 @@ export default function ReviewsAdminTable() {
   }
 
   const getAverageRating = () => {
-    if (reviewsData.length === 0) return 0
-    const sum = reviewsData.reduce((acc, review) => acc + review.rating, 0)
-    return (sum / reviewsData.length).toFixed(1)
+    if (reviewsData?.length === 0) return 0
+    const sum = reviewsData?.reduce((acc, review) => acc + review.rating, 0)
+    return (sum / reviewsData?.length).toFixed(1)
   }
+
 
   return (
     <div className="w-full space-y-6 p-6  min-h-screen">
@@ -125,7 +114,7 @@ export default function ReviewsAdminTable() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600">Total Reviews</p>
-                <p className="text-2xl font-bold text-blue-600">{reviewsData.length}</p>
+                <p className="text-2xl font-bold text-blue-600">{reviewsData?.length}</p>
               </div>
               <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
                 <Star className="w-4 h-4 text-blue-600" />
@@ -138,7 +127,7 @@ export default function ReviewsAdminTable() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600">Visible Reviews</p>
-                <p className="text-2xl font-bold text-green-600">{reviewsData.filter((r) => !r.isHidden).length}</p>
+                <p className="text-2xl font-bold text-green-600">{reviewsData?.filter((r) => !r.isHidden)?.length}</p>
               </div>
               <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
                 <Eye className="w-4 h-4 text-green-600" />
@@ -151,7 +140,7 @@ export default function ReviewsAdminTable() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600">Hidden Reviews</p>
-                <p className="text-2xl font-bold text-red-600">{reviewsData.filter((r) => r.isHidden).length}</p>
+                <p className="text-2xl font-bold text-red-600">{reviewsData?.filter((r) => r.isHidden)?.length}</p>
               </div>
               <div className="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center">
                 <EyeOff className="w-4 h-4 text-red-600" />
@@ -176,10 +165,6 @@ export default function ReviewsAdminTable() {
 
 
       <Card className="border-blue-200 shadow-lg">
-        {/* <CardHeader className="bg-gradient-to-r from-blue-400 to-indigo-200 text-white rounded-t-lg">
-          <CardTitle className="text-2xl font-bold">Doctor Reviews Management</CardTitle>
-          <CardDescription className="text-blue-100">Manage and moderate patient reviews for doctors</CardDescription>
-        </CardHeader> */}
         <CardContent className="p-6">
           {/* Filters and Search */}
           <div className="flex flex-col sm:flex-row gap-4 mb-6">
@@ -199,8 +184,8 @@ export default function ReviewsAdminTable() {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Reviews</SelectItem>
-                <SelectItem value="visible">Visible</SelectItem>
-                <SelectItem value="hidden">Hidden</SelectItem>
+                <SelectItem value="false">Visible</SelectItem>
+                <SelectItem value="true">Hidden</SelectItem>
               </SelectContent>
             </Select>
             <Select value={ratingFilter} onValueChange={setRatingFilter}>
@@ -234,7 +219,7 @@ export default function ReviewsAdminTable() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredReviews.map((review) => (
+                {reviewsData?.map((review) => (
                   <TableRow key={review.id} className="hover:bg-blue-50/50">
                     <TableCell>
                       <div className="flex items-center gap-3">

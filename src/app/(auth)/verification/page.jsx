@@ -5,28 +5,46 @@ import { Button } from "@/shared/ui/button"
 import { Input } from "@/shared/ui/input"
 import { Mail, Check, Users } from "lucide-react"
 import { useRouter } from "next/navigation"
+import { useResendVerificationCodeMutation, useVerificationMutation } from "@/entities/auth/api/auth-api"
+import toast from "react-hot-toast"
 
-export default function Component() {
+export default function VerificationPage() {
     const [code, setCode] = useState(["", "", "", "", "", ""])
     const [countdown, setCountdown] = useState(57)
     const inputRefs = useRef([])
-     const router = useRouter()
- const [userEmail, setUserEmail] = useState("")
+    const router = useRouter()
+    const [userEmail, setUserEmail] = useState("")
+ 
+    
+    
 
-useEffect(() => {
-  if (typeof window !== "undefined") {
-    const email = sessionStorage.getItem("emailForVerification")
-    if (email) {
-      setUserEmail(email)
-    }
-  }
-}, [])
+    useEffect(() => {
+        if (typeof window !== "undefined") {
+            const email = sessionStorage.getItem("emailForVerification")
+            if (email) {
+                setUserEmail(email)
+            }
+        }
+    }, [])
+
+    const [resendVerificationCode] = useResendVerificationCodeMutation()
+    const [verification] = useVerificationMutation()
+    const handleSubmit = async (e) => {
+        e.preventDefault()
+        const fullCode = code.join("")
+        const params = {
+            email: userEmail,
+            code: fullCode
+        }
+        try {
+            await verification(params).unwrap()
+            router.push("/login")
+        } catch (error) {
+            console.error(error);
+            toast.error(error?.data?.message)
+        }
 
 
-    const handleSubmit = (e)=>{
-       e.preventDefault()
-        router.push("/login")
-        
     }
 
     const handleInputChange = (index, value) => {
@@ -136,7 +154,7 @@ useEffect(() => {
                                 {countdown > 0 ? (
                                     <p className="text-sm text-teal-500">Resend code in {countdown}s</p>
                                 ) : (
-                                    <button className="text-sm text-teal-600 hover:text-teal-700 font-medium">Resend code</button>
+                                    <button onClick={()=>resendVerificationCode()} className="text-sm text-teal-600 hover:text-teal-700 font-medium">Resend code</button>
                                 )}
                             </div>
                         </form>

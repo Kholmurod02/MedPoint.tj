@@ -1,6 +1,6 @@
 "use client"
 import { useGetReviewsByUserIdQuery } from '@/entities/reviews/api/reviewApi'
-import { useGetUserByIdQuery } from '@/entities/user/api/userApi'
+import { useGetUserByIdQuery, useGetUserOrdersQuery } from '@/entities/user/api/userApi'
 import { Avatar, AvatarFallback, AvatarImage } from '@/shared/ui/avatar'
 import { Badge } from '@/shared/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/shared/ui/card'
@@ -13,48 +13,7 @@ import { useState } from 'react'
 const UserById = () => {
 
 
-    const appointments = [
-        {
-            id: 1,
-            service: "User Name",
-            provider: "Emma Wilson",
-            date: "December 28, 2024",
-            time: "2:00 PM",
-            status: "confirmed",
-            duration: "90 min",
-            price: "$85",
-        },
-        {
-            id: 2,
-            service: "Deep Tissue Massage",
-            provider: "Michael Chen",
-            date: "January 5, 2025",
-            time: "11:00 AM",
-            status: "pending",
-            duration: "60 min",
-            price: "$120",
-        },
-        {
-            id: 3,
-            service: "Facial Treatment",
-            provider: "Lisa Rodriguez",
-            date: "December 15, 2024",
-            time: "3:30 PM",
-            status: "completed",
-            duration: "75 min",
-            price: "$95",
-        },
-        {
-            id: 4,
-            service: "Manicure",
-            provider: "Anna Kim",
-            date: "December 10, 2024",
-            time: "1:00 PM",
-            status: "cancelled",
-            duration: "45 min",
-            price: "$45",
-        },
-    ]
+
 
     const { id } = useParams()
     const { data } = useGetUserByIdQuery(id)
@@ -64,6 +23,10 @@ const UserById = () => {
 
     const { data: reviews } = useGetReviewsByUserIdQuery(id)
 
+
+    const { data: appointment } = useGetUserOrdersQuery(id)
+    const appointments = appointment?.data
+    console.log(appointments);
 
 
     const renderStars = (rating) => {
@@ -170,15 +133,15 @@ const UserById = () => {
                     <Card>
                         <CardContent>
                             <div className="space-y-4">
-                                {appointments.map((appointment) => (
+                                {appointments?.map((appointment) => (
                                     <div key={appointment.id} className="border rounded-lg p-4">
                                         <div className="flex items-start justify-between">
                                             <div className="space-y-2">
                                                 <div className="flex items-center gap-2">
-                                                    <h3 className="font-semibold">{appointment.service}</h3>
+                                                    <h3 className="font-semibold">{appointment.userName}</h3>
                                                     {/* <Badge className={getStatusColor(appointment.status)}>{appointment.status}</Badge> */}
                                                 </div>
-                                                <p className="text-sm text-muted-foreground">Provider: {appointment.provider}</p>
+                                                <p className="text-sm text-muted-foreground">Dr: {appointment.doctorName}</p>
                                                 <div className="flex items-center gap-4 text-sm text-muted-foreground">
                                                     <div className="flex items-center gap-1">
                                                         <Calendar className="h-4 w-4" />
@@ -186,20 +149,32 @@ const UserById = () => {
                                                     </div>
                                                     <div className="flex items-center gap-1">
                                                         <Clock className="h-4 w-4" />
-                                                        {appointment.time}
+                                                        {appointment.startTime} -{appointment.endTime}
                                                     </div>
                                                 </div>
                                             </div>
                                             <div className="text-right">
-                                                <DropdownMenu>
+                                                {/* <DropdownMenu>
                                                     <DropdownMenuTrigger>
                                                         <MoreHorizontal />
                                                     </DropdownMenuTrigger>
                                                     <DropdownMenuContent>
                                                         <DropdownMenuItem><Trash /> Delete Appointment</DropdownMenuItem>
                                                     </DropdownMenuContent>
-                                                </DropdownMenu>
-                                            </div>
+                                                </DropdownMenu> */}
+                                                <Badge
+                                                    className={
+                                                        appointment.orderStatus === "Pending"
+                                                            ? "bg-yellow-100 text-yellow-700"
+                                                            : appointment.orderStatus === "Finished"
+                                                                ? "bg-green-100 text-green-700"
+                                                                : appointment.orderStatus === "Canceled"
+                                                                    ? "bg-red-100 text-red-700"
+                                                                    : "bg-gray-100 text-gray-700"
+                                                    }
+                                                >
+                                                    {appointment.orderStatus}
+                                                </Badge>                                            </div>
                                         </div>
                                     </div>
                                 ))}
@@ -211,10 +186,6 @@ const UserById = () => {
                 {/* Reviews Tab */}
                 <TabsContent value="reviews">
                     <Card>
-                        {/* <CardHeader>
-              <CardTitle>Customer Reviews</CardTitle>
-              <CardDescription>Reviews and ratings left by this user</CardDescription>
-            </CardHeader> */}
                         <CardContent>
                             <div className="space-y-6">
                                 {reviews?.data?.map((review) => (

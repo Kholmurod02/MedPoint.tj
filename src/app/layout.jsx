@@ -1,6 +1,7 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import StoreProvider from "./store/store-provider";
+import { Toaster } from "react-hot-toast";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -26,9 +27,12 @@ export default function RootLayout({ children }) {
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         suppressHydrationWarning
       >
-        <div className="container m-auto p-auto">
-          <StoreProvider>{children}</StoreProvider>
-        </div>
+        <StoreProvider>
+          <div className="container m-auto p-auto">
+            {children}
+          </div>
+          <Toaster position="bottom-right" reverseOrder={false}/>
+        </StoreProvider>
       </body>
     </html>
   );

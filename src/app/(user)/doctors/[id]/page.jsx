@@ -140,9 +140,9 @@ export default function DoctorById() {
 
 
       {/* Book Appointment */}
-      <section className="relative h-[550px] flex items-center my-20 justify-start p-4 bg-blue-900 bg-[url('/calendar_book.png')] bg-no-repeat bg-cover bg-center">
+      <section className="relative h-[650px] flex items-center my-20 justify-start p-4 bg-blue-900 bg-[url('/calendar_book.png')] bg-no-repeat bg-cover bg-center">
         <div className="absolute inset-0 bg-black/40 z-0" />
-        <div className="relative z-10 my-10">
+        <div className="relative z-10 my-10 w-full p-3">
           <Calendar20 />
         </div>
       </section>

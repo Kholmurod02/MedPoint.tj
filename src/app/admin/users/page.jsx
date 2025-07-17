@@ -13,6 +13,7 @@ import { MoreHorizontal, Search, UserPlus, Edit, Trash2, Mail, Shield, Save, X, 
 import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "@/shared/ui/dialog"
 import Link from "next/link"
 import { useAddUserMutation, useDeleteUserMutation, useUpdateUserMutation, useUserFiltersQuery } from "@/entities/user/api/userApi"
+import toast from "react-hot-toast"
 
 
 
@@ -30,14 +31,27 @@ export default function Users() {
     password: "",
     role: ""
   })
-  const handleAddUser = (e) => {
+  const handleAddUser = async (e) => {
     e.preventDefault()
-    addUser(user)
-    setOpen(false)
+    try {
+      await addUser(user).unwrap()
+      setOpen(false)
+      toast.success("User successfully added")
+    } catch (error) {
+      toast.error(error.data.message)
+    }
   }
 
   //  delete user
   const [deleteUser] = useDeleteUserMutation()
+  const handleDeleteUser = async (id) => {
+    try {
+      await deleteUser(id).unwrap()
+      toast.success("User successfully deleted")
+    } catch (error) {
+      toast.error(error?.data?.message)
+    }
+  }
 
   //filter users
   const [nameFilter, setNameFilter] = useState("")
@@ -57,102 +71,11 @@ export default function Users() {
   }
   const { data: filteredData } = useUserFiltersQuery(params)
 
-  // update user 
-  const [update, setUpdate] = useState({
-    firstName: "",
-    lastName: "",
-    email: "",
-    phone: ""
-  })
-  const [idx, setIdx] = useState(null)
-  const [editOpen, setEditOpen] = useState(false)
-  const [updateUser] = useUpdateUserMutation()
-  const handleUpdateUser = (e) => {
-    e.preventDefault()
-    updateUser({id: idx, newUser: update})
-    setEditOpen(false)
-  }
-
-
 
 
   return (
     <div className="container mx-auto p-6 space-y-6">
 
-      {/* edit dialog */}
-      <Dialog open={editOpen} onOpenChange={setEditOpen}>
-        <DialogContent>
-          <DialogTitle>
-            Edit User
-          </DialogTitle>
-          <form onSubmit={handleUpdateUser}>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-5 py-5">
-
-              <div className="space-y-2">
-                <Label htmlFor="firstName">First Name</Label>
-                <Input
-                  id="firstName"
-                  placeholder="Enter First Name..."
-                  required
-                  value={update.firstName}
-                  onChange={(e) => setUpdate({ ...update, firstName: e.target.value })}
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="lastName">Last Name</Label>
-                <Input
-                  id="lastName"
-                  placeholder="Enter Last Name..."
-                  required
-                  value={update.lastName}
-                  onChange={(e) => setUpdate({ ...update, lastName: e.target.value })}
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="phone">Phone Number</Label>
-                <Input
-                  type='number'
-                  id="phone"
-                  placeholder="Enter Phone Number..."
-                  required
-                  value={update.phone}
-                  onChange={(e) => setUpdate({ ...update, phone: e.target.value })}
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="email">Email Address</Label>
-                <Input
-                  type='email'
-                  id="email"
-                  placeholder="Enter Email Address..."
-                  required
-                  value={update.email}
-                  onChange={(e) => setUpdate({ ...update, email: e.target.value })}
-                />
-              </div>
-
-            </div>
-            <div className="flex justify-end space-x-2 mt-5">
-              <Button
-                size="sm"
-              >
-                <Save className="h-4 w-4 mr-2" />
-                Save
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-              >
-                <X className="h-4 w-4 mr-2" />
-                Cancel
-              </Button>
-            </div>
-          </form>
-        </DialogContent>
-      </Dialog>
 
       {/* Header */}
       <div className="flex items-center justify-between">
@@ -437,32 +360,8 @@ export default function Users() {
                             View Details
                           </DropdownMenuItem>
                         </Link>
-                        {/* edit */}
-                        <DropdownMenuItem onClick={() => {
-                          setUpdate({
-                            firstName: user?.firstName,
-                            lastName: user?.lastName,
-                            email: user?.email,
-                            phone: user?.phone,
-                          });
-                          setEditOpen(true);
-                          setIdx(user.id)
-                        }}>
-                          <Edit className="mr-4 h-4 w-4" />
-                          Update User
-                        </DropdownMenuItem>
-                        {/* <DropdownMenuItem>
-                          <Shield className="mr-2 h-4 w-4" />
-                          Change Role
-                        </DropdownMenuItem> */}
-                        {/* {!user.is_email_verified && (
-                          <DropdownMenuItem>
-                            <Mail className="mr-2 h-4 w-4" />
-                            Send Verification
-                          </DropdownMenuItem>
-                        )} */}
                         {/* delete */}
-                        <DropdownMenuItem className="text-destructive" onClick={() => deleteUser(user.id)}>
+                        <DropdownMenuItem className="text-destructive" onClick={() => handleDeleteUser(user.id)}>
                           <Trash2 className="mr-2 h-4 w-4" />
                           {user.is_deleted ? "Restore User" : "Delete User"}
                         </DropdownMenuItem>

@@ -13,16 +13,18 @@ import {
   SidebarMenuItem,
 } from "@/shared/ui/sidebar"
 import { Calendar, LayoutDashboard, MessageSquare, UserCircle, Settings, Stethoscope, Users, LogOut, ChevronRight } from "lucide-react"
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { Popover, PopoverContent, PopoverTrigger } from "@/shared/ui/popover"
 import { Button } from "@/shared/ui/button"
 
 import { useCurrentUserQuery } from "@/entities/user/api/userApi"
+import { useRouter } from "next/navigation"
 
 
 export function AppSidebar() {
   const [role, setRole] = useState("Admin")
   const { data } = useCurrentUserQuery()
+  const router = useRouter()
 
 
 
@@ -39,12 +41,12 @@ export function AppSidebar() {
       icon: Calendar,
       highlight: "bg-emerald-800",
     },
-    {
-      title: "Reviews",
-      url: "/master/reviews",
-      icon: MessageSquare,
-      highlight: "bg-yellow-600",
-    },
+    // {
+    //   title: "Reviews",
+    //   url: "/master/reviews",
+    //   icon: MessageSquare,
+    //   highlight: "bg-yellow-600",
+    // },
     {
       title: "Profile",
       url: "/master/profile",
@@ -92,7 +94,7 @@ export function AppSidebar() {
     }
   ]
 
-  const menuItems = role === "Admin" ? adminMenuItems : role === "Doctor"? masterMenuItems: [];
+  const menuItems = role === "Admin" ? adminMenuItems : role === "Doctor"? masterMenuItems: router.push('/login');
 
 
 

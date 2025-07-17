@@ -9,39 +9,13 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/shared/ui/tabs"
 import { Star, Calendar, Clock, MessageSquare } from "lucide-react"
 import { Button } from "@/shared/ui/button"
 import { useParams, useRouter } from "next/navigation"
-import { useGetDoctorByIdQuery } from "@/entities/doctor/api/doctorApi"
+import { useGetDoctorByIdQuery, useGetDoctorOrdersQuery } from "@/entities/doctor/api/doctorApi"
 import { useGetReviewsByDoctorIdQuery } from "@/entities/reviews/api/reviewApi"
 
 
 
-// Mock appointments data
-const appointmentsData = [
-  {
-    id: 1,
-    patientName: "John Smith",
-    date: "2024-01-15",
-    time: "10:00 AM",
-    status: "confirmed",
-    type: "Consultation",
-  },
-  {
-    id: 2,
-    patientName: "Sarah Johnson",
-    date: "2024-01-15",
-    time: "2:30 PM",
-    status: "pending",
-    type: "Follow-up",
-  },
-  {
-    id: 3,
-    patientName: "Mike Wilson",
-    date: "2024-01-16",
-    time: "9:15 AM",
-    status: "completed",
-    type: "Check-up",
-  },
-]
- 
+
+
 
 export default function DoctorProfileById() {
   const router = useRouter()
@@ -50,11 +24,14 @@ export default function DoctorProfileById() {
   const { data } = useGetDoctorByIdQuery(id)
   const doctorData = data?.data
 
-  const {data:reviews}=useGetReviewsByDoctorIdQuery(id)
+  const { data: reviews } = useGetReviewsByDoctorIdQuery(id)
   const doctorReviews = reviews?.data;
-  
-  
-  
+
+  const { data: doctorOrder } = useGetDoctorOrdersQuery(id)
+  const appointmentsData = doctorOrder?.data
+
+
+
 
 
 
@@ -200,11 +177,11 @@ export default function DoctorProfileById() {
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                {appointmentsData.map((appointment) => (
+                {appointmentsData?.map((appointment) => (
                   <div key={appointment.id} className="p-4 rounded-lg bg-slate-50/50 border border-slate-200/50">
                     <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
                       <div className="flex-1">
-                        <h4 className="font-semibold text-slate-800">{appointment.patientName}</h4>
+                        <h4 className="font-semibold text-slate-800">{appointment.userName}</h4>
                         <p className="text-sm text-slate-600">{appointment.type}</p>
                       </div>
 
@@ -215,25 +192,20 @@ export default function DoctorProfileById() {
                         </div>
                         <div className="flex items-center gap-2 text-sm text-slate-600">
                           <Clock className="w-4 h-4" />
-                          {appointment.time}
+                          {appointment.startTime}-{appointment.endTime}
                         </div>
                         <Badge
-                          variant={
-                            appointment.status === "confirmed"
-                              ? "default"
-                              : appointment.status === "pending"
-                                ? "secondary"
-                                : "outline"
-                          }
                           className={
-                            appointment.status === "confirmed"
-                              ? "bg-green-100 text-green-800"
-                              : appointment.status === "pending"
-                                ? "bg-yellow-100 text-yellow-800"
-                                : "bg-slate-100 text-slate-600"
+                            appointment.orderStatus === "Pending"
+                              ? "bg-yellow-100 text-yellow-700"
+                              : appointment.orderStatus === "Finished"
+                                ? "bg-green-100 text-green-700"
+                                : appointment.orderStatus === "Canceled"
+                                  ? "bg-red-100 text-red-700"
+                                  : "bg-gray-100 text-gray-700"
                           }
                         >
-                          {appointment.status}
+                          {appointment.orderStatus}
                         </Badge>
                       </div>
                     </div>

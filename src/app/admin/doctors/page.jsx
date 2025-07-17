@@ -14,6 +14,7 @@ import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "@/shared/ui/d
 import Link from "next/link"
 import { useAddDoctorMutation, useGetAllDoctorsQuery, useGetDoctorsSpecializationsQuery, useRemoveDoctorMutation, useUpdateDoctorMutation } from "@/entities/doctor/api/doctorApi"
 import { Textarea } from "@/shared/ui/textarea"
+import toast from "react-hot-toast"
 
 
 
@@ -30,10 +31,15 @@ export default function Doctors() {
   })
 
   const [addDoctor] = useAddDoctorMutation()
-  const handleAddDoctor = (e) => {
+  const handleAddDoctor = async(e) => {
     e.preventDefault()
-    addDoctor(doctor)
-    setAddDialog(false)
+    try {
+     await addDoctor(doctor).unwrap()
+      setAddDialog(false)
+      toast.success("Doctor Successfully added")
+    } catch (error) {
+      toast.error(error?.data?.message)
+    }
   }
 
   const [nameFilter, setNameFilter] = useState("")
@@ -52,157 +58,13 @@ export default function Doctors() {
 
   const { data: doctors, isLoading, error } = useGetAllDoctorsQuery(params)
   const { data: specs } = useGetDoctorsSpecializationsQuery()
-
-
-  const [editDialog, setEditDialog] = useState(false)
-  const [idx, setIdx] = useState(null)
-  const [editedDoctor, setEditedDoctor] = useState({
-    firstName: "",
-    lastName: "",
-    phone: "",
-    email: "",
-    password: "",
-    specialization: [],
-    description: ""
-  })
-
-  const editDoctorFunc = (el) => {
-    setEditedDoctor({
-      firstName: el?.firstName,
-      lastName: el?.lastName,
-      phone: el?.phone,
-      email: el?.email,
-      specialization: el?.specialization,
-      description: el?.description
-    })
-    setEditDialog(true)
-    setIdx(el.id)
-  }
-
-  const [updateDoctor] = useUpdateDoctorMutation()
-  const handleEditDoctor = (e) => {
-    e.preventDefault()
-    updateDoctor({ id: idx, editedDoctor })
-    setEditDialog(false)
-  }
-
+ 
   const [removeDoctor] = useRemoveDoctorMutation()
-
-
-
-
-
 
 
   return (
     <div className="container mx-auto p-6 space-y-6">
-      {/* edit Dialog */}
-      <Dialog open={editDialog} onOpenChange={setEditDialog}>
-        <DialogContent>
-          <DialogTitle>
-            Add new User
-          </DialogTitle>
-          <form onSubmit={handleEditDoctor}>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-5 py-5">
-              {/* firstName */}
-              <div className="space-y-2">
-                <Label htmlFor="firstName">First Name</Label>
-                <Input
-                  id="firstName"
-                  placeholder="Enter First Name..."
-                  required
-                  value={editedDoctor?.firstName}
-                  onChange={(e) => setEditedDoctor({ ...editedDoctor, firstName: e.target.value })}
-                />
-              </div>
-              {/* lastName */}
-              <div className="space-y-2">
-                <Label htmlFor="lastName">Last Name</Label>
-                <Input
-                  id="lastName"
-                  placeholder="Enter Last Name..."
-                  required
-                  value={editedDoctor.lastName}
-                  onChange={(e) => setEditedDoctor({ ...editedDoctor, lastName: e.target.value })}
-                />
-              </div>
-              {/* phone */}
-              <div className="space-y-2">
-                <Label htmlFor="phone">Phone Number</Label>
-                <Input
-                  type='number'
-                  id="phone"
-                  placeholder="Enter Phone Number..."
-                  required
-                  value={editedDoctor.phone}
-                  onChange={(e) => setEditedDoctor({ ...editedDoctor, phone: e.target.value })}
-                />
-              </div>
-              {/* email */}
-              <div className="space-y-2">
-                <Label htmlFor="email">Email Address</Label>
-                <Input
-                  type='email'
-                  id="email"
-                  placeholder="Enter Email Address..."
-                  required
-                  value={editedDoctor.email}
-                  onChange={(e) => setEditedDoctor({ ...editedDoctor, email: e.target.value })}
-                />
-              </div>
-              {/* specialization */}
-              <div className="space-y-2">
-                <Label htmlFor="role">Specializations</Label>
-                <Select
-                  value={editedDoctor.specialization[0] || ""}
-                  onValueChange={(value) => setEditedDoctor({ ...editedDoctor, specialization: [value] })}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select Specialization" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {specs?.data.map((el) => <SelectItem key={el.id} value={el.name}>{el.name}</SelectItem>)}
-                  </SelectContent>
-                  {/* <SelectContent value="JuniorDoctor">JuniorDoctor</SelectContent>
-                    <SelectContent value="MiddleDoctor">MiddleDoctor</SelectContent>
-                    <SelectContent value='SeniorDoctor'>SeniorDoctor</SelectContent> */}
-                </Select>
-              </div>
-              {/* description */}
-              <div className="space-y-2">
-                <Label htmlFor="desc">Description*</Label>
-                <Textarea
-                  id="desc"
-                  placeholder="Enter your description ..."
-                  required
-                  value={editedDoctor.description}
-                  onChange={(e) => setEditedDoctor({ ...editedDoctor, description: e.target.value })}
-                />
-
-              </div>
-
-            </div>
-
-            {/* action */}
-            <div className="flex justify-end space-x-2 mt-5">
-              <Button
-                size="sm"
-                type='submit'
-              >
-                <Save className="h-4 w-4 mr-2" />
-                Save
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-              >
-                <X className="h-4 w-4 mr-2" />
-                Cancel
-              </Button>
-            </div>
-          </form>
-        </DialogContent>
-      </Dialog>
+      
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
@@ -218,7 +80,7 @@ export default function Doctors() {
           </DialogTrigger>
           <DialogContent>
             <DialogTitle>
-              Add new User
+              Add New Doctor
             </DialogTitle>
             <form onSubmit={handleAddDoctor}>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5 py-5">
@@ -486,11 +348,13 @@ export default function Doctors() {
                             View Details
                           </DropdownMenuItem>
                         </Link>
-                        <DropdownMenuItem onClick={() => editDoctorFunc(doctor)}>
+                        {/* <DropdownMenuItem onClick={() => editDoctorFunc(doctor)}>
                           <Edit className="mr-2 h-4 w-4" />
                           Edit  Doctor
-                        </DropdownMenuItem>
-                        <DropdownMenuItem className="text-destructive" onClick={() => removeDoctor(doctor.id)}>
+                        </DropdownMenuItem> */}
+                        <DropdownMenuItem className="text-destructive" onClick={() =>{ removeDoctor(doctor.id),
+                          toast.success("Doctor successfully deleted")
+                        }}>
                           <Trash2 className="mr-2 h-4 w-4" />
                           {doctor.isDeleted ? "Restore User" : "Delete User"}
                         </DropdownMenuItem>

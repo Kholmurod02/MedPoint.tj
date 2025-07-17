@@ -21,7 +21,7 @@ export async function POST(req) {
     // Определяем URL для редиректа
     let redirectUrl = '/';
     if (role === 'Admin') redirectUrl = '/admin/';
-    if (role === 'Master') redirectUrl = '/master/';
+    if (role === 'Doctor') redirectUrl = '/master/';
 
     const response = NextResponse.json(
       { message: 'Login successful', role },

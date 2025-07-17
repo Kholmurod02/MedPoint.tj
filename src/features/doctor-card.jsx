@@ -2,6 +2,7 @@ import Image from "next/image"
 import { Card, CardContent, CardFooter } from "@/shared/ui/card"
 import { Button } from "@/shared/ui/button"
 import { Facebook, Linkedin, Twitter } from "lucide-react"
+import Link from "next/link"
 
 
 export default function DoctorCard({doctor}) {
@@ -10,6 +11,7 @@ export default function DoctorCard({doctor}) {
   const imageUrl = doctor?.profileImageUrl || null
 
   return (
+    <Link href={`/doctors/${doctor.id}`}>
     <Card className=" max-w-sm overflow-hidden rounded-xl shadow-lg bg-white " >
       <div className="relative bg-doctor-card-bg-light-blue h-[235px] flex items-center justify-center ">
         <Image
@@ -48,5 +50,7 @@ export default function DoctorCard({doctor}) {
         </Button>
       </CardFooter>
     </Card>
+    </Link>
+
   )
 }

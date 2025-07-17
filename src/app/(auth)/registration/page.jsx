@@ -14,11 +14,13 @@ import { Eye, EyeOff, Mail, Lock, ArrowRight, ShieldCheck, MailCheck, UserPlus, 
 import { z } from "zod"
 import { useForm } from "react-hook-form"
 
-import { zodResolver } from "@hookform/resolvers/zod" 
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useRegistrationMutation } from "@/entities/auth/api/auth-api"
+import toast from "react-hot-toast"
 
 const formSchema = z.object({
-  firstName: z.string().min(1, "First name is required"),
-  lastName: z.string().min(1, "Last name is required"),
+  firstName: z.string().min(3, "First name must be at least 3 letters"),
+  lastName: z.string().min(3, "Last name must be at least 3 letters"),
   email: z.string().email("Invalid email address"),
   phone: z.string().min(9, "Phone number is required"),
   password: z.string().min(6, "Password must be at least 6 characters"),
@@ -38,13 +40,22 @@ export default function Registration() {
     resolver: zodResolver(formSchema),
   })
 
-  const onSubmit = (data) => {
-    setIsLoading(true)
-     if (typeof window !== "undefined") {
-
-       sessionStorage.setItem("emailForVerification", data.email)
+  const [registration] = useRegistrationMutation()
+  const onSubmit = async (data) => {
+    try {
+      await registration(data).unwrap()
+      setIsLoading(true)
+      if (typeof window !== "undefined") {
+        sessionStorage.setItem("emailForVerification", data?.email)
       }
-    router.push("/verification")
+      // if(data?.status == 200){
+        toast.success("You successfully registered ")
+        router.push("/verification")
+      // }
+    } catch (error) {
+      console.error(error);
+      toast.error(error?.data?.message)
+    }
   }
 
   return (

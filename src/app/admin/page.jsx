@@ -5,6 +5,8 @@ import { Area, AreaChart, Bar, BarChart, CartesianGrid, Line, LineChart, XAxis, 
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/shared/ui/card"
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/shared/ui/chart"
+import { useGetCountStatsQuery } from "@/entities/dashboards/api/statistics"
+import { Progress } from "@/shared/ui/progress"
 
 const userData = [
   { month: "Jan", users: 1200, doctors: 45, appointments: 890, reviews: 234 },
@@ -23,6 +25,10 @@ const monthlyStats = [
 ]
 
 export default function DashboardAdmin() {
+
+  const { data: stats } = useGetCountStatsQuery()
+  const countStats = stats?.data
+
   return (
     <div className="min-h-screen bg-gray-50 p-6 w-full container m-auto">
       <div className="max-w-7xl mx-auto space-y-6">
@@ -43,13 +49,17 @@ export default function DashboardAdmin() {
               </div>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-gray-900">2,100</div>
-              <div className="flex items-center text-xs text-green-600 mt-1">
+              <div className="text-2xl font-bold text-gray-900">{countStats?.usersCount}</div>
+              {/* <div className="flex items-center text-xs text-green-600 mt-1">
                 <TrendingUp className="h-3 w-3 mr-1" />
                 <span className="font-medium">+11.1%</span> from last month
-              </div>
-              <div className="mt-3 h-2 bg-blue-100 rounded-full">
-                <div className="h-2 bg-blue-500 rounded-full w-3/4"></div>
+              </div> */}
+              <div className="mt-3 h-2 rounded-full">
+                <div className="h-2 w-3/4">
+                  <Progress
+                    className='bg-blue-100'
+                    value={countStats?.usersCount} />
+                </div>
               </div>
             </CardContent>
           </Card>
@@ -63,13 +73,17 @@ export default function DashboardAdmin() {
               </div>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-gray-900">62</div>
-              <div className="flex items-center text-xs text-green-600 mt-1">
+              <div className="text-2xl font-bold text-gray-900">{countStats?.doctorsCount}</div>
+              {/* <div className="flex items-center text-xs text-green-600 mt-1">
                 <TrendingUp className="h-3 w-3 mr-1" />
                 <span className="font-medium">+6.9%</span> from last month
-              </div>
+              </div> */}
               <div className="mt-3 h-2 bg-green-100 rounded-full">
-                <div className="h-2 bg-green-500 rounded-full w-2/3"></div>
+                <div className="h-2 w-3/4">
+                  <Progress
+                    className='bg-green-100  [&>div]:bg-green-600'
+                    value={countStats?.doctorsCount} />
+                </div>
               </div>
             </CardContent>
           </Card>
@@ -83,13 +97,17 @@ export default function DashboardAdmin() {
               </div>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-gray-900">1,680</div>
-              <div className="flex items-center text-xs text-green-600 mt-1">
+              <div className="text-2xl font-bold text-gray-900">{countStats?.ordersCount}</div>
+              {/* <div className="flex items-center text-xs text-green-600 mt-1">
                 <TrendingUp className="h-3 w-3 mr-1" />
                 <span className="font-medium">+10.5%</span> from last month
-              </div>
+              </div> */}
               <div className="mt-3 h-2 bg-purple-100 rounded-full">
-                <div className="h-2 bg-purple-500 rounded-full w-4/5"></div>
+                <div className="h-2 w-3/4">
+                  <Progress
+                    className='bg-purple-100  [&>div]:bg-purple-600'
+                    value={countStats?.ordersCount} />
+                </div>
               </div>
             </CardContent>
           </Card>
@@ -103,13 +121,17 @@ export default function DashboardAdmin() {
               </div>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-gray-900">412</div>
-              <div className="flex items-center text-xs text-green-600 mt-1">
+              <div className="text-2xl font-bold text-gray-900">{countStats?.reviewsCount}</div>
+              {/* <div className="flex items-center text-xs text-green-600 mt-1">
                 <TrendingUp className="h-3 w-3 mr-1" />
                 <span className="font-medium">+9.0%</span> from last month
-              </div>
+              </div> */}
               <div className="mt-3 h-2 bg-orange-100 rounded-full">
-                <div className="h-2 bg-orange-500 rounded-full w-3/5"></div>
+                <div className="h-2 w-3/4">
+                <Progress
+                 className='bg-orange-100  [&>div]:bg-orange-600'
+                 value={countStats?.doctorsCount}/>
+                </div>
               </div>
             </CardContent>
           </Card>
@@ -121,7 +143,7 @@ export default function DashboardAdmin() {
           <Card>
             <CardHeader>
               <CardTitle>User Growth</CardTitle>
-              <CardDescription>User growth dynamics over the last 6 months</CardDescription>
+              {/* <CardDescription>User growth dynamics over the last 6 months</CardDescription> */}
             </CardHeader>
             <CardContent>
               <ChartContainer

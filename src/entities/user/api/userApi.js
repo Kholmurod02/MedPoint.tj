@@ -58,7 +58,7 @@ export const userApi = createApi({
             query: (formdata) => ({
                 url: "/User/upload-or-update-profile-image",
                 method: "POST",
-               body:formdata
+                body: formdata
             }),
             invalidatesTags: ["userApi"]
         }),
@@ -71,6 +71,11 @@ export const userApi = createApi({
             invalidatesTags: ['userApi']
         }),
 
+        getUserOrders: builder.query({
+            query: (id) => `/Order/User-orders?userId=${id}`,
+            providesTags:['userApi']
+        })
+
 
     })
 })
@@ -78,5 +83,5 @@ export const userApi = createApi({
 export const {
     useGetUserByIdQuery, useAddUserMutation, useDeleteUserMutation,
     useUserFiltersQuery, useUpdateUserMutation, useCurrentUserQuery,
-    useChangeImageUserMutation, useDeleteUserImageMutation
+    useChangeImageUserMutation, useDeleteUserImageMutation,useGetUserOrdersQuery
 } = userApi

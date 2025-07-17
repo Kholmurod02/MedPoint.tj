@@ -79,9 +79,7 @@ const DoctorsPage = () => {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {doctors?.map((doctor) => (
-           <Link key={doctor?.id}  href={`/doctors/${doctor.id}`}>
-            <DoctorCard doctor={doctor} />
-            </Link>
+            <DoctorCard  key={doctor.id} doctor={doctor} />
           ))}
         </div>
       </div>
