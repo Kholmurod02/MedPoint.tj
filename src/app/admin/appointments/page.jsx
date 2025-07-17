@@ -197,7 +197,7 @@ export default function AppointmentTable() {
               <div className="relative">
                 <Dialog open={open} onOpenChange={setOpen}>
                   <DialogTrigger asChild>
-                    <Button>Add Appointment</Button>
+                    <Button className={'bg-blue-600'}>Add Appointment</Button>
                   </DialogTrigger>
                     <DialogContent>
                   <form onSubmit={handleAddAppointmentByAdmin}>
