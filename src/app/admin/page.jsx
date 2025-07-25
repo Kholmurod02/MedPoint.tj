@@ -8,8 +8,9 @@ import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/shared/ui/c
 import { useGetCountStatsQuery } from "@/entities/dashboards/api/statistics"
 import { Progress } from "@/shared/ui/progress"
 import { useState } from "react"
-import ReactApexChart from "react-apexcharts"
+import dynamic from "next/dynamic"
 
+const ReactApexChart = dynamic(() => import("react-apexcharts"), { ssr: false })
 const userData = [
   { month: "Jan", users: 1200, doctors: 45, appointments: 890, reviews: 234 },
   { month: "Feb", users: 1350, doctors: 48, appointments: 1020, reviews: 267 },
