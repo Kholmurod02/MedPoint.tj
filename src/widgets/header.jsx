@@ -11,16 +11,25 @@ import {
   DropdownMenuTrigger,
 } from "@/shared/ui/dropdown-menu"
 import Image from "next/image"
+import Cookies from "js-cookie"
+import { useCurrentUserQuery } from "@/entities/user/api/userApi"
+import { useRouter } from "next/navigation"
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isLoggedIn, setIsLoggedIn] = useState(false)
-  const [user] = useState({ name: "John Doe", email: "john@example.com" })
+  const token = Cookies.get("token")
+  
+  const { data, isLoading } = useCurrentUserQuery(undefined, {
+    skip: !token,
+  });
+  const user = data?.data
 
   // Check for authentication token on component mount
   useEffect(() => {
-    const token = localStorage.getItem("authToken")
-    setIsLoggedIn(!!token)
+    console.log(token);
+    
+    setIsLoggedIn(token)
   }, [])
 
   const navigationItems = [
@@ -30,17 +39,19 @@ export default function Header() {
     { name: "Contact", href: "/contact" },
   ]
 
-  const handleLogout = () => {
-    localStorage.removeItem("authToken")
+    const router = useRouter();
+
+  const handleLogout =  () => {
+
+    Cookies.remove("token")
     setIsLoggedIn(false)
-    // Add your logout logic here
-  }
+    router.push('/login'); 
+  };
+
 
   const handleLogin = () => {
-    // Simulate login - replace with actual login logic
-    localStorage.setItem("authToken", "sample-token")
     setIsLoggedIn(true)
-    // Add your login logic here
+    window.location.href = '/login'
   }
 
   return (
@@ -91,17 +102,17 @@ export default function Header() {
                   <DropdownMenuTrigger asChild>
                     <button className="flex items-center space-x-2 text-white hover:text-blue-200 transition-colors duration-200">
                       <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
-                        <User size={16} />
+                       {user && user?.firstName.charAt(0)}{user?.lastName.charAt(0)}
                       </div>
-                      <span className="hidden xl:block">{user.name}</span>
+                    
                     </button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="w-56">
-                    <div className="px-2 py-1.5">
-                      <p className="text-sm font-medium">{user.name}</p>
-                      <p className="text-xs text-gray-500">{user.email}</p>
+                  <DropdownMenuContent align="end" className="w-56 pt-5">
+                    {/* <div className="px-2 py-1.5">
+                      <p className="text-sm font-medium">{user?.firstName}</p>
+                      <p className="text-xs text-gray-500">{user?.email}</p>
                     </div>
-                    <DropdownMenuSeparator />
+                    <DropdownMenuSeparator /> */}
                     <DropdownMenuItem asChild>
                       <Link href="/profile" className="flex items-center">
                         <User className="mr-2 h-4 w-4" />
@@ -127,18 +138,11 @@ export default function Header() {
                 <Link href='/login'>
                   <Button
                     variant="ghost"
-                    className="text-white hover:text-blue-200 hover:bg-blue-700"
-                    onClick={handleLogin}
+                    className="w-full bg-white text-[#3B4A8C] hover:bg-blue-50 font-medium py-3 rounded-lg" onClick={handleLogin}
                   >
                     Login
                   </Button>
                 </Link>
-                <Button
-                  className="bg-white text-[#3B4A8C] hover:bg-blue-50 font-medium px-4 py-2 rounded-full"
-                  onClick={handleLogin}
-                >
-                  Sign Up
-                </Button>
               </div>
             )}
           </div>
@@ -148,7 +152,7 @@ export default function Header() {
         {isMenuOpen && (
           <div className="lg:hidden border-t border-blue-600">
             <div className="py-4 max-h-screen overflow-y-auto">
-              
+
 
               {/* Navigation Links */}
               <nav className="px-4 space-y-1">
@@ -168,7 +172,7 @@ export default function Header() {
               {isLoggedIn ? (
                 <div className="border-t border-blue-600 mt-4 pt-4 px-4">
                   <div className="space-y-2">
-                   
+
                     <Link
                       href="/profile"
                       className="flex items-center space-x-3 py-3 px-2 text-white hover:text-blue-200 hover:bg-blue-700 rounded-lg transition-colors duration-200"
@@ -200,18 +204,8 @@ export default function Header() {
               ) : (
                 <div className="border-t border-blue-600 mt-4 pt-4 px-4 space-y-3">
                   <Button
-                    className="w-full bg-white text-[#3B4A8C] hover:bg-blue-50 font-medium py-3 rounded-lg"
-                    onClick={() => {
-                      handleLogin()
-                      setIsMenuOpen(false)
-                    }}
-                  >
-                    Sign Up
-                  </Button>
-                  <Button
                     variant="ghost"
-                    className="w-full text-white hover:text-blue-200 hover:bg-blue-700 py-3 rounded-lg"
-                    onClick={() => {
+                    className="w-full bg-white text-[#3B4A8C] hover:bg-blue-50 font-medium py-3 rounded-lg" onClick={() => {
                       handleLogin()
                       setIsMenuOpen(false)
                     }}

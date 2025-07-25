@@ -7,6 +7,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/sha
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/shared/ui/chart"
 import { useGetCountStatsQuery } from "@/entities/dashboards/api/statistics"
 import { Progress } from "@/shared/ui/progress"
+import { useState } from "react"
+import ReactApexChart from "react-apexcharts"
 
 const userData = [
   { month: "Jan", users: 1200, doctors: 45, appointments: 890, reviews: 234 },
@@ -17,6 +19,8 @@ const userData = [
   { month: "Jun", users: 2100, doctors: 62, appointments: 1680, reviews: 412 },
 ]
 
+
+
 const monthlyStats = [
   { category: "Users", current: 2100, previous: 1890, growth: 11.1 },
   { category: "Doctors", current: 62, previous: 58, growth: 6.9 },
@@ -25,6 +29,49 @@ const monthlyStats = [
 ]
 
 export default function DashboardAdmin() {
+  const [options, setOptions] = useState({
+    chart: {
+      type: "line",
+      height: 350,
+      toolbar: { show: false },
+    },
+    stroke: {
+      curve: "smooth",
+      width: 2,
+    },
+    title: {
+      text: "Users vs Doctors",
+      align: "left",
+      style: {
+        fontSize: "16px",
+        color: "#333",
+      },
+    },
+    xaxis: {
+      categories: ["Jan", "Feb", "Mar", "Apr", "May"],
+      title: {
+        text: "Month",
+      },
+    },
+    yaxis: {
+      title: {
+        text: "Count",
+      },
+    },
+    colors: ["#007bff", "#00e396"],
+    legend: {
+      position: "top",
+      horizontalAlign: "right",
+    },
+    dataLabels: {
+      enabled: false,
+    },
+    grid: {
+      borderColor: "#e7e7e7",
+    },
+  });
+
+const [series,setSeries] = useState([{name:"Users",data:[1,2,3,4,12,]},{name:"Doctors",data:[2,4,1,41,2]}])
 
   const { data: stats } = useGetCountStatsQuery()
   const countStats = stats?.data
@@ -128,9 +175,9 @@ export default function DashboardAdmin() {
               </div> */}
               <div className="mt-3 h-2 bg-orange-100 rounded-full">
                 <div className="h-2 w-3/4">
-                <Progress
-                 className='bg-orange-100  [&>div]:bg-orange-600'
-                 value={countStats?.doctorsCount}/>
+                  <Progress
+                    className='bg-orange-100  [&>div]:bg-orange-600'
+                    value={countStats?.doctorsCount} />
                 </div>
               </div>
             </CardContent>
@@ -155,19 +202,12 @@ export default function DashboardAdmin() {
                 }}
                 className="h-[300px] w-[100%]"
               >
-                <AreaChart data={userData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="month" />
-                  <YAxis />
-                  <ChartTooltip content={<ChartTooltipContent />} />
-                  <Area
-                    type="monotone"
-                    dataKey="users"
-                    stroke="var(--color-users)"
-                    fill="var(--color-users)"
-                    fillOpacity={0.3}
-                  />
-                </AreaChart>
+                <ReactApexChart
+                  options={options}
+                  series={series}
+                  type="area"
+                  height={220}
+                />
               </ChartContainer>
             </CardContent>
           </Card>

@@ -84,7 +84,6 @@ export default function AppointmentTable() {
   const [docIdx, setDocIdx] = useState(null)
   const { data: doctors } = useGetDoctorByNameQuery(docByName)
   const filteredDoctors = doctors?.data
-  console.log(docIdx);
 
 
   // filtered user
@@ -92,13 +91,11 @@ export default function AppointmentTable() {
   const [userIdx, setUserIdx] = useState(null)
   const { data: users } = useGetUserByNameQuery(userByName)
   const filteredUsers = users?.data
-  console.log(userIdx);
 
 
   const [aptDate, setAptDate] = useState('')
   const [aptTime, setAptTime] = useState('')
-  console.log('aptDate', aptDate);
-  console.log('aptTime', aptTime);
+
 
   const [addOrderByAdmin] = useAddOrderByAdminMutation()
 

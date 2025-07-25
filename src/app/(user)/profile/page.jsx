@@ -240,9 +240,9 @@ export default function DashboardPage() {
 
             </div>
             <div className="flex flex-col items-center gap-3">
-              <Avatar className="h-52 w-52  border-gray-200 rounded overflow-hidden">
+              <Avatar className="h-52 w-52  border-gray-200 rounded-[50%] overflow-hidden">
                 <AvatarImage
-                  src={userData?.profileImageUrl || PLACEHOLDER_PROFILE_IMAGE}
+                  src={userData?.profileImageUrl}
                   alt={`${userData?.firstName ?? ""} ${userData?.lastName ?? ""}`}
                 />
                 <AvatarFallback>

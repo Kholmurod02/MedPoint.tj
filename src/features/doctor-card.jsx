@@ -12,7 +12,7 @@ export default function DoctorCard({doctor}) {
 
   return (
     <Link href={`/doctors/${doctor.id}`}>
-    <Card className=" max-w-sm overflow-hidden rounded-xl shadow-lg bg-white " >
+    <Card className=" max-w-sm overflow-hidden rounded-xl shadow-lg bg-white h-[620px] " >
       <div className="relative bg-doctor-card-bg-light-blue h-[235px] flex items-center justify-center ">
         <Image
           src={imageUrl || "/placeholder.svg"}
@@ -26,7 +26,7 @@ export default function DoctorCard({doctor}) {
         </Button>
       </div>
       <CardContent className="p-4 text-center">
-        <h2 className="text-2xl font-bold text-doctor-card-text-dark-blue mt-4">Dr. {fullName}, MD</h2>
+        <h2 className="text-2xl font-bold text-doctor-card-text-dark-blue mt-4">{fullName}</h2>
         <p className="text-doctor-card-text-gray text-base mt-1">
           {primarySpecialization.replace(/([A-Z])/g, " $1").trim()}
         </p>

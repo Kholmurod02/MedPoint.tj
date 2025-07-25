@@ -9,8 +9,6 @@ const ReviewsSection = () => {
 
     const { data } = useGetReviewsForClientsQuery()
     const reviewData = data?.data;
-    console.log(reviewData);
-
 
 
     const formatDate = (dateString) => {

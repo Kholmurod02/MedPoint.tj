@@ -32,7 +32,17 @@ export const orderApi = createApi({
             query: (orderId) => ({
                 url: `/Order/Confirm-order-by-doctor?orderId=${orderId}`,
                 method: "PUT",
-            })
+            }),
+            invalidatesTags:['orderApi']
+        }),
+
+        cancelOrderByDoctor: builder.mutation({
+           query: (cancelledOrder) => ({
+                url: `/Order/Cancel-order-by-doctor`,
+                method: "PUT",
+                body:cancelledOrder
+            }),
+            invalidatesTags:['orderApi']
         }),
 
         getOrders: builder.query({
@@ -45,7 +55,8 @@ export const orderApi = createApi({
                 url: '/Order/By-admin',
                 method: "POST",
                 body: newOrderByAdmin
-            })
+            }),
+            invalidatesTags:['orderApi']
         })
 
 
@@ -55,5 +66,6 @@ export const orderApi = createApi({
 
 
 
-export const { useAddOrderMutation, useGetUserOrdersByUserIdQuery, useGetOrdersQuery, useAddOrderByAdminMutation } = orderApi
+export const { useAddOrderMutation, useGetUserOrdersByUserIdQuery, useGetOrdersQuery,
+     useAddOrderByAdminMutation,useConfirmOrderByDoctorMutation,useCancelOrderByDoctorMutation } = orderApi
 

@@ -17,7 +17,6 @@ export default function DoctorById() {
 
   const { data: schedule } = useGetScheduleByDoctorIdQuery(id)
   const scheduleData = schedule?.data
-  console.log(scheduleData);
 
 
 

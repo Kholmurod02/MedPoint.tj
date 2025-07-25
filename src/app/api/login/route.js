@@ -1,6 +1,6 @@
 import axios from "axios";
 import { NextResponse } from "next/server";
-import { jwtDecode } from 'jwt-decode';
+import { jwtDecode } from "jwt-decode";
 
 export async function POST(req) {
   try {
@@ -14,34 +14,33 @@ export async function POST(req) {
     const token = data?.data?.token;
     if (!token) throw new Error("No token received");
 
-    // Декодируем токен чтобы получить роль
+    // Декодируем токен, чтобы получить роль
     const decoded = jwtDecode(token);
     const role = decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
-    
-    // Определяем URL для редиректа
-    let redirectUrl = '/';
-    if (role === 'Admin') redirectUrl = '/admin/';
-    if (role === 'Doctor') redirectUrl = '/master/';
 
+    // Определяем куда редиректить по роли
+    let redirectUrl = "/";
+    if (role === "Admin") redirectUrl = "/admin";
+    else if (role === "Doctor") redirectUrl = "/master";
+    else if (role === "User") redirectUrl = "/"; // пример для клиента
+
+    // Формируем ответ с cookie
     const response = NextResponse.json(
-      { message: 'Login successful', role },
-      { status: 200, headers: { 'Location': redirectUrl } }
+      { message: "Login successful", role },
+      { status: 200, headers: { Location: redirectUrl } }
     );
 
-    response.cookies.set('token', token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      path: '/',
-      maxAge: 60 * 60 * 24
+    response.cookies.set("token", token, {
+      // httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      path: "/",
+      maxAge: 60 * 60 * 24, // 1 день
+      sameSite: "lax",
     });
 
     return response;
-
   } catch (error) {
-    console.error('Login error:', error?.response?.data || error.message);
-    return NextResponse.json(
-      { message: 'Invalid credentials' },
-      { status: 401 }
-    );
+    console.error("Login error:", error?.response?.data || error.message);
+    return NextResponse.json({ message: "Invalid credentials" }, { status: 401 });
   }
 }

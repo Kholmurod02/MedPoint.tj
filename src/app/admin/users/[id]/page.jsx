@@ -26,7 +26,6 @@ const UserById = () => {
 
     const { data: appointment } = useGetUserOrdersQuery(id)
     const appointments = appointment?.data
-    console.log(appointments);
 
 
     const renderStars = (rating) => {

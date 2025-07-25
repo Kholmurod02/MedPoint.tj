@@ -1,6 +1,7 @@
 import { access_token, BASIC_URL } from '@/shared/config/config'
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 
+
 export const doctorApi = createApi({
     reducerPath: 'doctorApi',
     baseQuery: fetchBaseQuery({
@@ -79,6 +80,14 @@ export const doctorApi = createApi({
             providesTags: ['doctorApi']
         }),
 
+        changeDoctorActivityStatus:builder.mutation({
+            query:(doctorStatus)=>({
+                url:"/Doctor/ChangeActivityStatus",
+                method:"PUT",
+                body:doctorStatus
+            }),
+            invalidatesTags:['doctorApi']
+        })
 
     })
 })
@@ -86,6 +95,6 @@ export const doctorApi = createApi({
 export const { useGetAllDoctorsQuery, useGetDoctorsSpecializationsQuery, useGetDoctorByIdQuery,
      useAddDoctorMutation, useUpdateDoctorMutation, useRemoveDoctorMutation,useCurrentDoctorQuery,
      useGetScheduleByDoctorIdQuery,useGetDoctorOrdersQuery,
-    useGetDoctorByNameQuery } = doctorApi
+    useGetDoctorByNameQuery,useChangeDoctorActivityStatusMutation } = doctorApi
 
 
