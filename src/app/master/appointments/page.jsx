@@ -23,34 +23,44 @@ import { useCancelOrderByDoctorMutation, useConfirmOrderByDoctorMutation } from 
 export default function AppointmentsPage() {
   const token = Cookies.get("token")
 
+  // Safely get doctorId from token
   let doctorId = null
-  try {
-    const decode = jwtDecode(token)
-    doctorId = decode["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"]
-  } catch (error) {
-    console.error("Invalid token", error)
+  if (token) {
+    try {
+      const decode = jwtDecode(token)
+      doctorId = decode["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"]
+    } catch (error) {
+      console.error("Invalid token", error)
+    }
   }
 
-  const { data: appointment, isLoading } = useGetDoctorOrdersQuery(doctorId, {
+  const { data: appointment, isLoading, error: apiError } = useGetDoctorOrdersQuery(doctorId, {
     skip: !doctorId,
   })
 
-  const [appointments, setAppointments] = useState(appointment?.data)
+  const [appointments, setAppointments] = useState([])
   const [cancelDialogOpen, setCancelDialogOpen] = useState(false)
   const [selectedId, setSelectedId] = useState(null)
   const [reason, setReason] = useState("")
-  
+  const [notification, setNotification] = useState({ show: false, message: "", type: "" })
 
   useEffect(() => {
     if (appointment?.data) {
       setAppointments(appointment.data)
+    } else {
+      setAppointments([])
     }
   }, [appointment])
 
-
   const [confirmOrder] = useConfirmOrderByDoctorMutation()
-  const handleAccept = (id) => {
-    confirmOrder(id)
+  const handleAccept = async (id) => {
+    try {
+      await confirmOrder(id).unwrap()
+      setNotification({ show: true, message: "Appointment confirmed successfully", type: "success" })
+    } catch (error) {
+      console.error("Failed to confirm order:", error)
+      setNotification({ show: true, message: "Failed to confirm appointment", type: "error" })
+    }
   }
 
   const openCancelDialog = (id) => {
@@ -59,16 +69,23 @@ export default function AppointmentsPage() {
     setCancelDialogOpen(true)
   }
 
-  const[cancelOrder]=useCancelOrderByDoctorMutation()
-  const confirmCancel = () => {
-    let canceledOrder={
-      orderId:selectedId,
-      reason:reason
+  const [cancelOrder] = useCancelOrderByDoctorMutation()
+  const confirmCancel = async () => {
+    if (!reason.trim()) return
+    
+    try {
+      await cancelOrder({
+        orderId: selectedId,
+        reason: reason
+      }).unwrap()
+      setCancelDialogOpen(false)
+      setSelectedId(null)
+      setReason("")
+      setNotification({ show: true, message: "Appointment cancelled successfully", type: "success" })
+    } catch (error) {
+      console.error("Failed to cancel order:", error)
+      setNotification({ show: true, message: "Failed to cancel appointment", type: "error" })
     }
-   cancelOrder(canceledOrder)
-    setCancelDialogOpen(false)
-    setSelectedId(null)
-    setReason("")
   }
 
   const badgeVariant = (status) => {
@@ -86,9 +103,19 @@ export default function AppointmentsPage() {
     }
   }
 
+  if (isLoading) return <div className="flex justify-center items-center h-64">Loading appointments...</div>
+  if (apiError) return <div className="text-red-500 p-4">Error loading appointments</div>
+  if (!doctorId) return <div className="text-red-500 p-4">Doctor not authenticated</div>
+
   return (
     <div className="container mx-auto px-4 md:px-6 py-8">
       <h1 className="text-3xl font-bold mb-6">Doctor Appointments</h1>
+
+      {notification.show && (
+        <div className={`mb-4 p-3 rounded-md ${notification.type === "success" ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}`}>
+          {notification.message}
+        </div>
+      )}
 
       <div className="overflow-x-auto border rounded-lg">
         <Table>
@@ -103,39 +130,55 @@ export default function AppointmentsPage() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {appointments?.map((appointment) => (
-              <TableRow key={appointment?.id}>
-                <TableCell>{appointment?.userName}</TableCell>
-                <TableCell>{appointment?.date}</TableCell>
-                <TableCell>{`${appointment?.startTime.slice(0, 5)} – ${appointment?.endTime.slice(0, 5)}`}</TableCell>
-                <TableCell>
-                  <Badge variant={badgeVariant(appointment?.orderStatus)}>{appointment?.orderStatus}</Badge>
-                </TableCell>
-                <TableCell className="text-muted-foreground">
-                  {appointment?.cancellationReason ?? "N/A"}
-                </TableCell>
-                <TableCell className="text-right">
-                  {(appointment?.orderStatus === "Pending" || appointment?.orderStatus === "NotAccepted") && (
-                    <div className="flex gap-2 justify-end">
-                      <Button
-                        size="icon"
-                        variant="outline"
-                        onClick={() => handleAccept(appointment?.id)}
-                      >
-                        <Check className="h-4 w-4 text-green-500" />
-                      </Button>
-                      <Button
-                        size="icon"
-                        variant="outline"
-                        onClick={() =>{ openCancelDialog(appointment?.id)}}
-                      >
-                        <X className="h-4 w-4 text-red-500" />
-                      </Button>
-                    </div>
-                  )}
+            {appointments.length > 0 ? (
+              appointments.map((appointment) => (
+                <TableRow key={`${appointment.id}-${appointment.date}`}>
+                  <TableCell>{appointment.userName || "N/A"}</TableCell>
+                  <TableCell>{appointment.date || "N/A"}</TableCell>
+                  <TableCell>
+                    {appointment.startTime && appointment.endTime 
+                      ? `${appointment.startTime.slice(0, 5)} – ${appointment.endTime.slice(0, 5)}`
+                      : "N/A"}
+                  </TableCell>
+                  <TableCell>
+                    <Badge variant={badgeVariant(appointment.orderStatus)}>
+                      {appointment.orderStatus || "Unknown"}
+                    </Badge>
+                  </TableCell>
+                  <TableCell className="text-muted-foreground">
+                    {appointment.cancellationReason || "N/A"}
+                  </TableCell>
+                  <TableCell className="text-right">
+                    {(appointment.orderStatus === "Pending" || appointment.orderStatus === "NotAcceptedYet") && (
+                      <div className="flex gap-2 justify-end">
+                        <Button
+                          size="icon"
+                          variant="outline"
+                          onClick={() => handleAccept(appointment.id)}
+                          aria-label="Accept appointment"
+                        >
+                          <Check className="h-4 w-4 text-green-500" />
+                        </Button>
+                        <Button
+                          size="icon"
+                          variant="outline"
+                          onClick={() => openCancelDialog(appointment.id)}
+                          aria-label="Cancel appointment"
+                        >
+                          <X className="h-4 w-4 text-red-500" />
+                        </Button>
+                      </div>
+                    )}
+                  </TableCell>
+                </TableRow>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
+                  No appointments found
                 </TableCell>
               </TableRow>
-            ))}
+            )}
           </TableBody>
         </Table>
       </div>
@@ -154,10 +197,11 @@ export default function AppointmentsPage() {
               <Label htmlFor="reason">Reason</Label>
               <Textarea
                 id="reason"
-                placeholder="Doctor unavailable, patient rescheduled, emergency…"
+                placeholder="Doctor unavailable, patient rescheduled, emergency..."
                 value={reason}
                 onChange={(e) => setReason(e.target.value)}
                 className="min-h-[100px]"
+                required
               />
             </div>
           </div>
