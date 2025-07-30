@@ -20,6 +20,7 @@ import {
   UserCircle,
   Stethoscope,
   Users,
+  MessageCircle,
 } from "lucide-react";
 
 import { useEffect, useState } from "react";
@@ -33,8 +34,7 @@ export function AppSidebar() {
 
   const [role, setRole] = useState(null);
   const [menuItems, setMenuItems] = useState([]);
-  const { data: adminData } = useCurrentUserQuery();
-  const { data: doctorData } = useCurrentDoctorQuery()
+  
 
 
 
@@ -53,18 +53,18 @@ export function AppSidebar() {
       icon: Calendar,
       highlight: "bg-emerald-800",
     },
-    // {
-    //   title: "Reviews",
-    //   url: "/master/reviews",
-    //   icon: MessageSquare,
-    //   highlight: "bg-yellow-600",
-    // },
     {
-      title: "Profile",
-      url: "/master/profile",
-      icon: UserCircle,
-      highlight: "bg-gray-700",
+      title: "Chats",
+      url: "/master/chat",
+      icon: MessageCircle,
+      highlight: "bg-yellow-600",
     },
+    // {
+    //   title: "Profile",
+    //   url: "/master/profile",
+    //   icon: UserCircle,
+    //   highlight: "bg-gray-700",
+    // },
   ]
 
   const adminMenuItems = [
@@ -98,12 +98,12 @@ export function AppSidebar() {
       icon: MessageSquare,
       highlight: "bg-yellow-600",
     },
-    {
-      title: "Profile",
-      url: "/admin/profile",
-      icon: UserCircle,
-      highlight: "bg-gray-700",
-    }
+    // {
+    //   title: "Profile",
+    //   url: "/admin/profile",
+    //   icon: UserCircle,
+    //   highlight: "bg-gray-700",
+    // }
   ]
 
 
@@ -120,7 +120,7 @@ export function AppSidebar() {
         } else if (role === "Doctor") {
           setMenuItems(masterMenuItems);
         } else {
-          setMenuItems([]); // если роль не распознана
+          setMenuItems([]);
         }
       } catch (error) {
         console.error("Token decode error:", error);
@@ -181,7 +181,7 @@ export function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
 
-      <SidebarFooter data={role == "Admin" ? adminData : doctorData} />
+      {/* <SidebarFooter data={role == "Admin" ? adminData : doctorData} /> */}
     </Sidebar>
   );
 }

@@ -34,13 +34,10 @@ export const reviewApi = createApi({
         }),
 
         statusReview: builder.mutation({
-            query: (status) => ({
+            query: (reviewStatus) => ({
                 url: `/Review/Hide-Or-Show-Review`,
                 method: "PUT",
-                body: {
-                    ReviewId: status.reviewId,
-                    IsHidden: status.isHidden
-                }
+                body: reviewStatus
             }),
             invalidatesTags: ['reviewApi']
         }),
@@ -62,7 +59,9 @@ export const reviewApi = createApi({
                 body: newReview
             }),
             invalidatesTags: ['reviewApi']
-        })
+        }),
+
+     
 
 
 

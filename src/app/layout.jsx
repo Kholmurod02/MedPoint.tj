@@ -2,6 +2,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import StoreProvider from "./store/store-provider";
 import { Toaster } from "react-hot-toast";
+import TawkToChat from "@/shared/components/tawk-chat";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -21,6 +22,7 @@ export const metadata = {
 };
 
 export default function RootLayout({ children }) {
+ 
   return (
     <html lang="en" suppressHydrationWarning>
       <body
@@ -30,6 +32,7 @@ export default function RootLayout({ children }) {
         <StoreProvider>
           <div className="container m-auto p-auto">
             {children}
+            <TawkToChat/>
           </div>
           <Toaster position="bottom-right" reverseOrder={false}/>
         </StoreProvider>

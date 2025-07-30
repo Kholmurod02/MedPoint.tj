@@ -24,21 +24,22 @@ export async function POST(req) {
     else if (role === "Doctor") redirectUrl = "/master";
     else if (role === "User") redirectUrl = "/"; // пример для клиента
 
-    // Формируем ответ с cookie
-    const response = NextResponse.json(
+    // const response = NextResponse.redirect(new URL(redirectUrl, req.url));
+
+     const response = NextResponse.json(
       { message: "Login successful", role },
       { status: 200, headers: { Location: redirectUrl } }
     );
 
     response.cookies.set("token", token, {
-      // httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       path: "/",
-      maxAge: 60 * 60 * 24, // 1 день
+      maxAge: 60 * 60 * 24,
       sameSite: "lax",
     });
 
     return response;
+    
   } catch (error) {
     console.error("Login error:", error?.response?.data || error.message);
     return NextResponse.json({ message: "Invalid credentials" }, { status: 401 });

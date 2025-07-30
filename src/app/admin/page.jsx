@@ -1,38 +1,42 @@
 "use client"
 
-import { Users, UserCheck, Calendar, MessageSquare, TrendingUp } from "lucide-react"
-import { Area, AreaChart, Bar, BarChart, CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts"
-
+import { Users, UserCheck, Calendar, MessageSquare, TrendingUp, ArrowUp, ArrowDown, Stethoscope, ShoppingCart, Star, UserCircle } from "lucide-react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/shared/ui/card"
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/shared/ui/chart"
-import { useGetCountStatsQuery } from "@/entities/dashboards/api/statistics"
+import { useGetCountReviewsAndOrdersStatsByMonthQuery, useGetCountStatsQuery, useGetCountUsersAndDoctorStatsByMonthQuery, useGetPercentageStatisticsQuery, useGetPopularDoctorsQuery } from "@/entities/dashboards/api/statistics"
 import { Progress } from "@/shared/ui/progress"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import dynamic from "next/dynamic"
+import Cookies from "js-cookie"
 
 const ReactApexChart = dynamic(() => import("react-apexcharts"), { ssr: false })
-const userData = [
-  { month: "Jan", users: 1200, doctors: 45, appointments: 890, reviews: 234 },
-  { month: "Feb", users: 1350, doctors: 48, appointments: 1020, reviews: 267 },
-  { month: "Mar", users: 1580, doctors: 52, appointments: 1180, reviews: 298 },
-  { month: "Apr", users: 1720, doctors: 55, appointments: 1350, reviews: 334 },
-  { month: "May", users: 1890, doctors: 58, appointments: 1520, reviews: 378 },
-  { month: "Jun", users: 2100, doctors: 62, appointments: 1680, reviews: 412 },
-]
 
 
+const iconMap = {
+  Users: <Users className="w-5 h-5 text-blue-600" />,
+  Doctors: <Stethoscope className="w-5 h-5 text-purple-600" />,
+  Orders: <ShoppingCart className="w-5 h-5 text-green-600" />,
+  Reviews: <Star className="w-5 h-5 text-yellow-500" />,
+};
 
-const monthlyStats = [
-  { category: "Users", current: 2100, previous: 1890, growth: 11.1 },
-  { category: "Doctors", current: 62, previous: 58, growth: 6.9 },
-  { category: "Appointments", current: 1680, previous: 1520, growth: 10.5 },
-  { category: "Reviews", current: 412, previous: 378, growth: 9.0 },
-]
 
 export default function DashboardAdmin() {
+
+  const token = Cookies.get("token")
+
+  // chart No 1
+  const [series, setSeries] = useState([{ name: "Users", data: [] }, { name: "Doctors", data: [] }])
+
+  const { data: usersAndDoctors } = useGetCountUsersAndDoctorStatsByMonthQuery(undefined, {
+    skip: !token,
+  });
+
+  const statData = usersAndDoctors?.data || [];
+
+
   const [options, setOptions] = useState({
     chart: {
-      type: "line",
+      type: "bar",
       height: 350,
       toolbar: { show: false },
     },
@@ -49,7 +53,7 @@ export default function DashboardAdmin() {
       },
     },
     xaxis: {
-      categories: ["Jan", "Feb", "Mar", "Apr", "May"],
+      categories: [],
       title: {
         text: "Month",
       },
@@ -72,10 +76,184 @@ export default function DashboardAdmin() {
     },
   });
 
-const [series,setSeries] = useState([{name:"Users",data:[1,2,3,4,12,]},{name:"Doctors",data:[2,4,1,41,2]}])
+  useEffect(() => {
+    if (statData?.length === 0) return;
 
+    const users = [];
+    const doctors = [];
+    const months = [];
+
+    statData?.forEach((el) => {
+      users?.push(el?.usersCount);
+      doctors?.push(el?.doctorsCount);
+
+      const date = new Date(el?.month + "-01");
+      const formattedMonth = date.toLocaleString("en-US", {
+        month: "short",
+        // year: "2-digit",
+      }); // Например: "Jan 25"
+
+      months?.push(formattedMonth);
+    });
+
+
+
+
+    setSeries([
+      { name: "Users", data: users },
+      { name: "Doctors", data: doctors },
+    ]);
+
+    setOptions((prev) => ({
+      ...prev,
+      xaxis: {
+        ...prev.xaxis,
+        categories: months || [],
+      },
+    }));
+  }, [statData]);
+
+
+  // countStats
   const { data: stats } = useGetCountStatsQuery()
   const countStats = stats?.data
+
+
+
+  // Chart No 2
+
+  const [series2, setSeries2] = useState([{ name: "Reviews", data: [] }, { name: "Appointments", data: [] }])
+
+  const { data: reviewsAndOrders } = useGetCountReviewsAndOrdersStatsByMonthQuery(undefined, {
+    skip: !token,
+  })
+  const statData2 = reviewsAndOrders?.data || []
+
+
+  const [options2, setOptions2] = useState({
+    chart: {
+      type: "line",
+      height: 350,
+      toolbar: { show: false },
+      fontFamily: "Arial, sans-serif",
+      foreColor: "#333",
+    },
+    stroke: {
+      curve: "smooth",
+      width: 3,
+    },
+    title: {
+      text: "Reviews vs Appointments",
+      align: "left",
+      style: {
+        fontSize: "18px",
+        fontWeight: "bold",
+        color: "#1E293B", // чуть темнее
+      },
+    },
+    xaxis: {
+      categories: [], // заполни позже
+      title: {
+        text: "Month",
+        style: {
+          fontSize: "14px",
+          fontWeight: 600,
+        },
+      },
+      labels: {
+        style: {
+          fontSize: "13px",
+          colors: "#555",
+        },
+      },
+    },
+    yaxis: {
+      title: {
+        text: "Count",
+        style: {
+          fontSize: "14px",
+          fontWeight: 600,
+        },
+      },
+      labels: {
+        style: {
+          fontSize: "13px",
+          colors: "#555",
+        },
+      },
+    },
+    colors: ["#F97316", "#A855F7"],
+    legend: {
+      position: "top",
+      horizontalAlign: "right",
+      fontSize: "13px",
+      fontWeight: 500,
+    },
+    dataLabels: {
+      enabled: false,
+    },
+    grid: {
+      borderColor: "#E5E7EB",
+      strokeDashArray: 4,
+      padding: {
+        left: 10,
+        right: 10,
+      },
+    },
+    tooltip: {
+      theme: "light",
+      x: {
+        format: "MMM yyyy",
+      },
+    },
+  });
+
+
+  useEffect(() => {
+    if (statData2?.length === 0) return;
+
+    const reviews = [];
+    const orders = [];
+    const months2 = [];
+
+    statData2?.forEach((el) => {
+      reviews?.push(el?.reviewsCount);
+      orders?.push(el?.ordersCount);
+
+      const date = new Date(el?.month);
+      const formattedMonth = date.toLocaleString("en-US", {
+        month: "short",
+        // year: "2-digit",
+      }); // Например: "Jan 25"
+
+      months2?.push(formattedMonth);
+    });
+
+
+    setSeries2([
+      { name: "Reviews", data: reviews },
+      { name: "Appointments", data: orders },
+    ]);
+
+    setOptions2((prev) => ({
+      ...prev,
+      xaxis: {
+        ...prev.xaxis,
+        categories: months2 || [],
+      },
+    }));
+  }, [statData2]);
+
+  // Popular doctors
+  const { data: popular } = useGetPopularDoctorsQuery()
+  const popularDoctors = popular?.data
+
+  // Percentage statistics
+  const { data: percentageInfo } = useGetPercentageStatisticsQuery()
+  const monthlyStats = percentageInfo?.data
+
+
+
 
   return (
     <div className="min-h-screen bg-gray-50 p-6 w-full container m-auto">
@@ -87,102 +265,94 @@ const [series,setSeries] = useState([{name:"Users",data:[1,2,3,4,12,]},{name:"Do
         </div>
 
         {/* KPI Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {/* Users Card */}
-          <Card className="hover:shadow-lg transition-all duration-300 hover:-translate-y-1 border-blue-100 bg-gradient-to-br from-blue-50 to-white">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-blue-600">Number of users</CardTitle>
-              <div className="p-2 rounded-full bg-blue-100">
-                <Users className="h-4 w-4 text-blue-600" />
+          <Card className="hover:shadow-md transition-all duration-300 hover:-translate-y-1 border-blue-100 bg-gradient-to-br from-blue-50 to-white h-37 py-4 sm:p-2">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1">
+              <CardTitle className="text-xs sm:text-sm font-medium text-blue-600">Users</CardTitle>
+              <div className="p-1 sm:p-2 rounded-full bg-blue-100">
+                <Users className="h-4 w-4 sm:h-5 sm:w-5 text-blue-600" />
               </div>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-gray-900">{countStats?.usersCount}</div>
-              {/* <div className="flex items-center text-xs text-green-600 mt-1">
-                <TrendingUp className="h-3 w-3 mr-1" />
-                <span className="font-medium">+11.1%</span> from last month
-              </div> */}
-              <div className="mt-3 h-2 rounded-full">
-                <div className="h-2 w-3/4">
-                  <Progress
-                    className='bg-blue-100'
-                    value={countStats?.usersCount} />
+              <div className="text-xl sm:text-2xl font-bold text-gray-900">{countStats?.usersCount}</div>
+              <div className="mt-2 h-2 rounded-full">
+                <div className="h-2 w-full">
+                  <Progress className="bg-blue-100" value={countStats?.usersCount} />
                 </div>
               </div>
             </CardContent>
           </Card>
+
 
           {/* Doctors Card */}
-          <Card className="hover:shadow-lg transition-all duration-300 hover:-translate-y-1 border-green-100 bg-gradient-to-br from-green-50 to-white">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-green-600">Number of doctors</CardTitle>
-              <div className="p-2 rounded-full bg-green-100">
-                <UserCheck className="h-4 w-4 text-green-600" />
+          <Card className="hover:shadow-md transition-all duration-300 hover:-translate-y-1 border-green-100 bg-gradient-to-br from-green-50 to-white h-37 py-4 sm:p-2">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1">
+              <CardTitle className="text-xs sm:text-sm font-medium text-green-600">Doctors</CardTitle>
+              <div className="p-1 sm:p-2 rounded-full bg-green-100">
+                <UserCheck className="h-4 w-4 sm:h-5 sm:w-5 text-green-600" />
               </div>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-gray-900">{countStats?.doctorsCount}</div>
-              {/* <div className="flex items-center text-xs text-green-600 mt-1">
-                <TrendingUp className="h-3 w-3 mr-1" />
-                <span className="font-medium">+6.9%</span> from last month
-              </div> */}
-              <div className="mt-3 h-2 bg-green-100 rounded-full">
-                <div className="h-2 w-3/4">
-                  <Progress
-                    className='bg-green-100  [&>div]:bg-green-600'
-                    value={countStats?.doctorsCount} />
-                </div>
+              <div className="text-xl sm:text-2xl font-bold text-gray-900">{countStats?.doctorsCount}</div>
+
+              <div className="mt-2 h-2 bg-green-100 rounded-full">
+                <Progress
+                  className="bg-green-100 [&>div]:bg-green-600"
+                  value={countStats?.doctorsCount}
+                />
               </div>
             </CardContent>
           </Card>
+
 
           {/* Appointments Card */}
-          <Card className="hover:shadow-lg transition-all duration-300 hover:-translate-y-1 border-purple-100 bg-gradient-to-br from-purple-50 to-white">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-purple-600">Number of appointments</CardTitle>
-              <div className="p-2 rounded-full bg-purple-100">
-                <Calendar className="h-4 w-4 text-purple-600" />
+          <Card className="hover:shadow-md transition-all duration-300 hover:-translate-y-1 border-purple-100 bg-gradient-to-br from-purple-50 to-white h-37 py-4 sm:p-2">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1">
+              <CardTitle className="text-xs sm:text-sm font-medium text-purple-600">
+                Appointments
+              </CardTitle>
+              <div className="p-1 sm:p-2 rounded-full bg-purple-100">
+                <Calendar className="h-4 w-4 sm:h-5 sm:w-5 text-purple-600" />
               </div>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-gray-900">{countStats?.ordersCount}</div>
-              {/* <div className="flex items-center text-xs text-green-600 mt-1">
-                <TrendingUp className="h-3 w-3 mr-1" />
-                <span className="font-medium">+10.5%</span> from last month
-              </div> */}
-              <div className="mt-3 h-2 bg-purple-100 rounded-full">
-                <div className="h-2 w-3/4">
-                  <Progress
-                    className='bg-purple-100  [&>div]:bg-purple-600'
-                    value={countStats?.ordersCount} />
-                </div>
+              <div className="text-xl sm:text-2xl font-bold text-gray-900">
+                {countStats?.ordersCount}
+              </div>
+              <div className="mt-2 h-2 bg-purple-100 rounded-full">
+                <Progress
+                  className="bg-purple-100 [&>div]:bg-purple-600"
+                  value={countStats?.ordersCount}
+                />
               </div>
             </CardContent>
           </Card>
 
+
           {/* Reviews Card */}
-          <Card className="hover:shadow-lg transition-all duration-300 hover:-translate-y-1 border-orange-100 bg-gradient-to-br from-orange-50 to-white">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-orange-600">Number of reviews</CardTitle>
-              <div className="p-2 rounded-full bg-orange-100">
-                <MessageSquare className="h-4 w-4 text-orange-600" />
+          <Card className="hover:shadow-md transition-all duration-300 hover:-translate-y-1 border-orange-100 bg-gradient-to-br from-orange-50 to-white h-37 py-4 sm:p-2">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1">
+              <CardTitle className="text-xs sm:text-sm font-medium text-orange-600">
+                Number of reviews
+              </CardTitle>
+              <div className="p-1 sm:p-2 rounded-full bg-orange-100">
+                <MessageSquare className="h-4 w-4 sm:h-5 sm:w-5 text-orange-600" />
               </div>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-gray-900">{countStats?.reviewsCount}</div>
-              {/* <div className="flex items-center text-xs text-green-600 mt-1">
-                <TrendingUp className="h-3 w-3 mr-1" />
-                <span className="font-medium">+9.0%</span> from last month
-              </div> */}
-              <div className="mt-3 h-2 bg-orange-100 rounded-full">
-                <div className="h-2 w-3/4">
-                  <Progress
-                    className='bg-orange-100  [&>div]:bg-orange-600'
-                    value={countStats?.doctorsCount} />
-                </div>
+              <div className="text-xl sm:text-2xl font-bold text-gray-900">
+                {countStats?.reviewsCount}
+              </div>
+              <div className="mt-2 h-2 bg-orange-100 rounded-full">
+                <Progress
+                  className="bg-orange-100 [&>div]:bg-orange-600"
+                  value={countStats?.reviewsCount}
+                />
               </div>
             </CardContent>
           </Card>
+
         </div>
 
         {/* Charts Row 1 */}
@@ -190,8 +360,7 @@ const [series,setSeries] = useState([{name:"Users",data:[1,2,3,4,12,]},{name:"Do
           {/* Users Growth Chart */}
           <Card>
             <CardHeader>
-              <CardTitle>User Growth</CardTitle>
-              {/* <CardDescription>User growth dynamics over the last 6 months</CardDescription> */}
+              <CardTitle>User/doctors growth dynamics by month</CardTitle>
             </CardHeader>
             <CardContent>
               <ChartContainer
@@ -204,8 +373,8 @@ const [series,setSeries] = useState([{name:"Users",data:[1,2,3,4,12,]},{name:"Do
                 className="h-[300px] w-[100%]"
               >
                 <ReactApexChart
-                  options={options}
-                  series={series}
+                  options={options || []}
+                  series={series || []}
                   type="area"
                   height={220}
                 />
@@ -216,8 +385,7 @@ const [series,setSeries] = useState([{name:"Users",data:[1,2,3,4,12,]},{name:"Do
           {/* Appointments Chart */}
           <Card>
             <CardHeader>
-              <CardTitle>Doctor Appointments</CardTitle>
-              <CardDescription>Number of appointments by month</CardDescription>
+              <CardTitle>Number of reviews/appointments by month</CardTitle>
             </CardHeader>
             <CardContent>
               <ChartContainer
@@ -229,19 +397,12 @@ const [series,setSeries] = useState([{name:"Users",data:[1,2,3,4,12,]},{name:"Do
                 }}
                 className="h-[300px] w-[100%]"
               >
-                <LineChart data={userData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="month" />
-                  <YAxis />
-                  <ChartTooltip content={<ChartTooltipContent />} />
-                  <Line
-                    type="monotone"
-                    dataKey="appointments"
-                    stroke="var(--color-appointments)"
-                    strokeWidth={3}
-                    dot={{ fill: "var(--color-appointments)", strokeWidth: 2, r: 4 }}
-                  />
-                </LineChart>
+                <ReactApexChart
+                  options={options2 || []}
+                  series={series2 || []}
+                  type="area"
+                  height={220}
+                />
               </ChartContainer>
             </CardContent>
           </Card>
@@ -249,57 +410,71 @@ const [series,setSeries] = useState([{name:"Users",data:[1,2,3,4,12,]},{name:"Do
 
         {/* Charts Row 2 */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Doctors and Reviews Chart */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Doctors and Reviews</CardTitle>
-              <CardDescription>Comparison of doctors count and reviews</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <ChartContainer
-                config={{
-                  doctors: {
-                    label: "Doctors",
-                    color: "hsl(142, 76%, 36%)",
-                  },
-                  reviews: {
-                    label: "Reviews",
-                    color: "hsl(25, 95%, 53%)",
-                  },
-                }}
-                className="h-[300px] w-[100%]"
-              >
-                <BarChart data={userData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="month" />
-                  <YAxis />
-                  <ChartTooltip content={<ChartTooltipContent />} />
-                  <Bar dataKey="doctors" fill="var(--color-doctors)" radius={[4, 4, 0, 0]} />
-                  <Bar dataKey="reviews" fill="var(--color-reviews)" radius={[4, 4, 0, 0]} />
-                </BarChart>
-              </ChartContainer>
-            </CardContent>
-          </Card>
-
           {/* Monthly Comparison */}
           <Card>
             <CardHeader>
-              <CardTitle>Comparison with Previous Month</CardTitle>
-              <CardDescription>Percentage change in key metrics</CardDescription>
+              <CardTitle>Month-over-Month Overview</CardTitle>
+              <CardDescription>How each metric changed since last month</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="space-y-4">
-                {monthlyStats.map((stat, index) => (
-                  <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                    <div>
-                      <p className="font-medium text-gray-900">{stat.category}</p>
-                      <p className="text-sm text-gray-600">
-                        {stat.current.toLocaleString()} (prev: {stat.previous.toLocaleString()})
-                      </p>
+              <div className="grid grid-cols-1 gap-4">
+                {monthlyStats?.map((stat, index) => {
+                  const isPositive = parseFloat(stat.percenteDifference) >= 0;
+                  const Icon = isPositive ? ArrowUp : ArrowDown;
+                  const iconColor = isPositive ? "text-green-600" : "text-red-600";
+
+                  return (
+                    <div
+                      key={index}
+                      className="flex items-center justify-between border p-4 rounded-xl shadow-sm bg-white hover:bg-gray-50 transition"
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className="p-2 bg-gray-100 rounded-full">
+                          {iconMap[stat.category]}
+                        </div>
+                        <div>
+                          <p className="text-sm font-semibold text-gray-800">{stat.category}</p>
+                          <p className="text-xs text-gray-500">
+                            {stat.current} (prev: {stat.previous})
+                          </p>
+                        </div>
+                      </div>
+                      <div className={`flex items-center gap-1 font-medium ${iconColor}`}>
+                        <Icon className="w-4 h-4" />
+                        <span>{Math.abs(stat.percenteDifference)}%</span>
+                      </div>
                     </div>
-                    <div className="flex items-center text-green-600">
-                      <TrendingUp className="h-4 w-4 mr-1" />
-                      <span className="font-semibold">+{stat.growth}%</span>
+                  );
+                })}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Popular doctors */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Popular Doctors</CardTitle>
+              <CardDescription>Top doctors by number of orders</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                {popularDoctors?.slice(0, 5)?.map((doctor, index) => (
+                  <div
+                    key={doctor.doctorId}
+                    className="flex items-center justify-between rounded-md p-3 bg-muted hover:bg-accent transition"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="rounded-full bg-primary/10 p-2">
+                        <Stethoscope className="w-5 h-5 text-primary" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-foreground">
+                          {index + 1}. {doctor.doctorName}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="text-sm text-muted-foreground">
+                      {doctor.orderCount} orders
                     </div>
                   </div>
                 ))}
@@ -308,71 +483,6 @@ const [series,setSeries] = useState([{name:"Users",data:[1,2,3,4,12,]},{name:"Do
           </Card>
         </div>
 
-        {/* Summary Chart */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Overall Statistics</CardTitle>
-            <CardDescription>All key metrics in one chart</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <ChartContainer
-              config={{
-                users: {
-                  label: "Users",
-                  color: "hsl(221, 83%, 53%)",
-                },
-                doctors: {
-                  label: "Doctors",
-                  color: "hsl(142, 76%, 36%)",
-                },
-                appointments: {
-                  label: "Appointments",
-                  color: "hsl(262, 83%, 58%)",
-                },
-                reviews: {
-                  label: "Reviews",
-                  color: "hsl(25, 95%, 53%)",
-                },
-              }}
-              className="h-[400px] w-full"
-            >
-              <LineChart data={userData}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="month" />
-                <YAxis />
-                <ChartTooltip content={<ChartTooltipContent />} />
-                <Line
-                  type="monotone"
-                  dataKey="users"
-                  stroke="var(--color-users)"
-                  strokeWidth={2}
-                  dot={{ fill: "var(--color-users)", strokeWidth: 2, r: 3 }}
-                />
-                <Line
-                  type="monotone"
-                  dataKey="appointments"
-                  stroke="var(--color-appointments)"
-                  strokeWidth={2}
-                  dot={{ fill: "var(--color-appointments)", strokeWidth: 2, r: 3 }}
-                />
-                <Line
-                  type="monotone"
-                  dataKey="reviews"
-                  stroke="var(--color-reviews)"
-                  strokeWidth={2}
-                  dot={{ fill: "var(--color-reviews)", strokeWidth: 2, r: 3 }}
-                />
-                <Line
-                  type="monotone"
-                  dataKey="doctors"
-                  stroke="var(--color-doctors)"
-                  strokeWidth={2}
-                  dot={{ fill: "var(--color-doctors)", strokeWidth: 2, r: 3 }}
-                />
-              </LineChart>
-            </ChartContainer>
-          </CardContent>
-        </Card>
       </div>
     </div>
   )

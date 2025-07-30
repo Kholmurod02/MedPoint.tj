@@ -30,7 +30,7 @@ const ReviewsSection = () => {
 
     return (
         <div className="grid gap-4">
-            <Marquee pauseOnHover className="[--duration:20s] cursor-pointer">
+            <Marquee pauseOnHover className="[--duration:65s] cursor-pointer">
                 {reviewData?.map((review) => (
                     <Card
                         key={review.id}
@@ -69,13 +69,13 @@ const ReviewsSection = () => {
                                         </div>
                                     </div>
 
-                                    <div className="flex items-center gap-2">
+                                    {/* <div className="flex items-center gap-2">
                                         {review.isHidden && (
                                             <Badge variant="destructive" className="text-xs px-1.5 py-0.5">
                                                 Hidden
                                             </Badge>
                                         )}
-                                    </div>
+                                    </div> */}
                                 </div>
 
                                 {/* Comment section */}

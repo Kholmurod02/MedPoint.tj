@@ -6,6 +6,7 @@ import { reviewApi } from '@/entities/reviews/api/reviewApi'
 import { orderApi } from '@/entities/order/api/orderApi'
 import { statisticsApi } from '@/entities/dashboards/api/statistics'
 import { authApi } from '@/entities/auth/api/auth-api'
+import { chatApi } from '@/entities/chat/api/chatApi'
 
 export const store = configureStore({
   reducer: {
@@ -15,6 +16,7 @@ export const store = configureStore({
     [orderApi.reducerPath]: orderApi.reducer,
     [statisticsApi.reducerPath]: statisticsApi.reducer,
     [authApi.reducerPath]: authApi.reducer,
+    [chatApi.reducerPath]: chatApi.reducer
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(
@@ -23,7 +25,8 @@ export const store = configureStore({
       reviewApi.middleware,
       orderApi.middleware,
       statisticsApi.middleware,
-      authApi.middleware
+      authApi.middleware,
+      chatApi.middleware
     )
 })
 

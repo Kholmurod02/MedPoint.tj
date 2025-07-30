@@ -62,6 +62,9 @@ export function middleware(req) {
   return NextResponse.next();
 }
 
+// export const config = {
+//   matcher: ['/((?!api|_next|_vercel|.*\\..*).*)'],
+// };
 export const config = {
   matcher: [
     "/", "/login", "/register",

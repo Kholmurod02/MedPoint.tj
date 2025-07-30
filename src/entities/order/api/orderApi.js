@@ -1,5 +1,6 @@
 import { access_token, BASIC_URL } from "@/shared/config/config";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { date } from "zod";
 
 
 export const orderApi = createApi({
@@ -33,16 +34,16 @@ export const orderApi = createApi({
                 url: `/Order/Confirm-order-by-doctor?orderId=${orderId}`,
                 method: "PUT",
             }),
-            invalidatesTags:['orderApi']
+            invalidatesTags: ['orderApi']
         }),
 
         cancelOrderByDoctor: builder.mutation({
-           query: (cancelledOrder) => ({
+            query: (cancelledOrder) => ({
                 url: `/Order/Cancel-order-by-doctor`,
                 method: "PUT",
-                body:cancelledOrder
+                body: cancelledOrder
             }),
-            invalidatesTags:['orderApi']
+            invalidatesTags: ['orderApi']
         }),
 
         getOrders: builder.query({
@@ -56,7 +57,12 @@ export const orderApi = createApi({
                 method: "POST",
                 body: newOrderByAdmin
             }),
-            invalidatesTags:['orderApi']
+            invalidatesTags: ['orderApi']
+        }),
+
+        getDoctorReservedTimes: builder.query({
+            query: () => `http://147.45.146.15:5063/api/Order/Doctor-orders-availability?doctorId=${doctorId}&date=${date}`,
+            providesTags:['orderApi']
         })
 
 
@@ -66,6 +72,6 @@ export const orderApi = createApi({
 
 
 
-export const { useAddOrderMutation, useGetUserOrdersByUserIdQuery, useGetOrdersQuery,
-     useAddOrderByAdminMutation,useConfirmOrderByDoctorMutation,useCancelOrderByDoctorMutation } = orderApi
+export const { useAddOrderMutation, useGetUserOrdersByUserIdQuery, useGetOrdersQuery,useGetDoctorReservedTimesQuery,
+    useAddOrderByAdminMutation, useConfirmOrderByDoctorMutation, useCancelOrderByDoctorMutation } = orderApi
 
