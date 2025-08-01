@@ -1,5 +1,6 @@
 import { access_token, BASIC_URL } from "@/shared/config/config";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import Cookies from "js-cookie";
 
 export const statisticsApi = createApi({
   reducerPath: "statisticsApi",
