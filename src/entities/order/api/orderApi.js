@@ -1,5 +1,6 @@
 import { access_token, BASIC_URL } from "@/shared/config/config";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import Cookies from "js-cookie";
 import { date } from "zod";
 
 
@@ -7,10 +8,15 @@ export const orderApi = createApi({
     reducerPath: "orderApi",
     baseQuery: fetchBaseQuery({
         baseUrl: BASIC_URL,
-        prepareHeaders: (headers) => {
-            headers.set('Authorization', `Bearer ${access_token}`)
-            return headers
-        },
+       prepareHeaders: (headers) => {
+           const token = Cookies.get("token"); // get token dynamically
+           console.log(token);
+     
+           if (token) {
+             headers.set("Authorization", `Bearer ${token}`);
+           }
+           return headers;
+         },
     }),
     tagTypes: ['orderApi'],
     endpoints: (builder) => ({
