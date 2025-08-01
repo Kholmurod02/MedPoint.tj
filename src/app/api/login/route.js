@@ -6,13 +6,9 @@ export async function POST(req) {
   try {
     const { email, password } = await req.json();
 
-    // Replace with your actual API login URL
     const { data } = await axios.post(
       "http://147.45.146.15:5063/api/Auth/login",
-      {
-        email,
-        password,
-      }
+      { email, password }
     );
 
     const token = data?.data?.token;
@@ -25,15 +21,18 @@ export async function POST(req) {
     let redirectUrl = "/";
     if (role === "Admin") redirectUrl = "/admin";
     else if (role === "Doctor") redirectUrl = "/master";
-    else if (role === "User") redirectUrl = "/";
 
-    const response = NextResponse.redirect(new URL(redirectUrl, req.url));
+    const response = NextResponse.json(
+      { message: "Login successful", role, redirectTo: redirectUrl },
+      { status: 200 }
+    );
+
     response.cookies.set("token", token, {
       httpOnly: true,
       path: "/",
-      maxAge: 60 * 60 * 24,
+      maxAge: 60 * 60 * 24, // 1 day
       sameSite: "lax",
-      secure: false, // Use false because you're on HTTP
+      secure: false, // HTTP only
     });
 
     return response;

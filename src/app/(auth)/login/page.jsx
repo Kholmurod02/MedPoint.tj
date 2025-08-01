@@ -31,26 +31,31 @@ export default function LoginPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
     setError("");
 
     try {
-      const res = await fetch("/api/login", {
-        method: "POST",
-        body: JSON.stringify({ email, password }),
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-      });
+      const response = await axios.post(
+        "/api/login",
+        { email, password },
+        {
+          headers: { "Content-Type": "application/json" },
+          withCredentials: true,
+        }
+      );
 
-      if (res.redirected) {
-        window.location.href = res.url;
-      } else {
-        const data = await res.json();
-        setError(data.message || "Login failed");
+      if (response.status === 200) {
+        const redirectUrl = response.data.redirectTo || "/";
+        router.push(redirectUrl);
       }
-    } catch (err) {
-      setError("Unexpected error");
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        setError(error.response?.data?.message || "Ошибка входа");
+      } else {
+        setError("Произошла неизвестная ошибка");
+      }
+    } finally {
+      setIsLoading(false);
     }
   };
 
