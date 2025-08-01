@@ -1,14 +1,14 @@
 import { NextResponse } from "next/server";
-import { jwtDecode } from "jwt-decode";
+import jwtDecode from "jwt-decode";
 
-// Роли и разрешённые маршруты
+// Roles and allowed routes
 const roleRoutes = {
   Admin: ["/admin"],
   Doctor: ["/master"],
-  User: ["/"], // только /
+  User: ["/"], // only "/"
 };
 
-// Публичные страницы (доступны без токена)
+// Public routes accessible without token
 const publicRoutes = ["/login", "/register"];
 
 export function middleware(req) {
@@ -16,59 +16,84 @@ export function middleware(req) {
   const url = req.nextUrl.clone();
   const pathname = req.nextUrl.pathname;
 
-  // ❌ Если нет токена и не на публичной странице — редирект на login
+  // Log request info for debugging
+  console.log("Middleware triggered:");
+  console.log("  Pathname:", pathname);
+  console.log("  Token:", token ? "Exists" : "None");
+
+  // If no token and not on public page — redirect to login
   if (!token && !publicRoutes.includes(pathname)) {
+    console.log(
+      "  No token and accessing protected route - redirect to /login"
+    );
     url.pathname = "/login";
     return NextResponse.redirect(url);
   }
 
-  // ✅ Если есть токен
+  // If token exists
   if (token) {
     try {
       const decoded = jwtDecode(token);
-      const role = decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
+      const role =
+        decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
+      console.log("  User role from token:", role);
 
-      // 🔒 Если авторизованный пользователь пытается попасть на /login — редирект на свою роль-страницу
+      // Redirect logged-in user away from public pages if needed
       if (publicRoutes.includes(pathname)) {
-        if (role === "Admin") url.pathname = "/admin";
-        else if (role === "Doctor") url.pathname = "/master";
-        else url.pathname = "/";
-        return NextResponse.redirect(url);
+        let redirectTo = "/";
+        if (role === "Admin") redirectTo = "/admin";
+        else if (role === "Doctor") redirectTo = "/master";
+
+        if (pathname !== redirectTo) {
+          console.log(
+            `  Authenticated user on public page, redirecting to ${redirectTo}`
+          );
+          url.pathname = redirectTo;
+          return NextResponse.redirect(url);
+        }
       }
 
-      // ✅ Проверка разрешённых маршрутов
+      // Check if user role allows the route
       const allowedRoutes = roleRoutes[role] || [];
+      const isAllowed = allowedRoutes.some(
+        (route) => pathname === route || pathname.startsWith(route + "/")
+      );
 
-      const isAllowed = allowedRoutes.some((route) => {
-        return pathname === route || pathname.startsWith(route + "/");
-      });
-
-      // ❌ Если путь не разрешён — редирект на свою домашнюю страницу
       if (!isAllowed) {
-        if (role === "Admin") url.pathname = "/admin";
-        else if (role === "Doctor") url.pathname = "/master";
-        else url.pathname = "/";
-        return NextResponse.redirect(url);
-      }
+        // Redirect to user's home page if not allowed
+        let redirectTo = "/";
+        if (role === "Admin") redirectTo = "/admin";
+        else if (role === "Doctor") redirectTo = "/master";
 
+        if (pathname !== redirectTo) {
+          console.log(
+            `  Access denied to ${pathname}, redirecting to ${redirectTo}`
+          );
+          url.pathname = redirectTo;
+          return NextResponse.redirect(url);
+        }
+      }
     } catch (err) {
-      console.error("Invalid token:", err);
+      console.error("  Invalid token:", err);
       url.pathname = "/login";
       return NextResponse.redirect(url);
     }
   }
 
-  // ✅ Всё ок — продолжаем
+  // All checks passed - continue request
+  console.log("  Access granted - continue");
   return NextResponse.next();
 }
 
-// export const config = {
-//   matcher: ['/((?!api|_next|_vercel|.*\\..*).*)'],
-// };
+// Match these routes for middleware
 export const config = {
   matcher: [
-    "/", "/login", "/register",
-    "/admin", "/admin/:path*",
-    "/master", "/master/:path*",
+    "/",
+    "/login",
+    "/register",
+    "/admin",
+    "/admin/:path*",
+    "/master",
+    "/master/:path*",
   ],
 };
