@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import jwtDecode from "jwt-decode";
+import { jwtDecode } from "jwt-decode";
 
 // Role-based route access
 const roleRoutes = {
@@ -17,7 +17,7 @@ export function middleware(req) {
   const pathname = req.nextUrl.pathname;
 
   console.log("MIDDLEWARE ⛔ Path:", pathname);
-  console.log("Token exists:", !!token);
+  console.log("Token exists:", token);
 
   // If not logged in, redirect to login for protected pages
   if (!token && !publicRoutes.includes(pathname)) {
