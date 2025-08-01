@@ -1,55 +1,58 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Button } from "@/shared/ui/button"
-import { Input } from "@/shared/ui/input"
-import { Label } from "@/shared/ui/label"
-import { Card, CardContent } from "@/shared/ui/card"
-import { Eye, EyeOff, Mail, Lock, ArrowRight, LogIn, ShieldCheck, Fingerprint } from "lucide-react"
-import Link from "next/link"
-import axios from "axios"
-import { useRouter } from "next/navigation"
-import logo from '../../../../public/logo.png'
-import Image from "next/image"
+import { useState } from "react";
+import { Button } from "@/shared/ui/button";
+import { Input } from "@/shared/ui/input";
+import { Label } from "@/shared/ui/label";
+import { Card, CardContent } from "@/shared/ui/card";
+import {
+  Eye,
+  EyeOff,
+  Mail,
+  Lock,
+  ArrowRight,
+  LogIn,
+  ShieldCheck,
+  Fingerprint,
+} from "lucide-react";
+import Link from "next/link";
+import axios from "axios";
+import { useRouter } from "next/navigation";
+import logo from "../../../../public/logo.png";
+import Image from "next/image";
 
 export default function LoginPage() {
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
-  const [showPassword, setShowPassword] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState("")
-  const router = useRouter()
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
+  const router = useRouter();
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
-    setIsLoading(true)
-    setError("")
+    e.preventDefault();
+    setError("");
 
     try {
-      const response = await axios.post(
-        "/api/login",
-        { email, password },
-        {
-          headers: { "Content-Type": "application/json" },
-          withCredentials: true,
+      const res = await fetch("/api/login", {
+        method: "POST",
+        body: JSON.stringify({ email, password }),
+        headers: {
+          "Content-Type": "application/json",
         },
-      )
+        credentials: "include",
+      });
 
-      if (response.status === 200) {
-        // Получаем URL для редиректа из заголовков
-        const redirectUrl = response.headers["location"] || "/"
-        router.push(redirectUrl)
-      }
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        setError(error.response?.data?.message || "Ошибка входа")
+      if (res.redirected) {
+        window.location.href = res.url;
       } else {
-        setError("Произошла неизвестная ошибка")
+        const data = await res.json();
+        setError(data.message || "Login failed");
       }
-    } finally {
-      setIsLoading(false)
+    } catch (err) {
+      setError("Unexpected error");
     }
-  }
+  };
 
   return (
     <div className="min-h-screen w-full flex items-center justify-center p-4">
@@ -61,12 +64,12 @@ export default function LoginPage() {
               <Image src={logo} width={60} height={60} alt="Logo" />
               <span className="text-white text-xl font-bold">MedPoint</span>
             </div>
-
           </div>
           <div className="text-center space-y-4">
             <h2 className="text-3xl font-light text-slate-700">Welcome Back</h2>
             <p className="text-slate-600 text-lg leading-relaxed">
-              Sign in to your MedPoint account and continue managing your healthcare practice with confidence and ease.
+              Sign in to your MedPoint account and continue managing your
+              healthcare practice with confidence and ease.
             </p>
           </div>
           <div className="flex space-x-4">
@@ -89,20 +92,31 @@ export default function LoginPage() {
             <div className="lg:hidden text-center mb-5">
               <div className="relative w-64 h-25 mx-auto">
                 <div className="w-full h-full bg-blue-600 rounded-lg flex items-center justify-center-safe">
-                <Image src={logo} alt="MedPoint Logo"  className="object-contain w-20 h-20" />
+                  <Image
+                    src={logo}
+                    alt="MedPoint Logo"
+                    className="object-contain w-20 h-20"
+                  />
                   <span className="text-white text-xl font-bold">MedPoint</span>
                 </div>
               </div>
             </div>
 
             <div className="text-center mb-8">
-              <h3 className="text-2xl font-semibold text-slate-800 mb-2">Sign In</h3>
-              <p className="text-slate-600">Enter your credentials to access your account</p>
+              <h3 className="text-2xl font-semibold text-slate-800 mb-2">
+                Sign In
+              </h3>
+              <p className="text-slate-600">
+                Enter your credentials to access your account
+              </p>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="space-y-2">
-                <Label htmlFor="email" className="text-sm font-medium text-slate-700 flex items-center gap-2">
+                <Label
+                  htmlFor="email"
+                  className="text-sm font-medium text-slate-700 flex items-center gap-2"
+                >
                   <Mail className="w-4 h-4 text-blue-500" />
                   Email Address
                 </Label>
@@ -118,7 +132,10 @@ export default function LoginPage() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="password" className="text-sm font-medium text-slate-700 flex items-center gap-2">
+                <Label
+                  htmlFor="password"
+                  className="text-sm font-medium text-slate-700 flex items-center gap-2"
+                >
                   <Lock className="w-4 h-4 text-blue-500" />
                   Password
                 </Label>
@@ -137,7 +154,11 @@ export default function LoginPage() {
                     onClick={() => setShowPassword(!showPassword)}
                     className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-slate-600"
                   >
-                    {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                    {showPassword ? (
+                      <EyeOff className="w-5 h-5" />
+                    ) : (
+                      <Eye className="w-5 h-5" />
+                    )}
                   </button>
                 </div>
               </div>
@@ -149,7 +170,10 @@ export default function LoginPage() {
               )}
 
               <div className="flex items-end justify-end">
-                <button type="button" className="text-sm text-blue-600 hover:text-blue-700 font-medium hover:underline">
+                <button
+                  type="button"
+                  className="text-sm text-blue-600 hover:text-blue-700 font-medium hover:underline"
+                >
                   Forgot password?
                 </button>
               </div>
@@ -200,5 +224,5 @@ export default function LoginPage() {
         </Card>
       </div>
     </div>
-  )
+  );
 }
