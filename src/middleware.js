@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
 import jwtDecode from "jwt-decode";
 
 // Role-based route access
@@ -12,7 +11,7 @@ const roleRoutes = {
 // Public routes that don't require auth
 const publicRoutes = ["/login", "/register"];
 
-export function middleware(req: NextRequest) {
+export function middleware(req) {
   const token = req.cookies.get("token")?.value;
   const url = req.nextUrl.clone();
   const pathname = req.nextUrl.pathname;
@@ -28,7 +27,7 @@ export function middleware(req: NextRequest) {
 
   if (token) {
     try {
-      const decoded: any = jwtDecode(token);
+      const decoded = jwtDecode(token);
       const role =
         decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
       console.log("User role:", role);
@@ -36,7 +35,7 @@ export function middleware(req: NextRequest) {
       const isPublic = publicRoutes.includes(pathname);
       const isAllowed =
         roleRoutes[role]?.some(
-          (r: string) => pathname === r || pathname.startsWith(r + "/")
+          (r) => pathname === r || pathname.startsWith(r + "/")
         ) ?? false;
 
       if (isPublic) {
