@@ -13,6 +13,7 @@ export async function POST(req) {
 
     const token = data?.data?.token;
     if (!token) throw new Error("No token received");
+    console.log(token);
 
     const decoded = jwtDecode(token);
     const role =

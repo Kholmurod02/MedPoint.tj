@@ -20,6 +20,7 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import logo from "../../../../public/logo.png";
 import Image from "next/image";
+import { access_token } from "@/shared/config/config";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -58,6 +59,7 @@ export default function LoginPage() {
       setIsLoading(false);
     }
   };
+  console.log(access_token);
 
   return (
     <div className="min-h-screen w-full flex items-center justify-center p-4">
