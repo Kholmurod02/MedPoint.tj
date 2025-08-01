@@ -5,7 +5,8 @@ export const tg_chatId = process.env.NEXT_PUBLIC_TELEGRAM_CHAT_ID;
 import Cookies from "js-cookie";
 
 export const access_token = () => {
-  if (typeof window !== "undefined") {
+    if (typeof window !== "undefined") {
+      
     return Cookies.get("token");
   }
   return null;
