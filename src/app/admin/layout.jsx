@@ -7,11 +7,11 @@ export default function AdminLayout({ children }) {
     <SidebarProvider>
       <AppSidebar />
       <SidebarInset>
-       <div className="flex items-center sticky top-0 z-50 border-b bg-white">
+       <div className="flex items-center sticky top-0 z-50  border-b bg-white">
          <SidebarTrigger className="text-blue-600 hover:bg-blue-50 w-10 h-10 " />
           <AdminHeader/>
        </div>
-        <div className="flex flex-1 flex-col gap-4 p-4">{children}</div>
+        <div className="flex flex-1 flex-col gap-4 mt-[10px] ">{children}</div>
       </SidebarInset>
     </SidebarProvider>
   )

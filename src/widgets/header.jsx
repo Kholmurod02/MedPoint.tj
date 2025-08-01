@@ -1,7 +1,7 @@
 "use client"
 import { useState, useEffect } from "react"
 import Link from "next/link"
-import { Search, Menu, X, User, LogOut, Settings } from "lucide-react"
+import { Search, Menu, X, User, LogOut, Settings, MessageCircleMore } from "lucide-react"
 import { Button } from "@/shared/ui/button"
 import {
   DropdownMenu,
@@ -119,12 +119,12 @@ export default function Header() {
                         Profile
                       </Link>
                     </DropdownMenuItem>
-                    {/* <DropdownMenuItem asChild>
-                      <Link href="/settings" className="flex items-center">
-                        <Settings className="mr-2 h-4 w-4" />
-                        Settings
+                    <DropdownMenuItem asChild>
+                      <Link href="/chat" className="flex items-center">
+                        < MessageCircleMore className="mr-2 h-4 w-4" />
+                        My Chats
                       </Link>
-                    </DropdownMenuItem> */}
+                    </DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem onClick={handleLogout} className="flex items-center text-red-600">
                       <LogOut className="mr-2 h-4 w-4" />

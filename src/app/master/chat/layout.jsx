@@ -3,7 +3,7 @@
 import ChatSidebar from '@/widgets/chat-sidebar';
 import { usePathname } from 'next/navigation';
 
-export default function ChatsLayout({ children }) {
+export default function DoctorChatsLayout({ children }) {
   const pathname = usePathname()
 
   const isChatList = pathname === "/master/chat"
@@ -16,8 +16,8 @@ export default function ChatsLayout({ children }) {
       <aside className={`
         ${isChatList ? 'block' : 'hidden'} 
         md:block 
-        w-full md:w-[45%] 
-        bg-gray-100 border-r overflow-y-auto
+        w-full md:w-[45%] max-h-screen
+         border-r overflow-y-auto
       `}>
         <ChatSidebar />
       </aside>
@@ -27,6 +27,7 @@ export default function ChatsLayout({ children }) {
         ${isChatOpened ? 'block' : 'hidden'} 
         md:block 
         flex-1 overflow-y-auto
+        max-w-screen
       `}>
         {children}
       </main>

@@ -30,51 +30,19 @@ const messages = [
 
 
 
-export default function DoctorChatById() {
+export default function UserChatById() {
   const [isInfoDrawerOpen, setIsInfoDrawerOpen] = useState(false)
   const [messageText, setMessageText] = useState("")
   const router = useRouter()
 
-  const [messages, setMessages] = useState([]);
-  const [connection, setConnection] = useState(null);
-  const token = Cookies.get("access_token");
 
-  useEffect(() => {
-    const connect = async () => {
-      const hubConnection = connectToChatHub(token);
-
-      hubConnection.on("ReceiveMessage", (message) => {
-        setMessages((prev) => [...prev, message]);
-      });
-
-      hubConnection.on("MessageSent", (message) => {
-        setMessages((prev) => [...prev, message]);
-      });
-
-      hubConnection.on("Error", (error) => {
-        console.error("Error from SignalR:", error);
-      });
-
-      await hubConnection.start();
-      console.log("SignalR connected");
-      setConnection(hubConnection);
-    };
-
-    connect();
-
-    return () => {
-      if (connection) {
-        connection.stop();
-      }
-    };
-  }, []);
 
 
 
   return (
-    <div className="flex flex-col h-screen bg-white text-gray-900 max-w-md mx-auto">
+    <div className="flex flex-col my-10  h-screen bg-white text-gray-900 max-w-screen mx-auto">
       {/* Header */}
-      <div className="flex items-center justify-between p-2 border-b border-gray-200 bg-white sticky top-0 z-50">
+      <div className="flex items-center justify-between p-2 border-b border-gray-200 bg-white relative top-[-30] z-50">
         <div className="flex items-center space-x-3">
           <Button variant="ghost" size="icon" className="text-gray-700 hover:bg-gray-100" onClick={() => router.push("/master/chat")}>
             <ArrowLeft className="h-6 w-6" />
@@ -180,7 +148,7 @@ export default function DoctorChatById() {
       </div>
 
       {/* Info Drawer */}
-      <Drawer open={isInfoDrawerOpen} onOpenChange={setIsInfoDrawerOpen}>
+      <Drawer direction="right" open={isInfoDrawerOpen} onOpenChange={setIsInfoDrawerOpen}>
         <DrawerContent className="bg-white border-gray-200">
           <DrawerHeader>
             <DrawerTitle className="text-gray-900">Chat Info</DrawerTitle>
@@ -213,7 +181,7 @@ export default function DoctorChatById() {
               </div>
             </div>
 
-            <div className="pt-4 space-y-2">
+            {/* <div className="pt-4 space-y-2">
               <Button variant="outline" className="w-full border-gray-300 text-gray-700 hover:bg-gray-50 bg-white">
                 View Profile
               </Button>
@@ -223,7 +191,8 @@ export default function DoctorChatById() {
               <Button variant="destructive" className="w-full">
                 Delete Chat
               </Button>
-            </div>
+            </div> */}
+
           </div>
         </DrawerContent>
       </Drawer>

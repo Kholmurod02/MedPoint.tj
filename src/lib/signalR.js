@@ -1,18 +1,18 @@
-// lib/signalR.ts
-import * as signalR from "@microsoft/signalr"
-import Cookies from "js-cookie"
+// lib/signalR.js
+import * as signalR from "@microsoft/signalr";
 
-let connection = null
+let connection = null;
 
-export const getSignalRConnection = () => {
-  if (!connection) {
-    connection = new signalR.HubConnectionBuilder()
-      .withUrl("http://147.45.146.15:5063/hubs/chat", {
-        accessTokenFactory: () => Cookies.get("token") || ""
-      })
-      .withAutomaticReconnect()
-      .build()
-  }
+export const connectToChatHub = (token) => {
+  if (connection && connection.state !== signalR.HubConnectionState.Disconnected) return connection;
 
-  return connection
-}
+  connection = new signalR.HubConnectionBuilder()
+    .withUrl("http://147.45.146.15:5063/chathub", {
+      accessTokenFactory: () => token, 
+    })
+    .withAutomaticReconnect()
+    .configureLogging(signalR.LogLevel.Information)
+    .build();
+
+  return connection;
+};

@@ -52,7 +52,7 @@ export default function AdminHeader() {
 
 
   return (
-    <header className="w-full bg-white">
+    <header className="w-full  bg-white">
       <div className="container flex h-16 items-center justify-end px-4">
         <div className="flex items-center gap-2">
           {/* Notifications */}

@@ -70,10 +70,6 @@ const DoctorsPage = () => {
               </SelectContent>
             </Select> */}
 
-            <div className="flex gap-2">
-
-
-            </div>
           </div>
         </div>
 
