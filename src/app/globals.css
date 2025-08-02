@@ -176,26 +176,95 @@ body {
 }
 
 
-
-.swiper {
+/* styles.css */
+.notification {
+  position: fixed;
+  top: 0;
+  left: 0;
   width: 100%;
-  height: 100%;
-}
-
-.swiper-slide {
+  background-color: #2563eb;
+  color: white;
   text-align: center;
   font-size: 18px;
-  background: #444;
-
-  /* Center slide text vertically */
+  padding: 10px;
+  z-index: 9999;
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
+  backdrop-filter: blur(8px);
 }
 
-.swiper-slide img {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+.animate-ping-slow {
+  animation: ping 3s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+.animate-ping-slower {
+  animation: ping 4s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes float-delay {
+  0%,
+  100% {
+    transform: translateY(0) rotate(-6deg);
+  }
+  50% {
+    transform: translateY(-8px) rotate(-6deg);
+  }
+}
+
+@keyframes pulse-slow {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1) rotate(6deg);
+  }
+  50% {
+    opacity: 0.9;
+    transform: scale(1.03) rotate(6deg);
+  }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+.animate-float-delay {
+  animation: float-delay 7s ease-in-out infinite;
+}
+
+.animate-pulse-slow {
+  animation: pulse-slow 8s ease-in-out infinite;
+}
+
+.bg-grid-pattern {
+  background-image: linear-gradient(
+      rgba(255, 255, 255, 0.05) 1px,
+      transparent 1px
+    ),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+.custom-pagination-swiper .swiper-pagination-bullet {
+  width: 20%;
+  height: 12px;
+  background-color: #48aee0; /* ранги сабз */
+  opacity: 0.4;
+  transition: all 0.3s ease;
+  border-radius: 10px;
+}
+
+.custom-pagination-swiper .swiper-pagination-bullet-active {
+  background-color: #1b37c595;
+  opacity: 1;
+  transform: scale(1.1);
 }

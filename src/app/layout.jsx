@@ -34,7 +34,7 @@ export default function RootLayout({ children }) {
             {children}
             <TawkToChat/>
           </div>
-          <Toaster position="bottom-right" reverseOrder={false}/>
+          <Toaster position="top-center" reverseOrder={false}/>
         </StoreProvider>
       </body>
     </html>

@@ -16,11 +16,15 @@ export const chatApi = createApi({
   }),
   tagTypes: ['chatApi'],
   endpoints: (builder) => ({
-    getDoctorChats: builder.query({
-      query: ()=> "/Chat/doctor/rooms",
+
+    getUserChats: builder.query({
+      query: () => "/Chat/Chats-list",
       providesTags: ['chatApi'],
     }),
+
+
+
   }),
 })
 
-export const { useGetDoctorChatsQuery } = chatApi
+export const { useGetUserChatsQuery } = chatApi

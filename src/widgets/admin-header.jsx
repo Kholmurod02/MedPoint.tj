@@ -76,10 +76,10 @@ export default function AdminHeader() {
           </DropdownMenu> */}
 
           {/* Settings */}
-          <Button variant="ghost" size="icon">
+          {/* <Button variant="ghost" size="icon">
             <Moon className="h-5 w-5" />
             <span className="sr-only">Settings</span>
-          </Button>
+          </Button> */}
 
           {/* User Menu */}
           <DropdownMenu>

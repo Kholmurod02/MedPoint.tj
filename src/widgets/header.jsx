@@ -33,10 +33,10 @@ export default function Header() {
   }, [])
 
   const navigationItems = [
-    { name: "Home", href: "/" },
-    { name: "About us", href: "/about" },
-    { name: "Doctors", href: "/doctors" },
-    { name: "Contact", href: "/contact" },
+    { name: "Главная", href: "/" },
+    { name: " О нас", href: "/about" },
+    { name: "Врачи", href: "/doctors" },
+    { name: "Контакты", href: "/contact" },
   ]
 
     const router = useRouter();
@@ -55,19 +55,19 @@ export default function Header() {
   }
 
   return (
-    <header className="bg-blue-900 text-white sticky top-0 z-100 container mx-auto px-4">
+<header className="bg-white/30 backdrop-blur-md text-black sticky top-0 z-100 container mx-auto px-4">
       <div className="">
         <div className="flex items-center justify-between h-16">
           {/* Logo Section - Left on Desktop, Right on Mobile */}
-          <div className="flex items-center order-last lg:order-first">
+          <div className="flex items-center order-first lg:order-first">
             <Link href="/" className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center">
+              <div className="w-8 h-8  flex items-center justify-center">
                 <Image
                   src="/logo.png"
                   alt="MedPoint Logo"
-                  width={80}
-                  height={40}
-                  className="w-20 h-10"
+                  width={100}
+                  height={60}
+                  className="w-8 h-8 rounded-full"
                 />
               </div>
               <span className="font-bold text-xl sm:block">MedPoint</span>
@@ -85,7 +85,7 @@ export default function Header() {
               <Link
                 key={item.name}
                 href={item.href}
-                className="text-white hover:text-blue-200 transition-colors duration-200 font-medium"
+                className="text-black hover:text-blue-200 transition-colors duration-200 font-medium"
               >
                 {item.name}
               </Link>
@@ -119,12 +119,12 @@ export default function Header() {
                         Profile
                       </Link>
                     </DropdownMenuItem>
-                    <DropdownMenuItem asChild>
+                    {/* <DropdownMenuItem asChild>
                       <Link href="/chat" className="flex items-center">
                         < MessageCircleMore className="mr-2 h-4 w-4" />
                         My Chats
                       </Link>
-                    </DropdownMenuItem>
+                    </DropdownMenuItem> */}
                     <DropdownMenuSeparator />
                     <DropdownMenuItem onClick={handleLogout} className="flex items-center text-red-600">
                       <LogOut className="mr-2 h-4 w-4" />

@@ -11,28 +11,28 @@ import React, { useState } from 'react'
 const DoctorsPage = () => {
   const [name,setName]=useState('')
 
-  const healthTips = [
+ const healthTips = [
     {
       id: 1,
-      description: "Avoid smoking and limit alcohol — they increase cancer and heart disease risk.",
-      title: "CDC"
+      description: "Избегайте курения и ограничьте алкоголь — они повышают риск рака и болезней сердца.",
+      title: "CDC (Центр по контролю заболеваний)"
     },
     {
       id: 2,
-      description: "Manage stress — chronic stress affects the heart, digestion, and immunity.",
-      title: "Harvard Medical School"
+      description: "Контролируйте стресс — хронический стресс вредит сердцу, пищеварению и иммунитету.",
+      title: "Гарвардская медицинская школа"
     },
     {
       id: 3,
-      description: "See a doctor regularly — early diagnosis saves lives.",
-      title: "Ministry of Health"
+      description: "Регулярно посещайте врача — ранняя диагностика спасает жизни.",
+      title: "Министерство здравоохранения"
     },
     {
       id: 4,
-      description: "Take medications only as prescribed — self-medication can be dangerous.",
-      title: "World Health Organization"
+      description: "Принимайте лекарства только по назначению — самолечение может быть опасным.",
+      title: "Всемирная организация здравоохранения (ВОЗ)"
     }
-  ];
+];
 
   const params = {
     "nameFilter":name

@@ -12,7 +12,7 @@ export default function DoctorCard({ doctor }) {
 
   return (
     <Link href={`/doctors/${doctor.id}`}>
-      <Card className=" max-w-sm overflow-hidden rounded-xl shadow-lg bg-white h-[620px] " >
+      <Card className=" max-w-sm overflow-hidden rounded-xl shadow-lg bg-white h-[520px] " >
         <CardHeader className="relative bg-doctor-card-bg-light-blue h-[235px] flex items-center justify-center rounded-2xl ">
           <Image
             src={imageUrl || "/placeholder.svg"}
@@ -33,7 +33,7 @@ export default function DoctorCard({ doctor }) {
           </p>
           <p className="text-doctor-card-text-medium-gray text-sm mt-4 leading-relaxed">{doctor?.description.slice(0, 100)}</p>
         </CardContent>
-        <CardFooter className="flex justify-center gap-4 pb-2">
+        {/* <CardFooter className="flex justify-center gap-4 pb-2">
           <Button
             className="px-4 py-2 rounded-xl"
             onClick={() => {
@@ -52,7 +52,7 @@ export default function DoctorCard({ doctor }) {
           >
             Начать чат
           </Button>
-        </CardFooter>
+        </CardFooter> */}
 
       </Card>
     </Link>

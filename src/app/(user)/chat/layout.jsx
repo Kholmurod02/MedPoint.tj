@@ -10,13 +10,13 @@ export default function UserChatsLayout({ children }) {
   const isChatOpened = /^\/chat\/\d+\/\d+$/.test(pathname)
 
   return (
-    <div className="flex w-full">
+    <div className="flex w-full h-130 p-10">
 
       {/* SIDEBAR — показывается только на /chat или всегда на десктопе */}
       <aside className={`
         // ${isChatList ? 'block' : 'hidden'}
         md:block
-        w-full md:w-[45%] max-h-screen
+        w-full md:w-[45%]  
         border-r overflow-y-auto
       `}>
         <ChatSidebar />

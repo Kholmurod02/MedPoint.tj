@@ -19,6 +19,8 @@ import Cookies from "js-cookie"
 import { jwtDecode } from "jwt-decode"
 import { useGetDoctorOrdersQuery } from "@/entities/doctor/api/doctorApi"
 import { useCancelOrderByDoctorMutation, useConfirmOrderByDoctorMutation } from "@/entities/order/api/orderApi"
+import toast from "react-hot-toast"
+
 
 export default function AppointmentsPage() {
   const token = Cookies.get("token")
@@ -34,9 +36,10 @@ export default function AppointmentsPage() {
     }
   }
 
-  const { data: appointment, isLoading, error: apiError } = useGetDoctorOrdersQuery(doctorId, {
+  const { data: appointment, isLoading, error: apiError, refetch } = useGetDoctorOrdersQuery(doctorId, {
     skip: !doctorId,
   })
+
 
   const [appointments, setAppointments] = useState([])
   const [cancelDialogOpen, setCancelDialogOpen] = useState(false)
@@ -56,10 +59,11 @@ export default function AppointmentsPage() {
   const handleAccept = async (id) => {
     try {
       await confirmOrder(id).unwrap()
-      setNotification({ show: true, message: "Appointment confirmed successfully", type: "success" })
+      refetch()
+      toast.success("Appointment confirmed successfully")
     } catch (error) {
       console.error("Failed to confirm order:", error)
-      setNotification({ show: true, message: "Failed to confirm appointment", type: "error" })
+      toast.error("Failed to confirm appointment")
     }
   }
 
@@ -72,7 +76,7 @@ export default function AppointmentsPage() {
   const [cancelOrder] = useCancelOrderByDoctorMutation()
   const confirmCancel = async () => {
     if (!reason.trim()) return
-    
+
     try {
       await cancelOrder({
         orderId: selectedId,
@@ -81,10 +85,10 @@ export default function AppointmentsPage() {
       setCancelDialogOpen(false)
       setSelectedId(null)
       setReason("")
-      setNotification({ show: true, message: "Appointment cancelled successfully", type: "success" })
+      toast.success("Appointment cancelled successfully")
     } catch (error) {
       console.error("Failed to cancel order:", error)
-      setNotification({ show: true, message: "Failed to cancel appointment", type: "error" })
+      toast.error("Failed to cancel appointment")
     }
   }
 
@@ -136,7 +140,7 @@ export default function AppointmentsPage() {
                   <TableCell>{appointment.userName || "N/A"}</TableCell>
                   <TableCell>{appointment.date || "N/A"}</TableCell>
                   <TableCell>
-                    {appointment.startTime && appointment.endTime 
+                    {appointment.startTime && appointment.endTime
                       ? `${appointment.startTime.slice(0, 5)} – ${appointment.endTime.slice(0, 5)}`
                       : "N/A"}
                   </TableCell>

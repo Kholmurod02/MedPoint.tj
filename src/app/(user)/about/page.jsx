@@ -21,28 +21,28 @@ const AboutUs = () => {
   const quotes = [
     {
       id: 1,
-      description: "Panic is half the disease. Calm is half the health. Patience is the beginning of recovery!",
-      title: "Avicenna"
+      description: "Паника — это половина болезни. Спокойствие — половина здоровья. Терпение — начало выздоровления!",
+      title: "Авиценна"
     },
     {
       id: 2,
-      description: 'The body is but clay, the soul — a flame, And all your cures and fears end just the same. They treat the shell, but not the man inside, So toast to life before the healer’s game',
-      title: "Omar Khayyam",
+      description: 'Тело — лишь глина, душа — пламя, И все твои страхи и лечение — та же игра. Лечат оболочку, но не человека внутри, Так выпей за жизнь до начала врачевания.',
+      title: "Омар Хайям",
     },
     {
       id: 3,
-      description: 'Medicine is the science by which we learn the various states of the human body, in health, when not in health, the means by which health is likely to be lost, and when lost, is likely to be restored.',
-      title: "Avicenna (Ibn Sina) The Canon of Medicine",
+      description: 'Медицина — это наука, посредством которой мы познаём различные состояния человеческого тела — в здоровье и болезни, средства, которыми здоровье может быть утрачено, а когда утрачено — восстановлено.',
+      title: "Авиценна (Ибн Сина) «Канон врачебной науки»",
     },
     {
       id: 4,
-      description: "Wherever the art of Medicine is loved, there is also a love of Humanity.",
-      title: "Hippocrates"
+      description: "Там, где любят искусство медицины, там любят и человечество.",
+      title: "Гиппократ"
     },
     {
       id: 5,
-      description: 'The wound is the place where the Light enters you',
-      title: "Rumi",
+      description: 'Рана — это место, куда проникает Свет.',
+      title: "Руми",
     }
   ]
   const { data: doctor } = useGetAllDoctorsQuery("")

@@ -30,10 +30,10 @@ export default function DoctorById() {
             <div className="flex flex-col space-y-6">
               {/* Doctor Photo */}
               <Card className="bg-white rounded-2xl shadow-sm overflow-hidden border border-gray-100 hover:shadow-md transition-shadow">
-                <CardContent className="p-0">
-                  <div className="relative w-full h-[400px] bg-gray-50">
+                <CardContent className="py-0">
+                  <div className="relative w-full h-[360px] ">
                     <Image
-                      src="/womenDoc.jpg"
+                      src={doctorData?.profileImageUrl || "/placeholder.svg"}
                       alt={`Dr. ${doctorData?.firstName} ${doctorData?.lastName}`}
                       fill
                       style={{ objectFit: "cover" }}
