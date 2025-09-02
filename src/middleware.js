@@ -9,7 +9,7 @@ const roleRoutes = {
 };
 
 // Public routes that don't require auth
-const publicRoutes = ["/login", "/register"];
+const publicRoutes = ["/login", "/register","/"];
 
 export function middleware(req) {
   const token = req.cookies.get("token")?.value;
